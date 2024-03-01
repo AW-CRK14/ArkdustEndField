@@ -1,0 +1,5 @@
+// 1.20.4	2024-01-25T20:49:25.4645542	Loot Tables
+e5cc1add46dc8c4ff59bec312a79978dba92f207 data/arkdust/loot_tables/blocks/spirit_stela.json
+7107e5736b8a81c6eb868f9c9879ebf67934e920 data/arkdust/loot_tables/blocks/spirit_stone.json
+984756bf3f78a375a9b957868731ef1b783317be data/arkdust/loot_tables/blocks/spirit_stone_activated.json
+369d0ec8fac4bb4e328d0de06e6e381c35919246 data/arkdust/loot_tables/blocks/spirit_stone_unactivated.json

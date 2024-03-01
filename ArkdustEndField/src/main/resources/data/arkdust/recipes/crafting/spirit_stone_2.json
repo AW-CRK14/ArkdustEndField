@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "BCB",
+    "ABA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:blackstone"
+    },
+    "B": {
+      "item": "minecraft:obsidian"
+    },
+    "C": {
+      "item": "arkdust:spirit_stone_unactivated"
+    }
+  },
+  "result": {
+    "item": "arkdust:spirit_stone",
+    "count": 4
+  }
+}

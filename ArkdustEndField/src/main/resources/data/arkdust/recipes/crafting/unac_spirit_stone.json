@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "CDC",
+    "EFE"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:obsidian"
+    },
+    "B": {
+      "item": "minecraft:soul_lantern"
+    },
+    "C": {
+      "item": "minecraft:lapis_lazuli"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "E": {
+      "item": "minecraft:crying_obsidian"
+    },
+    "F": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "result": {
+    "item": "arkdust:spirit_stone_unactivated",
+    "count": 4
+  }
+}

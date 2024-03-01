@@ -1,0 +1,23 @@
+{
+  "block.arkdust.spirit_portal": "Spirit Portal",
+  "block.arkdust.spirit_stela": "Spirit Stela",
+  "block.arkdust.spirit_stone": "Spirit Stone",
+  "block.arkdust.spirit_stone_activated": "Spirit Stone Activated",
+  "block.arkdust.spirit_stone_unactivated": "Spirit Stone Unactivated",
+  "explain.arkdust.util.explain": "§4Explanation:",
+  "explain.arkdust.util.way": "§4Way To Get:",
+  "explain.block.arkdust.spirit_stela": "spirit_stela",
+  "explain.block.arkdust.spirit_stela.way": "spirit_stela",
+  "explain.block.arkdust.spirit_stone": "spirit_stone",
+  "explain.block.arkdust.spirit_stone.way": "spirit_stone",
+  "explain.block.arkdust.spirit_stone_activated": "spirit_stone_activated",
+  "explain.block.arkdust.spirit_stone_activated.way": "spirit_stone_activated",
+  "tab.arkdust.default": "Arkdust: Default",
+  "gui.arkdust.info.title.level_state": "Level State",
+  "gui.arkdust.info.title.level_state.climate": "Climate State:",
+  "gui.arkdust.warn.level_without_state": "[LLMD]Can't connect to the level state server.",
+  "climate.arkdust.humidity": "Humidity",
+  "climate.arkdust.windy": "Windy",
+  "climate.arkdust.bioactivity": "Bioactivity",
+  "climate.arkdust.orirock_activity": "Oriactivity"
+}

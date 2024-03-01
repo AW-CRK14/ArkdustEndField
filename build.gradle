@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url "https://mvn.cloud.alipay.com/nexus/content/repositories/open/"
+    }
+
+    maven{
+        url 'https://maven.aliyun.com/nexus/content/groups/public/'
+    }
+
+    maven {
+        url 'https://maven.aliyun.com/nexus/content/repositories/google'
+    }
+
+    maven {
+        name 'IzzelAliz Maven'
+        url 'https://maven.izzel.io/releases/'
+    }
+
+    maven {
+        name 'Curse Maven'
+        url = "https://www.cursemaven.com"
+    }
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+//dependencies {
+//    testImplementation platform('org.junit:junit-bom:5.9.1')
+//    testImplementation 'org.junit.jupiter:junit-jupiter'
+//}
+
+test {
+    useJUnitPlatform()
+}
