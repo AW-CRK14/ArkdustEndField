@@ -13,6 +13,9 @@
     </facet>
   </component>
   <component name="McpModuleSettings">
-    <option name="srgType" value="SRG" />
+    <option name="mappingFile" value="D:\IdeaProjects\ArkProgress\ArkdustEndField\build\neoForm\neoFormJoined1.20.4-20231207.154220\steps\mergeMappings\output.jar" />
+    <option name="minecraftVersion" value="20.4" />
+    <option name="platformVersion" value="20.4.184" />
+    <option name="srgType" value="TSRG" />
   </component>
 </module>
