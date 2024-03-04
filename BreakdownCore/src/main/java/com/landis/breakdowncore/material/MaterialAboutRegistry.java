@@ -35,5 +35,25 @@ public class MaterialAboutRegistry {
             type.primaryRegister(Registries.ITEM,new ResourceLocation(this.getNamespace(),name));
             return super.register(name, ()->type);
         }
+
+        @Override
+        protected <I extends MaterialItemType> DeferredHolder<MaterialItemType, I> createHolder(ResourceKey<? extends Registry<MaterialItemType>> registryKey, ResourceLocation key) {
+            return super.createHolder(registryKey, key);
+        }
+
+        public static class DeferredMIT<I extends MaterialItemType> extends DeferredHolder<MaterialItemType,I>{
+            private I uncheckedIns;
+            protected DeferredMIT(ResourceKey<MaterialItemType> key) {
+                super(key);
+            }
+
+            protected void setUncheckedIns(I uncheckedIns) {
+                if(this.uncheckedIns == null){
+                    this.uncheckedIns = uncheckedIns;
+                }
+            }
+
+
+        }
     }
 }

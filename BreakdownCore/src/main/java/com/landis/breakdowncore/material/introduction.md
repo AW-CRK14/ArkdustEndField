@@ -35,3 +35,5 @@
 这一设计用于处理一些诸如块之类的特殊物品。
 
 更多信息请参考[`MaterialItemType材料物品类型`](MaterialItemType.java)
+
+## []

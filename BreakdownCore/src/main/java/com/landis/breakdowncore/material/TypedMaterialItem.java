@@ -33,6 +33,6 @@ public class TypedMaterialItem extends Item implements ITypedMaterialObj{
 
     @Override
     public MaterialItemType getMIType() {
-        return null;
+        return type;
     }
 }
