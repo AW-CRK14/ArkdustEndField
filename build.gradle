@@ -38,6 +38,10 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 //    testImplementation 'org.junit.jupiter:junit-jupiter'
 //}
 
+dependencies {
+    implementation "net.neoforged:neoforge:${neo_version}"
+}
+
 test {
     useJUnitPlatform()
 }

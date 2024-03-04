@@ -6,6 +6,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -23,7 +24,7 @@ public class MaterialItemType {
     public final float purity;
     public final ResourceLocation alphaMapPosition;
 
-    private Holder<Item> insItemHolder;
+    private DeferredHolder<Item,TypedMaterialItem> insItemHolder;
 
     public MaterialItemType(long content, float purity, ResourceLocation alphaMapPosition) {
         this.content = content;
@@ -31,7 +32,7 @@ public class MaterialItemType {
         this.alphaMapPosition = alphaMapPosition;
     }
 
-    protected final void setHolder(Holder<Item> itemHolder){
+    protected final void setHolder(DeferredHolder<Item,TypedMaterialItem> itemHolder){
         this.insItemHolder = itemHolder;
     }
 
@@ -47,5 +48,16 @@ public class MaterialItemType {
         StringTag tag = StringTag.valueOf(material.getId().toString());
         stack.addTagElement("brea_material",tag);
         return stack;
+    }
+
+    /**WARN:<br>
+     * 以下部分代码会在注册前就被使用，请谨慎操作以避免出现严重的报错。
+     * */
+    @NonNull
+    public DeferredHolder<Item,TypedMaterialItem> primaryRegister(DeferredRegister<Item> register,ResourceLocation location){
+        return insItemHolder = register.register(location.getNamespace() + "_" + location.getPath(),()->new TypedMaterialItem(this));
+    }
+
+    public void secondaryRegistry(DeferredHolder<Material,? extends Material> material){
     }
 }

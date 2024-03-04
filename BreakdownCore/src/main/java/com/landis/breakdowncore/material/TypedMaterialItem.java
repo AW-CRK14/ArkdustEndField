@@ -10,21 +10,29 @@ import net.minecraft.world.item.ItemStack;
  * 因此请不要直接通过物品判断来决定它是否为你需要的物品。这有可能导致，比如说，你需要下届合金齿轮，但匹配到一个地狱岩齿轮。
  * //TODO
  * */
-public class TypedMaterialItem extends Item {
-    public final ResourceLocation aMap;
-    public final long content;
+public class TypedMaterialItem extends Item implements ITypedMaterialObj{
+    public final MaterialItemType type;
 
-    public TypedMaterialItem(ResourceLocation alphaMapLocation, long content) {
+    public TypedMaterialItem(MaterialItemType type) {
         super(new Properties().fireResistant());
-        this.aMap = alphaMapLocation;
-        this.content = content;
-    }
-
-    public TypedMaterialItem(String regName, long content) {
-        this(new ResourceLocation(BreakdownCore.MODID,regName),content);
+        this.type = type;
     }
 
     public static void setMaterial(ItemStack itemStack){
 
+    }
+
+
+    @Override
+    public Material getMaterial(ItemStack stack) {
+        if(stack.is(this)){
+//            return stack.getOrCreateTag().getString("brea_material");
+        }
+        return null;
+    }
+
+    @Override
+    public MaterialItemType getMIType() {
+        return null;
     }
 }
