@@ -36,4 +36,10 @@
 
 更多信息请参考[`MaterialItemType材料物品类型`](MaterialItemType.java)
 
-## []
+## [IMaterialFeature材料特征](IMaterialFeature.java)与[MFHandle材料特征处理器](MaterialFeatureHandle.java)
+
+材料特征接口只要求您返回对应的实例与实现获取类型的方法。为了避免出现不必要的问题，请将其中的泛型I设置为您的实现类。
+
+`MaterialFeatureHandle`则是实际注册用到的类，您可以将其理解为一种类似Type或Capability的设计。在这里您可以声明其包含的`MaterialItemType`，以及实现类的Class。
+
+在Material中加入MaterialFeature，加载完成后会自动创建对应的表，方便进行属性特征查找。

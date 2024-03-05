@@ -1,7 +1,6 @@
 package com.landis.breakdowncore.material;
 
-import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
+import com.landis.breakdowncore.unsafe.SkippedRegister;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -9,6 +8,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.HashSet;
 
 /**MaterialItemType材料物品类型<br>
  * 材料物品类型用于创建一个材料物品模板。比如说，一个“板”类型将可以被使用作铁板，铜板，金板等。<br>
@@ -39,6 +40,10 @@ public class MaterialItemType {
     public final Item getHolder(){
         return insItemHolder.value();
     }
+
+//    public boolean hasFeature(MaterialFeatureHandle<?> feature){
+//        RegistryMat.MATERIAL_FEATURE.wrapAsHolder()
+//    }
 
     /**WARN:<br>
      * 如果您设置了自定义的全局注册或材料特性接口，您可能需要覆写此方法来保证获取的正确运行。

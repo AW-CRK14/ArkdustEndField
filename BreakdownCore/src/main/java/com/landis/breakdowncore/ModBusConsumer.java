@@ -1,6 +1,6 @@
 package com.landis.breakdowncore;
 
-import com.landis.breakdowncore.material.MaterialAboutRegistry;
+import com.landis.breakdowncore.material.RegistryMat;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -9,6 +9,6 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 public class ModBusConsumer {
     @SubscribeEvent
     public static void newRegistry(NewRegistryEvent event){
-        event.register(MaterialAboutRegistry.MATERIAL_ITEM_TYPE);
+        event.register(RegistryMat.MATERIAL_ITEM_TYPE);
     }
 }
