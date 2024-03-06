@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Supplier;
 
 public class RegistryMat {
+
     public static final Registry<MaterialItemType> MATERIAL_ITEM_TYPE = new RegistryBuilder<>(Keys.MATERIAL_ITEM_TYPE).sync(true).create();
     public static final Registry<MaterialFeatureHandle<?>> MATERIAL_FEATURE = new RegistryBuilder<>(Keys.MATERIAL_FEATURE).sync(true).create();
 
@@ -28,22 +29,15 @@ public class RegistryMat {
      * 这一部分使用了跳过延迟注册。小心使用以避免出现报错。
      * */
     public static class MITRegister extends SkippedRegister<MaterialItemType> {
-        protected MITRegister(String namespace) {
+        public MITRegister(String namespace) {
             super(Keys.MATERIAL_ITEM_TYPE, namespace);
         }
 
         @Override
         public <I extends MaterialItemType> @NotNull Holder<MaterialItemType, I> register(@NotNull String name,I ins , Supplier<? extends I> sup) {
             Holder<MaterialItemType, I> holder = super.register(name,sup);
-            holder.getUnchecked().primaryRegister(Registries.ITEM,holder.getId());
+            holder.getUnchecked(false).primaryRegister(Registries.ITEM,holder.getId());
             return holder;
-        }
-    }
-
-    /**MF(MaterialFeature)Register*/
-    public static class MFRegistry extends SkippedRegister<MaterialFeatureHandle<?>> {
-        protected MFRegistry(String namespace) {
-            super(Keys.MATERIAL_FEATURE, namespace);
         }
     }
 }

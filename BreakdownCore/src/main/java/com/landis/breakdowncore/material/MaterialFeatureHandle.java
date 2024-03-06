@@ -1,15 +1,30 @@
 package com.landis.breakdowncore.material;
 
+import com.google.common.collect.ImmutableSet;
+import com.landis.breakdowncore.Registries;
 import com.landis.breakdowncore.unsafe.SkippedRegister;
 import net.minecraft.resources.ResourceLocation;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public record MaterialFeatureHandle<I extends IMaterialFeature<I>>(ResourceLocation id,Class<I> clazz,
-                                                                   HashSet<SkippedRegister.Holder<MaterialItemType,? extends MaterialItemType>> typeSet){
+public final class MaterialFeatureHandle<I extends IMaterialFeature<I>>{
+    public static final Logger LOGGER = LogManager.getLogger("BREA:Material/MFH");
+
+    public final ResourceLocation id;
+    public final Class<I> clazz;
+    private final HashSet<SkippedRegister.Holder<MaterialItemType,? extends MaterialItemType>> typeSet;
+    private ImmutableSet<MaterialItemType> typeInsSet;
+
+    public MaterialFeatureHandle(ResourceLocation id,Class<I> clazz, HashSet<SkippedRegister.Holder<MaterialItemType,? extends MaterialItemType>> typeSet){
+        this.typeSet = typeSet;
+        this.clazz = clazz;
+        this.id = id;
+    }
+
     public MaterialFeatureHandle(String modid,String path,Class<I> clazz){
         this(new ResourceLocation(modid,path),clazz,new HashSet<>());
     }
@@ -19,5 +34,20 @@ public record MaterialFeatureHandle<I extends IMaterialFeature<I>>(ResourceLocat
         this(new ResourceLocation(modid,path),clazz,new HashSet<>(List.of(holder)));
     }
 
+    @SafeVarargs
+    public final void addType(SkippedRegister.Holder<MaterialItemType, ? extends MaterialItemType>... holder){
+        if(Registries.isRegLock()){
+            LOGGER.error("Can't add MaterialItemType as the registry stage is finished");
+        }else{
+            typeSet.addAll(List.of(holder));
+        }
+    }
 
+    void finishRegistry(){
+        typeInsSet = typeSet.stream().map(DeferredHolder::get).collect(ImmutableSet.toImmutableSet());
+    }
+
+    public ImmutableSet<MaterialItemType> getSet(){
+        return typeInsSet;
+    }
 }

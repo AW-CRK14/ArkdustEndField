@@ -43,3 +43,7 @@
 `MaterialFeatureHandle`则是实际注册用到的类，您可以将其理解为一种类似Type或Capability的设计。在这里您可以声明其包含的`MaterialItemType`，以及实现类的Class。
 
 在Material中加入MaterialFeature，加载完成后会自动创建对应的表，方便进行属性特征查找。
+
+
+# 注册
+对于`MATERIAL_ITEM_TYPE`，请使用[material.RegistryMat.MITRegister](RegistryMat.java)进行注册。而`MaterialFeatureHandle<>`则请使用[SkippedRegistry](../unsafe/SkippedRegister.java)。

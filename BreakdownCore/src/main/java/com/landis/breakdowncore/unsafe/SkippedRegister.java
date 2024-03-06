@@ -45,7 +45,12 @@ public class SkippedRegister<I> extends DeferredRegister<I> {
             return this;
         }
 
-        public R getUnchecked(){
+        public R getUnchecked(boolean tryGet){
+            if(tryGet){
+                try {
+                    return get();
+                } catch (NullPointerException ignored){}
+            }
             return unchecked;
         }
     }

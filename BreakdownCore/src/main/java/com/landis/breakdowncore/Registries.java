@@ -8,6 +8,12 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class Registries {
+    public static boolean isRegLock() {
+
+        return regLock;
+    }
+    private static boolean regLock = true;
+
     public static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB,BreakdownCore.MODID);
     public static final DeferredRegister<Item> ITEM = DeferredRegister.createItems(BreakdownCore.MODID);
 
