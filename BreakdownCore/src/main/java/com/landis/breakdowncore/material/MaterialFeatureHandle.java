@@ -43,11 +43,11 @@ public final class MaterialFeatureHandle<I extends IMaterialFeature<I>>{
         }
     }
 
-    void finishRegistry(){
-        typeInsSet = typeSet.stream().map(DeferredHolder::get).collect(ImmutableSet.toImmutableSet());
-    }
 
-    public ImmutableSet<MaterialItemType> getSet(){
+    public ImmutableSet<MaterialItemType> getOrCreateSet(){
+        if(typeInsSet == null){
+            typeInsSet = typeSet.stream().map(DeferredHolder::get).collect(ImmutableSet.toImmutableSet());
+        }
         return typeInsSet;
     }
 }

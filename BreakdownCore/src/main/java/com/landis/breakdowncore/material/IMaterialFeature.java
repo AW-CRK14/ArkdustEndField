@@ -14,7 +14,7 @@ import java.util.List;
 //TODO 正在考虑有关Capability的部分
 public interface IMaterialFeature<I extends IMaterialFeature<I>> {
 
-    I getInstance();
+    default I getInstance(){return (I) this;}
 
     //请不要把没有注册的传进去……
     MaterialFeatureHandle<I> getType();

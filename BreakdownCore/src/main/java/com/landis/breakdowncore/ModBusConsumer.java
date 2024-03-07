@@ -10,5 +10,7 @@ public class ModBusConsumer {
     @SubscribeEvent
     public static void newRegistry(NewRegistryEvent event){
         event.register(RegistryMat.MATERIAL_ITEM_TYPE);
+        event.register(RegistryMat.MATERIAL_FEATURE);
+        event.register(RegistryMat.MATERIAL);
     }
 }

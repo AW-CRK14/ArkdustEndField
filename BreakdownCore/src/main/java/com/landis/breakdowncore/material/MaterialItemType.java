@@ -50,7 +50,7 @@ public class MaterialItemType {
      * */
     public @NonNull ItemStack createItem(Material material){
         ItemStack stack = new ItemStack(insItemHolder);
-        StringTag tag = StringTag.valueOf(material.getId().toString());
+        StringTag tag = StringTag.valueOf(material.id.toString());
         stack.addTagElement("brea_material",tag);
         return stack;
     }

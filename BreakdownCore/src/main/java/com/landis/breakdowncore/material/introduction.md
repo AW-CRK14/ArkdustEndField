@@ -42,8 +42,15 @@
 
 `MaterialFeatureHandle`则是实际注册用到的类，您可以将其理解为一种类似Type或Capability的设计。在这里您可以声明其包含的`MaterialItemType`，以及实现类的Class。
 
-在Material中加入MaterialFeature，加载完成后会自动创建对应的表，方便进行属性特征查找。
+在`Material`中加入`MaterialFeature`，加载完成后会自动创建对应的表，方便进行属性特征查找。
 
+## [Material材料](Material.java)
+
+材料上面两种设计的最终使用者。在构造时需要传入对应的`MaterialFeature`以及id。其中`MaterialFeature`会自动在`Material`类中创建表，可以使用需要的MFH来获取，物品所可用的物品形态类型同理。
+
+材料中存在一个可能会需要被覆写的方法`createItem`，这一方法与`MaterialItemType`中的功能相似。但是其可以返回null，表示回落给对应的`MaterialItemType`进行处理。
+
+材料使用正常的延迟注册。因此，为了确保注册的正常进行，请使用`MRegister`进行注册，参考下方注册章节。
 
 # 注册
-对于`MATERIAL_ITEM_TYPE`，请使用[material.RegistryMat.MITRegister](RegistryMat.java)进行注册。而`MaterialFeatureHandle<>`则请使用[SkippedRegistry](../unsafe/SkippedRegister.java)。
+对于`MATERIAL_ITEM_TYPE`，请使用[material.RegistryMat.MITRegister](RegistryMat.java)进行注册。而`MaterialFeatureHandle<>`则请使用[SkippedRegistry](../unsafe/SkippedRegister.java)。`Material`使用正常的延迟注册，但为了适应自注册，请使用[MRegister](RegistryMat.java)
