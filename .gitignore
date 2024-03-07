@@ -1,0 +1,29 @@
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+.idea/modules
+
+# gradle
+build
+.gradle
+.gradle/8.4
+
+# other
+eclipse
+run
+runs
+run-data
+
+repo
+/logs/
