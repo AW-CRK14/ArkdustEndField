@@ -63,6 +63,7 @@ public class MaterialItemType {
         return insItemHolder = register.register(location.getNamespace() + "_" + location.getPath(),()->new TypedMaterialItem(this));
     }
 
+
     public void secondaryRegistry(ResourceLocation material){
     }
 }

@@ -1,5 +1,8 @@
 plugins {
+    id 'java-library'
     id 'java'
+    id 'idea'
+    id 'net.neoforged.gradle.userdev' version '7.0.80'
 }
 
 group = 'org.example'

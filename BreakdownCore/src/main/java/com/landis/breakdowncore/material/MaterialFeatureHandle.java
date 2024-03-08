@@ -35,9 +35,9 @@ public final class MaterialFeatureHandle<I extends IMaterialFeature<I>>{
     }
 
     @SafeVarargs
-    public final void addType(SkippedRegister.Holder<MaterialItemType, ? extends MaterialItemType>... holder){
-        if(Registries.isRegLock()){
-            LOGGER.error("Can't add MaterialItemType as the registry stage is finished");
+    public final void addType(SkippedRegister.Holder<MaterialItemType,? extends MaterialItemType>... holder){
+        if(EventHandleMat.isPreregLock()){
+            LOGGER.error("Can't add MaterialItemType as the registry pre stage is finished");
         }else{
             typeSet.addAll(List.of(holder));
         }

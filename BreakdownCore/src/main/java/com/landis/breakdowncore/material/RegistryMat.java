@@ -15,13 +15,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public class RegistryMat {
-    public static final Logger LOGGER = LogManager.getLogger("BREA:Material");
+    public static final Logger LOGGER = LogManager.getLogger("BREA:Material:Registry");
 
 
     static ImmutableMap<Class<?>,MaterialFeatureHandle<?>> MF_CLASS2MFH;
@@ -72,8 +73,16 @@ public class RegistryMat {
         }
     }
 
+    static final List<MRegister> activeMReg = new ArrayList<>();
+    public final MRegister create(String name){
+        MRegister r = new MRegister(name);
+        activeMReg.add(r);
+        return r;
+    }
+
+
     public static class MRegister extends DeferredRegister<Material>{
-        protected MRegister( String namespace) {
+        private MRegister(String namespace) {
             super(Keys.MATERIAL, namespace);
         }
 
@@ -82,8 +91,9 @@ public class RegistryMat {
             listBuilder.addAll(Arrays.asList(features));
             AtomicReference<Holder<?>> ato = new AtomicReference<>();
             ato.set((Holder<?>) super.register(id,()->{
+                Material value = builder.create(ato.get().list,ato.get().getId());
                 ato.get().rel();
-                return builder.create(ato.get().list,ato.get().getId());
+                return value;
             }));
             ato.get().list = listBuilder;
             return ato.get();

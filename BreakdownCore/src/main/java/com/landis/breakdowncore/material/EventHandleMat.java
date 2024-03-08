@@ -8,8 +8,13 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
 /**本类用于处理在注册与注册前阶段的各种额外处理需求*/
-@Mod.EventBusSubscriber(modid = BreakdownCore.MODID)
+@Mod.EventBusSubscriber(modid = BreakdownCore.MODID,bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EventHandleMat {
+    public static boolean isPreregLock() {
+        return regLock;
+    }
+    private static boolean regLock = true;
+
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void setup(FMLCommonSetupEvent event){
         {//在注册完成后创建CLASS-MFH表
