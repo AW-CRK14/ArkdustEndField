@@ -5,15 +5,19 @@ import com.google.common.collect.ImmutableMap;
 import com.landis.breakdowncore.BreakdownCore;
 import com.landis.breakdowncore.Registries;
 import com.landis.breakdowncore.unsafe.SkippedRegister;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +27,8 @@ import java.util.function.Supplier;
 
 public class RegistryMat {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Material:Registry");
+
+
 
 
     static ImmutableMap<Class<?>,MaterialFeatureHandle<?>> MF_CLASS2MFH;
@@ -42,6 +48,40 @@ public class RegistryMat {
     public static boolean isC2MFHExist(){
         return MF_CLASS2MFH != null;
     }
+
+
+    static List<Pair<Holder<Item>,Supplier<ITypedMaterialObj>>> I2TMIPre = new ArrayList<>();
+    static List<Pair<Supplier<Pair<Holder<Material>,Holder<MaterialItemType>>>,Supplier<ItemStack>>> M_MIT2IPre = new ArrayList<>();
+
+    static ImmutableMap<Item,ITypedMaterialObj> I2TMI;
+    static ImmutableMap<Material,ImmutableMap<MaterialItemType,ItemStack>> M_MIT2I;
+
+    private static final ImmutableMap<MaterialItemType,ItemStack> EMPTY = ImmutableMap.<MaterialItemType, ItemStack>builder().build();
+
+    public static ITypedMaterialObj getMaterialInfo(Item item){
+        ITypedMaterialObj obj = I2TMI.get(item);
+        if(obj == null){
+            if(item instanceof ITypedMaterialObj){
+                return (ITypedMaterialObj) item;
+            }
+            return null;//也许之后会添加额外的事件处理
+        }
+        return obj;
+    }
+
+    public static ItemStack getFromMAndMIT(Material material,MaterialItemType type){
+        ItemStack itemStack = M_MIT2I.getOrDefault(material,EMPTY).get(type);
+        if(itemStack == null){
+            itemStack = material.createItem(type);
+            if(itemStack == null){
+                return type.createItem(material);
+            }
+            return itemStack;
+        }
+        return itemStack;
+    }
+
+
 
     public static final Registry<MaterialItemType> MATERIAL_ITEM_TYPE = new RegistryBuilder<>(Keys.MATERIAL_ITEM_TYPE).sync(true).create();
     public static final Registry<MaterialFeatureHandle<?>> MATERIAL_FEATURE = new RegistryBuilder<>(Keys.MATERIAL_FEATURE).sync(true).create();

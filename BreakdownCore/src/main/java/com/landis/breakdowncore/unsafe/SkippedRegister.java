@@ -10,8 +10,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Supplier;
 
 public class SkippedRegister<I> extends DeferredRegister<I> {
-    protected SkippedRegister(ResourceKey<? extends Registry<I>> registryKey, String namespace) {
+    private final boolean allowDoubleInstance;
+    protected SkippedRegister(ResourceKey<? extends Registry<I>> registryKey, String namespace,boolean allowDoubleInstance) {
         super(registryKey, namespace);
+        this.allowDoubleInstance = allowDoubleInstance;
+    }
+
+    protected SkippedRegister(ResourceKey<? extends Registry<I>> registryKey, String namespace) {
+        this(registryKey,namespace,false);
     }
 
     @Override
@@ -21,6 +27,9 @@ public class SkippedRegister<I> extends DeferredRegister<I> {
     }
 
     public <S extends I> @NotNull Holder<I, S> register(@NotNull String name, S instance, Supplier<? extends S> sup) {
+        if(!allowDoubleInstance){
+            sup = ()->instance;
+        }
         return ((Holder<I, S>) super.register(name, sup)).setUncheckedIns(instance);
     }
 

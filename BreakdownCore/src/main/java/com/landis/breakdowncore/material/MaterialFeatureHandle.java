@@ -1,7 +1,6 @@
 package com.landis.breakdowncore.material;
 
 import com.google.common.collect.ImmutableSet;
-import com.landis.breakdowncore.Registries;
 import com.landis.breakdowncore.unsafe.SkippedRegister;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -36,7 +35,7 @@ public final class MaterialFeatureHandle<I extends IMaterialFeature<I>>{
 
     @SafeVarargs
     public final void addType(SkippedRegister.Holder<MaterialItemType,? extends MaterialItemType>... holder){
-        if(EventHandleMat.isPreregLock()){
+        if(EventHandleMat.isDataGatherStageFinished()){
             LOGGER.error("Can't add MaterialItemType as the registry pre stage is finished");
         }else{
             typeSet.addAll(List.of(holder));
