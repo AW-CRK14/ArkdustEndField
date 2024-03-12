@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Material {
@@ -20,23 +21,26 @@ public class Material {
     public final ImmutableList<IMaterialFeature<?>> fIns;
     private ImmutableMap<MaterialFeatureHandle<?>,IMaterialFeature<?>> toFeature;
     private ImmutableSet<MaterialItemType> toTypes;
-    public Material(ResourceLocation id, String name, int x16color , ImmutableList.Builder<IMaterialFeature<?>> fIns){
+    public Material(ResourceLocation id, String name, int x16color , IMaterialFeature<?>... fIns){
         this.id = id;
         this.name = name;
         this.x16color = x16color;
-        this.fIns = fIns.build();
+        ImmutableList.Builder<IMaterialFeature<?>> builder = new ImmutableList.Builder<>();
+        builder.addAll(Arrays.asList(fIns));
+        builder.addAll(System$Material.MF4M_ADDITION.get(id));
+        this.fIns = builder.build();
     }
 
     public ImmutableMap<MaterialFeatureHandle<?>,IMaterialFeature<?>> getOrCreateFeatures(){
         if(toFeature == null){
-            if(!RegistryMat.isC2MFHExist()){
-                LOGGER.warn("Can't get CLASS2MFH map as it's not exist right now.It will be create on FMLCommonSetupEvent.");
+            if(!System$Material.release){
+                LOGGER.warn("Can't get CLASS2MFH map as it's not exist right now. It will be automatically created in method System$Material#init()");
                 LOGGER.warn("Details: called by Material(id={})",id);
                 return null;
             }
             ImmutableMap.Builder<MaterialFeatureHandle<?>,IMaterialFeature<?>> builder = new ImmutableMap.Builder<>();
             for(IMaterialFeature<?> feature : fIns){
-                builder.put(RegistryMat.getMFH(feature.getClass()),feature);
+                builder.put(System$Material.getMFH(feature.getClass()),feature);
             }
             toFeature = builder.build();
         }
@@ -51,7 +55,7 @@ public class Material {
         if(toTypes == null){
             ImmutableSet.Builder<MaterialItemType> builder = new ImmutableSet.Builder<>();
             for(IMaterialFeature<?> feature : fIns){
-                builder.addAll(feature.getType().getOrCreateSet());
+                builder.addAll(feature.getType().get().getOrCreateSet());
             }
             toTypes = builder.build();
         }

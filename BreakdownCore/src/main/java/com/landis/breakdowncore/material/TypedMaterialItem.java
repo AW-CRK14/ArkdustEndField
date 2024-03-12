@@ -18,7 +18,7 @@ public class TypedMaterialItem extends Item implements ITypedMaterialObj{
         this.type = type;
     }
 
-    public static void setMaterial(ItemStack itemStack){
+    public void setMaterial(ItemStack itemStack){
 
     }
 

@@ -33,7 +33,17 @@ repositories {
         name 'Curse Maven'
         url = "https://www.cursemaven.com"
     }
+
+    maven { // Registrate
+        url "https://maven.tterrag.com/"
+    }
 }
+
+jarJar.enable()
+
+jarJar { }
+
+//tasks.jarJar.finalizedBy('reobfJarJar')
 
 configurations {
     library
@@ -134,6 +144,9 @@ dependencies {
     // Modern UI for Minecraft Forge
     compileOnly "curse.maven:modern-ui-352491:5040141"
     runtimeOnly "curse.maven:modern-ui-352491:5040141"
+
+    implementation "com.tterrag.registrate:Registrate:${rege_version}"
+    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: rege_version_range)
 
 }
 

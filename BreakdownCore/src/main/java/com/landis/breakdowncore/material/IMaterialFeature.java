@@ -2,6 +2,7 @@ package com.landis.breakdowncore.material;
 
 import com.landis.breakdowncore.unsafe.SkippedRegister;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface IMaterialFeature<I extends IMaterialFeature<I>> {
     default I getInstance(){return (I) this;}
 
     //请不要把没有注册的传进去……
-    MaterialFeatureHandle<I> getType();
+    DeferredHolder<MaterialFeatureHandle<?>,MaterialFeatureHandle<I>> getType();
 }

@@ -10,7 +10,11 @@
 * “金属”的`MaterialFeature`，设置依赖为无，类型物品为\[锭,块\]
 * “铁”的`Material`，我们为其添加“金属”的MaterialFeature的特性。
 
-> Materials are used to explain some basic features of an item's ingredients. 
+# 运行流程
+1. 数据收集阶段，这一阶段与mod信息收集阶段平行。在`FMLCommonSetup`事件，优先级为Lowest的时候，所有被添加的[`Handle$Material`](Handler$Material.java)将被统一调用收集信息，同时dataGather标志将被设置为false。
+2. 基本注册阶段，这一阶段将注册所有使用`DeferredRegistry`注册的材料，材料物品种类，材料特征。在这一阶段，材料与材料特征被调用时将会拉取 阶段1 提供的，对于本对象的额外附加内容。在这之后，这两个表将会被清空。
+3. 额外注册阶段，这一阶段与`RegistryEvent`事件平行。在这一阶段中，所有上述内容已经完成注册，这时将会进行额外注册处理，为对应的材料与物品类型进行额外内容注册。
+4. 注册结束阶段，这一阶段与优先级为Low的`RegistryEvent`事件平行。在这一阶段中，将会创建各种额外的映射表，比如`MF_CLASS2MFH`,`M2MI`,`M1MIT2I`等，在阶段1收集的其它信息也将在这一阶段被统一处理。在这之后infoBuild标志将被设置为false。
 
 ## [TypedMaterialItem材料类型物品](TypedMaterialItem.java) 与 [ITypedMaterialObj材料类型对象接口](ITypedMaterialObj.java)
 
@@ -49,8 +53,3 @@
 材料上面两种设计的最终使用者。在构造时需要传入对应的`MaterialFeature`以及id。其中`MaterialFeature`会自动在`Material`类中创建表，可以使用需要的MFH来获取，物品所可用的物品形态类型同理。
 
 材料中存在一个可能会需要被覆写的方法`createItem`，这一方法与`MaterialItemType`中的功能相似。但是其可以返回null，表示回落给对应的`MaterialItemType`进行处理。
-
-材料使用正常的延迟注册。因此，为了确保注册的正常进行，请使用`MRegister`进行注册，参考下方注册章节。
-
-# 注册
-对于`MATERIAL_ITEM_TYPE`，请使用[material.RegistryMat.MITRegister](RegistryMat.java)进行注册。而`MaterialFeatureHandle<>`则请使用[SkippedRegistry](../unsafe/SkippedRegister.java)。`Material`使用正常的延迟注册，但为了适应自注册，请使用[MRegister](RegistryMat.java)

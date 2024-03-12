@@ -1,12 +1,18 @@
 package com.landis.breakdowncore.material;
 
+import com.landis.breakdowncore.BreakdownCore;
 import com.landis.breakdowncore.unsafe.SkippedRegister;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.HashSet;
@@ -24,46 +30,38 @@ public class MaterialItemType {
     public final long content;
     public final float purity;
     public final ResourceLocation alphaMapPosition;
+    public final ResourceLocation id;
 
-    private DeferredHolder<Item,TypedMaterialItem> insItemHolder;
+    private ResourceKey<Item> autoRegKey;
 
-    public MaterialItemType(long content, float purity, ResourceLocation alphaMapPosition) {
+    public MaterialItemType(long content, float purity, ResourceLocation alphaMapPosition, ResourceLocation id) {
         this.content = content;
         this.purity = purity;
         this.alphaMapPosition = alphaMapPosition;
+        this.id = id;
     }
 
-    protected final void setHolder(DeferredHolder<Item,TypedMaterialItem> itemHolder){
-        this.insItemHolder = itemHolder;
+    public ItemStack getHolder(){
+        return new ItemStack(BuiltInRegistries.ITEM.get(autoRegKey));
     }
-
-    public final Item getHolder(){
-        return insItemHolder.value();
-    }
-
-//    public boolean hasFeature(MaterialFeatureHandle<?> feature){
-//        RegistryMat.MATERIAL_FEATURE.wrapAsHolder()
-//    }
 
     /**WARN:<br>
      * 如果您设置了自定义的全局注册或材料特性接口，您可能需要覆写此方法来保证获取的正确运行。
      * */
     public @NonNull ItemStack createItem(Material material){
-        ItemStack stack = new ItemStack(insItemHolder);
+        ItemStack stack = getHolder();
         StringTag tag = StringTag.valueOf(material.id.toString());
         stack.addTagElement("brea_material",tag);
         return stack;
     }
 
-    /**WARN:<br>
-     * 以下部分代码会在注册前就被使用，请谨慎操作以避免出现严重的报错。
-     * */
-    @NonNull
-    public DeferredHolder<Item,TypedMaterialItem> primaryRegister(DeferredRegister<Item> register,ResourceLocation location){
-        return insItemHolder = register.register(location.getNamespace() + "_" + location.getPath(),()->new TypedMaterialItem(this));
+
+    public void primaryRegister(RegisterEvent event){
+        ResourceLocation reg = new ResourceLocation(BreakdownCore.MODID,id.getNamespace() + "_" + id.getPath());
+        autoRegKey = ResourceKey.create(Registries.ITEM,reg);
+        event.register(Registries.ITEM,reg,()->new TypedMaterialItem(this));
     }
 
-
-    public void secondaryRegistry(ResourceLocation material){
+    public void secondaryRegistry(RegisterEvent event,ResourceLocation material){
     }
 }
