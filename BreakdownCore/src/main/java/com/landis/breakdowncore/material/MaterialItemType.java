@@ -62,6 +62,6 @@ public class MaterialItemType {
         event.register(Registries.ITEM,reg,()->new TypedMaterialItem(this));
     }
 
-    public void secondaryRegistry(RegisterEvent event,ResourceLocation material){
+    public void secondaryRegistry(RegisterEvent event,Material material){
     }
 }

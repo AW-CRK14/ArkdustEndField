@@ -64,8 +64,8 @@ public class System$Material {
 
     static Multimap<ResourceLocation,IMaterialFeature<?>> MF4M_ADDITION = HashMultimap.create();
     static Multimap<ResourceLocation,Holder<MaterialItemType>> MIT4MF_ADDITION = HashMultimap.create();
-    static List<Pair<Holder<Item>, Supplier<ITypedMaterialObj>>> I2TMIPre = new ArrayList<>();
-    static List<Pair<Pair<Holder<Material>,Holder<MaterialItemType>>,Supplier<ItemStack>>> M_MIT2IPre = new ArrayList<>();
+    static List<Pair<Holder<Item>, Supplier<ITypedMaterialObj>>> I2TMI_PRE = new ArrayList<>();
+    static List<Pair<Pair<Holder<Material>,Holder<MaterialItemType>>,Supplier<ItemStack>>> M_MIT2I_PRE = new ArrayList<>();
 
 
 
@@ -84,7 +84,7 @@ public class System$Material {
         MF_CLASS2MFH = ImmutableMap.copyOf(a);
 
         Map<Item,ITypedMaterialObj> b = new HashMap<>();
-        for (Pair<Holder<Item>, Supplier<ITypedMaterialObj>> i : I2TMIPre){
+        for (Pair<Holder<Item>, Supplier<ITypedMaterialObj>> i : I2TMI_PRE){
             if(!b.containsKey(i.getA().value())){
                 b.put(i.getA().value(),i.getB().get());
             }
@@ -92,7 +92,7 @@ public class System$Material {
         I2TMI = ImmutableMap.copyOf(b);
 
         Map<Material,Map<MaterialItemType,ItemStack>> c = new HashMap<>();
-        for(Pair<Pair<Holder<Material>, Holder<MaterialItemType>>, Supplier<ItemStack>> i : M_MIT2IPre){
+        for(Pair<Pair<Holder<Material>, Holder<MaterialItemType>>, Supplier<ItemStack>> i : M_MIT2I_PRE){
             Material m = i.getA().getA().value();
             MaterialItemType t = i.getA().getB().value();
             ItemStack s = i.getB().get();
@@ -111,6 +111,11 @@ public class System$Material {
         ImmutableMap.Builder<Material,ImmutableMap<MaterialItemType,ItemStack>> builder = new ImmutableMap.Builder<>();
         c.forEach((m,mit)-> builder.put(m,ImmutableMap.copyOf(mit)));
         M_MIT2I = builder.build();
+
+        MF4M_ADDITION = null;
+        MIT4MF_ADDITION = null;
+        M_MIT2I_PRE = null;
+        I2TMI_PRE = null;
 
         release = true;
     }

@@ -1,12 +1,10 @@
 package com.landis.breakdowncore.material;
 
-import com.landis.breakdowncore.unsafe.SkippedRegister;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.util.tuples.Pair;
@@ -44,7 +42,7 @@ public class Handler$Material {
 
     public void regItemForTMI(Holder<Item> itemHolder, Supplier<ITypedMaterialObj> info){
         if(System$Material.infoB){
-            System$Material.I2TMIPre.add(new Pair<>(itemHolder,info));
+            System$Material.I2TMI_PRE.add(new Pair<>(itemHolder,info));
         }else {
             LOGGER.warn("Can't attach material info for item(id={}).",itemHolder.unwrapKey().map(ResourceKey::toString).orElse("[invalid key]"));
             LOGGER.warn(new IllegalStateException());
@@ -53,7 +51,7 @@ public class Handler$Material {
 
     public void regMarkedItem(DeferredHolder<Material,? extends Material> material, DeferredHolder<MaterialItemType,? extends MaterialItemType> type, Supplier<ItemStack> item){
         if(System$Material.infoB){
-            System$Material.M_MIT2IPre.add(new Pair<>(new Pair<>(material,type),item));
+            System$Material.M_MIT2I_PRE.add(new Pair<>(new Pair<>(material,type),item));
         }else {
             LOGGER.warn("Can't mark material({}) and type({}) for item stack.",material.getId(),type.getId());
             LOGGER.warn(new IllegalStateException());
