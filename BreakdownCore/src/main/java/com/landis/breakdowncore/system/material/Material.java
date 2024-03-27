@@ -1,4 +1,4 @@
-package com.landis.breakdowncore.material;
+package com.landis.breakdowncore.system.material;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -11,19 +11,16 @@ import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class Material {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Material/M");
     public final ResourceLocation id;
-    public final String name;
     public final int x16color;
     public final ImmutableList<IMaterialFeature<?>> fIns;
-    private ImmutableMap<MaterialFeatureHandle<?>,IMaterialFeature<?>> toFeature;
+    private ImmutableMap<MaterialFeatureType<?>,IMaterialFeature<?>> toFeature;
     private ImmutableSet<MaterialItemType> toTypes;
-    public Material(ResourceLocation id, String name, int x16color , IMaterialFeature<?>... fIns){
+    public Material(ResourceLocation id, int x16color , IMaterialFeature<?>... fIns){
         this.id = id;
-        this.name = name;
         this.x16color = x16color;
         ImmutableList.Builder<IMaterialFeature<?>> builder = new ImmutableList.Builder<>();
         builder.addAll(Arrays.asList(fIns));
@@ -31,14 +28,14 @@ public class Material {
         this.fIns = builder.build();
     }
 
-    public ImmutableMap<MaterialFeatureHandle<?>,IMaterialFeature<?>> getOrCreateFeatures(){
+    public ImmutableMap<MaterialFeatureType<?>,IMaterialFeature<?>> getOrCreateFeatures(){
         if(toFeature == null){
             if(!System$Material.release){
                 LOGGER.warn("Can't get CLASS2MFH map as it's not exist right now. It will be automatically created in method System$Material#init()");
                 LOGGER.warn("Details: called by Material(id={})",id);
                 return null;
             }
-            ImmutableMap.Builder<MaterialFeatureHandle<?>,IMaterialFeature<?>> builder = new ImmutableMap.Builder<>();
+            ImmutableMap.Builder<MaterialFeatureType<?>,IMaterialFeature<?>> builder = new ImmutableMap.Builder<>();
             for(IMaterialFeature<?> feature : fIns){
                 builder.put(System$Material.getMFH(feature.getClass()),feature);
             }
@@ -47,7 +44,7 @@ public class Material {
         return toFeature;
     }
 
-    public IMaterialFeature<?> getFeature(MaterialFeatureHandle<?> handle){
+    public IMaterialFeature<?> getFeature(MaterialFeatureType<?> handle){
         return getOrCreateFeatures().get(handle);
     }
 
@@ -55,7 +52,7 @@ public class Material {
         if(toTypes == null){
             ImmutableSet.Builder<MaterialItemType> builder = new ImmutableSet.Builder<>();
             for(IMaterialFeature<?> feature : fIns){
-                builder.addAll(feature.getType().get().getOrCreateSet());
+                builder.addAll(feature.forItemTypes());
             }
             toTypes = builder.build();
         }

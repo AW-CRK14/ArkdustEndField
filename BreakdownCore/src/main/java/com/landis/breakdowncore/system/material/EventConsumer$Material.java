@@ -1,6 +1,5 @@
-package com.landis.breakdowncore.material;
+package com.landis.breakdowncore.system.material;
 
-import com.google.common.collect.ImmutableMap;
 import com.landis.breakdowncore.BreakdownCore;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;

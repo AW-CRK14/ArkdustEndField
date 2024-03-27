@@ -1,17 +1,15 @@
-package com.landis.breakdowncore.material;
+package com.landis.breakdowncore.system.material;
 
 import com.google.common.collect.ImmutableSet;
-import com.landis.breakdowncore.unsafe.SkippedRegister;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
+@Deprecated(forRemoval = true)
 public final class MaterialFeatureHandle<I extends IMaterialFeature<I>>{
     public static final Logger LOGGER = LogManager.getLogger("BREA:Material/MFH");
 

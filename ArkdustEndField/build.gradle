@@ -142,8 +142,8 @@ dependencies {
     // Modern UI core extensions
     library "icyllis.modernui:ModernUI-Markdown:${modernui_version}"
     // Modern UI for Minecraft Forge
-    compileOnly "curse.maven:modern-ui-352491:5040141"
-    runtimeOnly "curse.maven:modern-ui-352491:5040141"
+    compileOnly "curse.maven:modern-ui-${modernui_path}"
+    runtimeOnly "curse.maven:modern-ui-${modernui_path}"
 
     implementation "com.tterrag.registrate:Registrate:${rege_version}"
     jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: rege_version_range)

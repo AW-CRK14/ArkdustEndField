@@ -1,8 +1,7 @@
-package com.landis.breakdowncore.material;
+package com.landis.breakdowncore.system.material;
 
 import com.landis.breakdowncore.BreakdownCore;
-import com.landis.breakdowncore.unsafe.SkippedRegister;
-import net.minecraft.core.Holder;
+import com.landis.breakdowncore.system.material.datagen.MitModelGen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.StringTag;
@@ -10,12 +9,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.util.HashSet;
 
 /**MaterialItemType材料物品类型<br>
  * 材料物品类型用于创建一个材料物品模板。比如说，一个“板”类型将可以被使用作铁板，铜板，金板等。<br>
@@ -23,21 +18,19 @@ import java.util.HashSet;
  * 另外的三个参数分别是：<br>
  * {@link MaterialItemType#content} 指定该种物品包含多少单位的对应材料。<br>
  * {@link MaterialItemType#purity}  指定该种物品的纯度。纯度将与content数值相乘获得直接产量。<br>
- * {@link MaterialItemType#alphaMapPosition} 指定该种物品的贴图特征，将按照此特征进行叠加获得最终材质。<br>
+ * {@link MaterialItemType#id} 为该物品的id，也将会被用于获取材料的透明度图。<br>
  * 在默认提供的{@link TypedMaterialItem}中，最终材质的获取会先检查有无用json额外配置的材质，在不存在时再进行自动处理。
  * */
 public class MaterialItemType {
     public final long content;
     public final float purity;
-    public final ResourceLocation alphaMapPosition;
     public final ResourceLocation id;
 
     private ResourceKey<Item> autoRegKey;
 
-    public MaterialItemType(long content, float purity, ResourceLocation alphaMapPosition, ResourceLocation id) {
+    public MaterialItemType(long content, float purity, ResourceLocation id) {
         this.content = content;
         this.purity = purity;
-        this.alphaMapPosition = alphaMapPosition;
         this.id = id;
     }
 
@@ -59,9 +52,13 @@ public class MaterialItemType {
     public void primaryRegister(RegisterEvent event){
         ResourceLocation reg = new ResourceLocation(BreakdownCore.MODID,id.getNamespace() + "_" + id.getPath());
         autoRegKey = ResourceKey.create(Registries.ITEM,reg);
-        event.register(Registries.ITEM,reg,()->new TypedMaterialItem(this));
+        event.register(Registries.ITEM,reg,()->new TypedMaterialItem(()->this));
     }
 
     public void secondaryRegistry(RegisterEvent event,Material material){
+    }
+
+    public void gatherKeyForDatagen(MitModelGen ins){
+        ins.ITEMS.add(autoRegKey.location());
     }
 }

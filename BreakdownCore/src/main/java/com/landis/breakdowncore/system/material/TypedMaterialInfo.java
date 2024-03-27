@@ -1,8 +1,9 @@
-package com.landis.breakdowncore.material;
+package com.landis.breakdowncore.system.material;
 
-import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 /**TypedMaterialInfo类型材料信息<br>
  * 类型材料信息是一个record类，使你可以在不修改一个物品/方块或其它内容的情况下创建其对应的材料信息。<br>
@@ -13,8 +14,13 @@ public record TypedMaterialInfo(Material material, long content, float purity,Ma
         this(material,content,1F,null);
     }
     @Override
-    public Material getMaterial(ItemStack stack) {
-        return material;
+    public ResourceLocation getMaterialId(ItemStack stack) {
+        return material.id;
+    }
+
+    @Override
+    public Optional<Material> getMaterial(ItemStack stack) {
+        return Optional.of(material);
     }
 
     @Override

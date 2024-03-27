@@ -3,7 +3,6 @@ package com.landis.breakdowncore;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -35,5 +34,8 @@ public class BreakdownCore {
     public static final String MODID = "brea";
     private static final Logger LOGGER = LogUtils.getLogger();
     public BreakdownCore(IEventBus modEventBus) {
+        Registries.MaterialReg.MATERIAL.register(modEventBus);
+        Registries.MaterialReg.FEATURE.register(modEventBus);
+        Registries.MaterialReg.TYPE.register(modEventBus);
     }
 }

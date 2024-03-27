@@ -1,13 +1,20 @@
-package com.landis.breakdowncore.material;
+package com.landis.breakdowncore.system.material;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.Optional;
 
 /**ITypedMaterialObj材料类型对象接口<br>
  * 材料类型对象接口用于获取一个物品的材料信息。我们将其以接口形式提取出来以方便兼容。
  * @see TypedMaterialInfo
  * */
 public interface ITypedMaterialObj {
-    Material getMaterial(ItemStack stack);
+    ResourceLocation getMaterialId(ItemStack stack);
+
+    default Optional<Material> getMaterial(ItemStack stack){
+        return Optional.ofNullable(Registry$Material.MATERIAL.get(getMaterialId(stack)));
+    };
 
     /**注意：当不设置MaterialItemType时，请注意覆写{@link ITypedMaterialObj#getContent()}与{@link ITypedMaterialObj#getPurity()}方法*/
     MaterialItemType getMIType();

@@ -1,6 +1,6 @@
 package com.landis.breakdowncore;
 
-import com.landis.breakdowncore.material.Registry$Material;
+import com.landis.breakdowncore.system.material.Registry$Material;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.registries.NewRegistryEvent;

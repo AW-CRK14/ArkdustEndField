@@ -36,11 +36,11 @@
 在通过Material与MaterialItemType创建物品时，程序将会先在Material中请求创建物品，若返回值为null，将会继续在MaterialItemType中请求，这时将不能返回null。  
 这一设计用于处理一些诸如块之类的特殊物品。
 
-## [IMaterialFeature材料特征](IMaterialFeature.java)与[MFHandle材料特征处理器](MaterialFeatureHandle.java)
+## [IMaterialFeature材料特征](IMaterialFeature.java)
 
-材料特征接口只要求您返回对应的实例与实现获取类型的方法。为了避免出现不必要的问题，请将其中的泛型I设置为您的实现类。
+在新的设计中放弃了`MaterialFeatureHandle`，与其对应的核心功能将使用更为简洁`MaterialFeatureType`进行标记。这一更改主要为了便于材料特征的灵活处理。
 
-`MaterialFeatureHandle`则是实际注册用到的类，您可以将其理解为一种类似Type或Capability的设计。在这里您可以声明其包含的`MaterialItemType`，以及实现类的Class。
+对于`IMaterialFeature`提供的内容，主要是指定其对应的MaterialFeatureType，提供对应的物品类型等。需要实现的方法已经全部添加了javadoc，可以进入类下自行查看。
 
 在`Material`中加入`MaterialFeature`，加载完成后会自动创建对应的表，方便进行属性特征查找。
 

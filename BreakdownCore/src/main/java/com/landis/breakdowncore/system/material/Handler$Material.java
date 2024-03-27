@@ -1,4 +1,4 @@
-package com.landis.breakdowncore.material;
+package com.landis.breakdowncore.system.material;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -26,12 +26,12 @@ public class Handler$Material {
         if(System$Material.dataG) {
             System$Material.MF4M_ADDITION.put(materialHolder.getId(),feature);
         }else {
-            LOGGER.warn("Can't add feature(type={}) to Material(id={}) as the pre stage is finished.",feature.getType().getId(),materialHolder.getId());
+            LOGGER.warn("Can't add feature(type={}) to Material(id={}) as the pre stage is finished.",feature.getType().get().id(),materialHolder.getId());
             LOGGER.warn(new IllegalStateException());
         }
     }
 
-    public void addForMF(DeferredHolder<MaterialFeatureHandle<?>, ? extends MaterialFeatureHandle<?>> feature, DeferredHolder<MaterialItemType, ? extends MaterialItemType>... mit){
+    public void addForMF(DeferredHolder<MaterialFeatureType<?>, ? extends MaterialFeatureType<?>> feature, DeferredHolder<MaterialItemType, ? extends MaterialItemType>... mit){
         if(System$Material.dataG) {
             System$Material.MIT4MF_ADDITION.putAll(feature.getId(), Arrays.asList(mit));
         }else {
