@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -59,6 +60,8 @@ public class MaterialItemType {
     }
 
     public void gatherKeyForDatagen(MitModelGen ins){
-        ins.ITEMS.add(autoRegKey.location());
+        ins.getBuilder(autoRegKey.location().toString())
+                .parent(new ModelFile.UncheckedModelFile("item/generated"))
+                .texture("layer0",id.withPath(s -> "brea/mit/" + s));
     }
 }

@@ -123,7 +123,15 @@ public class System$Material {
         c.forEach((m,mit)-> builder.put(m,ImmutableMap.copyOf(mit)));
         M_MIT2I = builder.build();
 
-        TextureAtlas atlas = (TextureAtlas) Minecraft.getInstance().getTextureManager().getTexture(BLOCK_ATLAS);
+        MF4M_ADDITION = null;
+        MIT4MF_ADDITION = null;
+        M_MIT2I_PRE = null;
+        I2TMI_PRE = null;
+
+        release = true;
+    }
+
+    static void initTexture(TextureAtlas atlas){
         TextureAtlasSprite missing = atlas.missingSprite;
 
         Map<Material,TextureAtlasSprite> d = new HashMap<>();
@@ -136,24 +144,19 @@ public class System$Material {
             d.put(material,sprite);
         }
         M2TEXTURE = ImmutableMap.copyOf(d);
+    }
 
+    static void initModel() {
         Map<MaterialItemType,BakedModel> e = new HashMap<>();
         ModelManager modelManager = Minecraft.getInstance().getModelManager();
         BakedModel m;
         for(MaterialItemType material : Registry$Material.MATERIAL_ITEM_TYPE){
             m = modelManager.getModel(material.id.withPath(id -> "brea/mit_cover/" + id));
-            if(!m.equals(modelManager.getMissingModel())){
+            if(m != null && !m.equals(modelManager.getMissingModel())){
                 e.put(material,m);
             }
         }
         MIT2COVER_MODEL = ImmutableMap.copyOf(e);
-
-        MF4M_ADDITION = null;
-        MIT4MF_ADDITION = null;
-        M_MIT2I_PRE = null;
-        I2TMI_PRE = null;
-
-        release = true;
     }
 
     public static <I extends IMaterialFeature<I>> MaterialFeatureType<I> getMFH(Class<I> c){

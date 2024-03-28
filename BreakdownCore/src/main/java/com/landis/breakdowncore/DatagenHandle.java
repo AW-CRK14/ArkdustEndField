@@ -24,10 +24,6 @@ public class DatagenHandle {
         ExistingFileHelper fileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
 
-        MitModelGen mitModelGen = new MitModelGen(output,fileHelper);
-        for(MaterialItemType type : Registry$Material.MATERIAL_ITEM_TYPE){
-            type.gatherKeyForDatagen(mitModelGen);
-        }
-        generator.addProvider(event.includeClient(),mitModelGen);
+        generator.addProvider(event.includeClient(),new MitModelGen(output,fileHelper));
     }
 }

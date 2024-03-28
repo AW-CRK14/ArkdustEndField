@@ -1,6 +1,8 @@
 package com.landis.breakdowncore.system.material.datagen;
 
 import com.landis.breakdowncore.BreakdownCore;
+import com.landis.breakdowncore.system.material.MaterialItemType;
+import com.landis.breakdowncore.system.material.Registry$Material;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
@@ -15,17 +17,10 @@ public class MitModelGen extends ItemModelProvider {
         super(output, BreakdownCore.MODID, existingFileHelper);
     }
 
-    public final List<ResourceLocation> ITEMS = new ArrayList<>();
-    public final List<ResourceLocation> BLOCKS = new ArrayList<>();
-    public static final ResourceLocation GENERATED = new ResourceLocation("item/generated");
-
     @Override
     protected void registerModels() {
-        for(ResourceLocation item : ITEMS){
-            getBuilder(item.toString())
-                    .parent(new ModelFile.UncheckedModelFile("item/generated"))
-                    .texture("layer0", new ResourceLocation(item.getNamespace(), "brea/mit/" + item.getPath()));
+        for(MaterialItemType type : Registry$Material.MATERIAL_ITEM_TYPE){
+            type.gatherKeyForDatagen(this);
         }
-        //TODO 方块模型处理
     }
 }
