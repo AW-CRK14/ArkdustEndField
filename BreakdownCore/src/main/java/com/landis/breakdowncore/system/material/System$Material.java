@@ -151,7 +151,7 @@ public class System$Material {
         ModelManager modelManager = Minecraft.getInstance().getModelManager();
         BakedModel m;
         for(MaterialItemType material : Registry$Material.MATERIAL_ITEM_TYPE){
-            m = modelManager.getModel(material.id.withPath(id -> "brea/mit_cover/" + id));
+            m = modelManager.getModel(material.id.withPath(id -> "item/mit_cover/" + id));
             if(m != null && !m.equals(modelManager.getMissingModel())){
                 e.put(material,m);
             }

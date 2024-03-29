@@ -145,8 +145,8 @@ dependencies {
     compileOnly "curse.maven:modern-ui-${modernui_path}"
     runtimeOnly "curse.maven:modern-ui-${modernui_path}"
 
-    implementation "com.tterrag.registrate:Registrate:${rege_version}"
-    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: rege_version_range)
+//    implementation "com.tterrag.registrate:Registrate:${rege_version}"
+//    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: rege_version_range)
 
 }
 

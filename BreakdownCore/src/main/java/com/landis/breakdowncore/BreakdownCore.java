@@ -33,7 +33,10 @@ import org.slf4j.Logger;
 public class BreakdownCore {
     public static final String MODID = "brea";
     private static final Logger LOGGER = LogUtils.getLogger();
+
     public BreakdownCore(IEventBus modEventBus) {
+        Registries.ITEM.register(modEventBus);
+        Registries.TAB.register(modEventBus);
         Registries.MaterialReg.MATERIAL.register(modEventBus);
         Registries.MaterialReg.FEATURE.register(modEventBus);
         Registries.MaterialReg.TYPE.register(modEventBus);

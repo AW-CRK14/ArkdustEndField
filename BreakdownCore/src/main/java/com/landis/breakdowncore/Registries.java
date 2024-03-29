@@ -1,11 +1,13 @@
 package com.landis.breakdowncore;
 
 import com.landis.breakdowncore.system.material.*;
-import com.landis.breakdowncore.system.material.expansion.IngotMaterialType;
+import com.landis.breakdowncore.system.material.expansion.IngotType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -21,7 +23,7 @@ public class Registries {
     public static final DeferredHolder<CreativeModeTab,CreativeModeTab> BREA_TAB = TAB.register("default",()->CreativeModeTab.builder().displayItems((parameters, output) -> {
         for(DeferredHolder<Item, ? extends Item> i : ITEM.getEntries()){
             output.accept((DeferredItem<Item>)i);
-        }}).title(Component.translatable("tab.brea.default")).build());
+        }}).title(Component.translatable("tab.brea.default")).icon(()->new ItemStack(Items.COMMAND_BLOCK)).build());
 
 
 
@@ -41,7 +43,7 @@ public class Registries {
             return MATERIAL.register(id,()->provider.apply(new ResourceLocation(MATERIAL.getNamespace(),id)));
         }
 
-        public static final DeferredHolder<MaterialItemType,IngotMaterialType> INGOT = type("ingot",location -> new IngotMaterialType(90,location));
+        public static final DeferredHolder<MaterialItemType, IngotType> INGOT = type("ingot", location -> new IngotType(90,location));
         public static final DeferredHolder<Material,Material> FALLBACK = material("missing",location -> new Material(location,0x888888));
     }
 }

@@ -68,12 +68,18 @@ public class TypedMaterialItem extends Item implements ITypedMaterialObj{
 
     public static class Renderer extends BlockEntityWithoutLevelRenderer {
         public final TypedMaterialItem item;
-        public final BakedModel basic;
+        private BakedModel basic;
         private MutableTextureBakedModelWrapper<? extends BakedModel> cache;
         public Renderer(TypedMaterialItem item) {
             super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
             this.item = item;
-            this.basic = Minecraft.getInstance().getModelManager().getModel(BuiltInRegistries.ITEM.getKey(item));
+        }
+
+        public BakedModel getBasicModel() {
+            if(this.basic == null){
+                this.basic = Minecraft.getInstance().getModelManager().getModel(BuiltInRegistries.ITEM.getKey(item));
+            }
+            return basic;
         }
 
         public void renderByItem(ItemStack pStack, ItemDisplayContext pDisplayContext, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
@@ -86,7 +92,7 @@ public class TypedMaterialItem extends Item implements ITypedMaterialObj{
                     Minecraft.getInstance().getItemRenderer().render(pStack,pDisplayContext,false,pPoseStack,pBuffer,pPackedLight,pPackedOverlay,coverModel);
                 }else{
                     if(cache == null){
-                        cache = new MutableTextureBakedModelWrapper<>(basic,true);
+                        cache = new MutableTextureBakedModelWrapper<>(getBasicModel(),true);
                     }
 
                     cache.setTexture(System$Material.getTexture(material));

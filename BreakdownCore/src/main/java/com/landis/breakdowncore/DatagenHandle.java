@@ -2,6 +2,7 @@ package com.landis.breakdowncore;
 
 import com.landis.breakdowncore.system.material.MaterialItemType;
 import com.landis.breakdowncore.system.material.Registry$Material;
+import com.landis.breakdowncore.system.material.datagen.MaterialSpriteAttachGen;
 import com.landis.breakdowncore.system.material.datagen.MitModelGen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -25,5 +26,6 @@ public class DatagenHandle {
         CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
 
         generator.addProvider(event.includeClient(),new MitModelGen(output,fileHelper));
+        generator.addProvider(event.includeClient(),new MaterialSpriteAttachGen(output,lookup,fileHelper));
     }
 }

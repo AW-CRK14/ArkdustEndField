@@ -39,7 +39,7 @@ runs {
     configureEach {
         systemProperty 'forge.logging.markers', 'REGISTRIES'
 
-        systemProperty 'forge.logging.console.level', 'debug'
+        systemProperty 'forge.logging.console.level', 'info'
 
         modSource project(":ArkdustEndField").sourceSets.main
         modSource project(":BreakdownCore").sourceSets.main

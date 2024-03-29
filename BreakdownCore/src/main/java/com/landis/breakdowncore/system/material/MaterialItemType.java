@@ -1,17 +1,23 @@
 package com.landis.breakdowncore.system.material;
 
 import com.landis.breakdowncore.BreakdownCore;
+import com.landis.breakdowncore.ModBusConsumer;
 import com.landis.breakdowncore.system.material.datagen.MitModelGen;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**MaterialItemType材料物品类型<br>
  * 材料物品类型用于创建一个材料物品模板。比如说，一个“板”类型将可以被使用作铁板，铜板，金板等。<br>
@@ -26,6 +32,7 @@ public class MaterialItemType {
     public final long content;
     public final float purity;
     public final ResourceLocation id;
+    private boolean regFlag = false;
 
     private ResourceKey<Item> autoRegKey;
 
@@ -50,18 +57,31 @@ public class MaterialItemType {
     }
 
 
-    public void primaryRegister(RegisterEvent event){
-        ResourceLocation reg = new ResourceLocation(BreakdownCore.MODID,id.getNamespace() + "_" + id.getPath());
-        autoRegKey = ResourceKey.create(Registries.ITEM,reg);
-        event.register(Registries.ITEM,reg,()->new TypedMaterialItem(()->this));
+    //bug:当向事件中注册item时，item已经完成了注册，这导致进行的额外自动注册无法成功。
+    //因此……现在我们换用了一种更加奇怪的方式。
+    public void primaryRegister(@Nullable RegisterEvent event){
+        Registry<Item> registry = (Registry<Item>) ModBusConsumer.REGS_MAP.get(Registries.ITEM);
+        ResourceLocation reg = new ResourceLocation(BreakdownCore.MODID, id.getNamespace() + "_" + id.getPath());
+        autoRegKey = ResourceKey.create(Registries.ITEM, reg);
+        Registry.register(registry,reg,new TypedMaterialItem(() -> this));
+        regFlag = true;
     }
 
-    public void secondaryRegistry(RegisterEvent event,Material material){
+    public void secondaryRegistry(@Nullable RegisterEvent event,Material material){
     }
 
     public void gatherKeyForDatagen(MitModelGen ins){
         ins.getBuilder(autoRegKey.location().toString())
                 .parent(new ModelFile.UncheckedModelFile("item/generated"))
                 .texture("layer0",id.withPath(s -> "brea/mit/" + s));
+        if(ins.existingFileHelper.exists(id.withPath(s -> "textures/brea/mit_cover/" + s + ".png"), PackType.CLIENT_RESOURCES)){
+            ins.getBuilder(autoRegKey.location().withPath(s -> "mit_cover/" + s) + "")
+                    .parent(new ModelFile.UncheckedModelFile("item/generated"))
+                    .texture("layer0",id.withPath(s -> "brea/mit_cover/" + s));
+        }
+    }
+
+    public void attachToCreativeTab(BuildCreativeModeTabContentsEvent event){
+        event.accept(BuiltInRegistries.ITEM.get(autoRegKey.location()));
     }
 }
