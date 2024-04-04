@@ -4,13 +4,8 @@ import com.landis.breakdowncore.BreakdownCore;
 import com.landis.breakdowncore.system.material.MaterialItemType;
 import com.landis.breakdowncore.system.material.Registry$Material;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MitModelGen extends ItemModelProvider {
     public MitModelGen(PackOutput output, ExistingFileHelper existingFileHelper) {

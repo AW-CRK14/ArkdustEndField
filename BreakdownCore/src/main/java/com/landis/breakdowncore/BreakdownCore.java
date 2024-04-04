@@ -2,7 +2,9 @@ package com.landis.breakdowncore;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -40,5 +42,21 @@ public class BreakdownCore {
         Registries.MaterialReg.MATERIAL.register(modEventBus);
         Registries.MaterialReg.FEATURE.register(modEventBus);
         Registries.MaterialReg.TYPE.register(modEventBus);
+    }
+
+    private static ItemModelGenerator ITEM_MODELGEN;
+    public static ItemModelGenerator getItemModelgen(){
+        if(ITEM_MODELGEN == null){
+            ITEM_MODELGEN = new ItemModelGenerator();
+        }
+        return ITEM_MODELGEN;
+    }
+
+    public static boolean checkResource(ResourceLocation location){
+        return Minecraft.getInstance().getResourceManager().getResource(location).isPresent();
+    }
+
+    public static ResourceLocation covertToModelID(ResourceLocation location){
+        return location.withPath(s -> "models/" + s + ".json");
     }
 }

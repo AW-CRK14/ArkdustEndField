@@ -9,12 +9,14 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
@@ -22,7 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import static net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS;
 
@@ -83,7 +87,6 @@ public class System$Material {
     static ImmutableMap<Item,ITypedMaterialObj> I2TMI;
     static ImmutableMap<Material,ImmutableMap<MaterialItemType,ItemStack>> M_MIT2I;
     static ImmutableMap<Material, TextureAtlasSprite> M2TEXTURE;
-    static ImmutableMap<MaterialItemType, BakedModel> MIT2COVER_MODEL;
 
     static void init(){
         infoB = false;
@@ -146,18 +149,6 @@ public class System$Material {
         M2TEXTURE = ImmutableMap.copyOf(d);
     }
 
-    static void initModel() {
-        Map<MaterialItemType,BakedModel> e = new HashMap<>();
-        ModelManager modelManager = Minecraft.getInstance().getModelManager();
-        BakedModel m;
-        for(MaterialItemType material : Registry$Material.MATERIAL_ITEM_TYPE){
-            m = modelManager.getModel(material.id.withPath(id -> "item/mit_cover/" + id));
-            if(m != null && !m.equals(modelManager.getMissingModel())){
-                e.put(material,m);
-            }
-        }
-        MIT2COVER_MODEL = ImmutableMap.copyOf(e);
-    }
 
     public static <I extends IMaterialFeature<I>> MaterialFeatureType<I> getMFH(Class<I> c){
         if(release){
@@ -168,20 +159,12 @@ public class System$Material {
         throw new IllegalStateException("Map has not present. Flags right now:{dataG=" + dataG + ",infoB=" + infoB + ",release=" + release + "}");
     }
     private static final ImmutableMap<MaterialItemType,ItemStack> EMPTY = ImmutableMap.<MaterialItemType, ItemStack>builder().build();
-    public static ITypedMaterialObj getMaterialInfo(Item item){
-        ITypedMaterialObj obj = null;
-        if(release){
-            obj = I2TMI.get(item);
-        }else {
+    public static @Nullable ITypedMaterialObj getMaterialInfo(Item item){
+        if(!release){
             LOGGER.warn("I2TMI map has not present so the result may lead to some unexpected error.");
+            return item instanceof ITypedMaterialObj i ? i : null;
         }
-        if(obj == null){
-            if(item instanceof ITypedMaterialObj){
-                return (ITypedMaterialObj) item;
-            }
-            return null;//也许之后会添加额外的事件处理
-        }
-        return obj;
+        return I2TMI.getOrDefault(item,item instanceof ITypedMaterialObj i ? i : null);
     }
     public static ItemStack getFromMAndMIT(Material material,MaterialItemType type){
         ItemStack itemStack = null;
@@ -209,12 +192,17 @@ public class System$Material {
         return null;
     }
 
-    public static BakedModel getCoverModel(MaterialItemType mit){
-        if(release){
-            return MIT2COVER_MODEL.get(mit);
-        }else {
-            LOGGER.warn("MIT2COVER_MODEL map has not present.");
-        }
-        return null;
+
+
+    public static ModelResourceLocation basicModel(ResourceLocation original){
+        return trans2ModelLocation(MIT_BASIC_MODEL_LOCATION.apply(original));
     }
+    public static ModelResourceLocation coverModel(ResourceLocation original){
+        return trans2ModelLocation(MIT_COVER_MODEL_LOCATION.apply(original));
+    }
+    public static ModelResourceLocation trans2ModelLocation(ResourceLocation original){
+        return new ModelResourceLocation(original,"inventory");
+    }
+    public static final UnaryOperator<ResourceLocation> MIT_BASIC_MODEL_LOCATION = location -> location.withPrefix("mit_basic/");
+    public static final UnaryOperator<ResourceLocation> MIT_COVER_MODEL_LOCATION = location -> location.withPrefix("mit_cover/");
 }

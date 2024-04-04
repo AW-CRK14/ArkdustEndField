@@ -44,6 +44,6 @@ public class Registries {
         }
 
         public static final DeferredHolder<MaterialItemType, IngotType> INGOT = type("ingot", location -> new IngotType(90,location));
-        public static final DeferredHolder<Material,Material> FALLBACK = material("missing",location -> new Material(location,0x888888));
+        public static final DeferredHolder<Material,Material> MISSING = material("missing", location -> new Material(location,0x888888));
     }
 }

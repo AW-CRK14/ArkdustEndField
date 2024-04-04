@@ -2,7 +2,10 @@ package com.landis.breakdowncore.system.material;
 
 import com.landis.breakdowncore.BreakdownCore;
 import com.landis.breakdowncore.ModBusConsumer;
+import com.landis.breakdowncore.system.material.client.TMIModel;
 import com.landis.breakdowncore.system.material.datagen.MitModelGen;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -13,11 +16,14 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.List;
 
 /**MaterialItemType材料物品类型<br>
  * 材料物品类型用于创建一个材料物品模板。比如说，一个“板”类型将可以被使用作铁板，铜板，金板等。<br>
@@ -34,7 +40,7 @@ public class MaterialItemType {
     public final ResourceLocation id;
     private boolean regFlag = false;
 
-    private ResourceKey<Item> autoRegKey;
+    protected ResourceKey<Item> autoRegKey;
 
     public MaterialItemType(long content, float purity, ResourceLocation id) {
         this.content = content;
@@ -71,17 +77,32 @@ public class MaterialItemType {
     }
 
     public void gatherKeyForDatagen(MitModelGen ins){
-        ins.getBuilder(autoRegKey.location().toString())
+        ins.getBuilder(autoRegKey.location()+ "")
+                .parent(new ModelFile.UncheckedModelFile("builtin/entity"));
+
+        //basic model
+        ins.getBuilder(id.withPath(s -> "item/mit_basic/" + s) + "")
                 .parent(new ModelFile.UncheckedModelFile("item/generated"))
                 .texture("layer0",id.withPath(s -> "brea/mit/" + s));
+
+        //cover model
         if(ins.existingFileHelper.exists(id.withPath(s -> "textures/brea/mit_cover/" + s + ".png"), PackType.CLIENT_RESOURCES)){
-            ins.getBuilder(autoRegKey.location().withPath(s -> "mit_cover/" + s) + "")
+            ins.getBuilder(id.withPath(s -> "item/mit_cover/" + s) + "")
                     .parent(new ModelFile.UncheckedModelFile("item/generated"))
                     .texture("layer0",id.withPath(s -> "brea/mit_cover/" + s));
         }
     }
 
+    public void consumeModelReg(ModelEvent.ModifyBakingResult event){
+        ModelBakery bakery = event.getModelBakery();
+        event.getModels().put(System$Material.trans2ModelLocation(autoRegKey.location()),new TMIModel(bakery,this));
+    }
+
     public void attachToCreativeTab(BuildCreativeModeTabContentsEvent event){
         event.accept(BuiltInRegistries.ITEM.get(autoRegKey.location()));
+    }
+
+    public List<ResourceLocation> attachToItemModelReg(){
+        return List.of(System$Material.MIT_BASIC_MODEL_LOCATION.apply(id),System$Material.MIT_COVER_MODEL_LOCATION.apply(id));
     }
 }

@@ -1,8 +1,19 @@
 {
   "sources": [
     {
-      "type": "minecraft:single",
-      "resource": "brea:brea/material/missing"
+      "type": "minecraft:directory",
+      "prefix": "brea/material/",
+      "source": "brea/material"
+    },
+    {
+      "type": "minecraft:directory",
+      "prefix": "brea/mit/",
+      "source": "brea/mit"
+    },
+    {
+      "type": "minecraft:directory",
+      "prefix": "brea/mit_cover/",
+      "source": "brea/mit_cover"
     }
   ]
 }

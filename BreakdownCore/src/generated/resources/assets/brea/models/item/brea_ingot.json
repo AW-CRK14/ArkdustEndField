@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "brea:brea/mit/ingot"
-  }
+  "parent": "minecraft:item/generated"
 }

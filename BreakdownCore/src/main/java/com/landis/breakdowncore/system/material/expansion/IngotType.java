@@ -4,15 +4,23 @@ import com.landis.breakdowncore.ModBusConsumer;
 import com.landis.breakdowncore.system.material.Material;
 import com.landis.breakdowncore.system.material.MaterialItemType;
 import com.landis.breakdowncore.system.material.TypedMaterialItem;
+import com.landis.breakdowncore.system.material.client.TMIModel;
 import com.landis.breakdowncore.system.material.datagen.MitModelGen;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
+import org.jetbrains.annotations.VisibleForTesting;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class IngotType extends MaterialItemType {
     public final HashMap<Material, IngotItem> WITH_MATERIAL = new HashMap<>();
@@ -40,6 +48,16 @@ public class IngotType extends MaterialItemType {
         super.gatherKeyForDatagen(ins);
         for(ResourceLocation id : WITH_RESOURCE.keySet()){
             ins.basicItem(id);
+        }
+    }
+
+    @VisibleForTesting
+    @Override
+    public void consumeModelReg(ModelEvent.ModifyBakingResult event) {
+        super.consumeModelReg(event);
+        ModelBakery bakery = event.getModelBakery();
+        for(IngotItem item : WITH_RESOURCE.values()){
+            event.getModels().put(BuiltInRegistries.ITEM.getKey(item),new TMIModel(bakery,this));
         }
     }
 

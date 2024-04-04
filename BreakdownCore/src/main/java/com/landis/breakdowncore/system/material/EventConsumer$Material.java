@@ -2,8 +2,10 @@ package com.landis.breakdowncore.system.material;
 
 import com.landis.breakdowncore.BreakdownCore;
 import com.landis.breakdowncore.Registries;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -12,6 +14,9 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS;
 
@@ -28,7 +33,6 @@ public class EventConsumer$Material {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void extraReg(RegisterEvent event){
         ResourceKey<? extends Registry<?>> key = event.getRegistryKey();
-        System.out.println(event.getRegistryKey());
 
         if(key.equals(Registry$Material.Keys.MATERIAL)){
             REG_FLAG[0] = true;
@@ -65,10 +69,6 @@ public class EventConsumer$Material {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void mapModel(ModelEvent.BakingCompleted event){
-        System$Material.initModel();
-    }
 
     @SubscribeEvent
     public static void attachToCreativeModeTab(BuildCreativeModeTabContentsEvent event){
@@ -76,6 +76,26 @@ public class EventConsumer$Material {
             for(MaterialItemType mit : Registry$Material.MATERIAL_ITEM_TYPE){
                 mit.attachToCreativeTab(event);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void extraItemModelAttach(ModelEvent.RegisterAdditional event) {
+        List<ResourceLocation> list = new ArrayList<>();
+        for(MaterialItemType type : Registry$Material.MATERIAL_ITEM_TYPE){
+            list.addAll(type.attachToItemModelReg());
+        }
+        for(ResourceLocation location : list){
+            if(BreakdownCore.checkResource(BreakdownCore.covertToModelID(location.withPrefix("item/")))){
+                event.register(System$Material.trans2ModelLocation(location));//false时两种都一样
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onModelBake(ModelEvent.ModifyBakingResult event) {
+        for(MaterialItemType type : Registry$Material.MATERIAL_ITEM_TYPE){
+            type.consumeModelReg(event);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.landis.breakdowncore.system.material;
 
+import com.landis.breakdowncore.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -15,6 +16,11 @@ public interface ITypedMaterialObj {
     default Optional<Material> getMaterial(ItemStack stack){
         return Optional.ofNullable(Registry$Material.MATERIAL.get(getMaterialId(stack)));
     };
+
+    default Material getMaterialOrMissing(ItemStack stack){
+        Material m = Registry$Material.MATERIAL.get(getMaterialId(stack));
+        return m == null ? Registries.MaterialReg.MISSING.get() : m;
+    }
 
     /**注意：当不设置MaterialItemType时，请注意覆写{@link ITypedMaterialObj#getContent()}与{@link ITypedMaterialObj#getPurity()}方法*/
     MaterialItemType getMIType();

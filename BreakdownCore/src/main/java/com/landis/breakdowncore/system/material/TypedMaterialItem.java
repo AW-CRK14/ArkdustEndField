@@ -1,22 +1,9 @@
 package com.landis.breakdowncore.system.material;
 
-import com.landis.breakdowncore.Registries;
-import com.landis.breakdowncore.module.textures.MutableTextureBakedModelWrapper;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-import javax.annotation.Nonnull;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**TypedMaterialItem材料类型物品<br>
@@ -25,7 +12,6 @@ import java.util.function.Supplier;
  * */
 public class TypedMaterialItem extends Item implements ITypedMaterialObj{
     public final Supplier<? extends MaterialItemType> type;
-    private Renderer renderer;
 
     public TypedMaterialItem(Supplier<? extends MaterialItemType> type) {
         super(new Properties().fireResistant());
@@ -52,57 +38,4 @@ public class TypedMaterialItem extends Item implements ITypedMaterialObj{
         return type.get();
     }
 
-    public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer) {
-        Renderer r = new Renderer(TypedMaterialItem.this);
-        consumer.accept(new IClientItemExtensions() {
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return r;
-            }
-        });
-    }
-
-    public Renderer getRenderer() {
-        return renderer;
-    }
-
-    public static class Renderer extends BlockEntityWithoutLevelRenderer {
-        public final TypedMaterialItem item;
-        private BakedModel basic;
-        private MutableTextureBakedModelWrapper<? extends BakedModel> cache;
-        public Renderer(TypedMaterialItem item) {
-            super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
-            this.item = item;
-        }
-
-        public BakedModel getBasicModel() {
-            if(this.basic == null){
-                this.basic = Minecraft.getInstance().getModelManager().getModel(BuiltInRegistries.ITEM.getKey(item));
-            }
-            return basic;
-        }
-
-        public void renderByItem(ItemStack pStack, ItemDisplayContext pDisplayContext, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
-            if(pStack.getItem() == this.item){
-                MaterialItemType type = item.getMIType();
-                Material material = item.getMaterial(pStack).orElse(Registries.MaterialReg.FALLBACK.get());
-                ModelManager manager = Minecraft.getInstance().getModelManager();
-                BakedModel coverModel = manager.getModel(material.id.withPath(s -> "brea/matem/" + s + type.id.getPath()));
-                if(!coverModel.equals(manager.getMissingModel())){
-                    Minecraft.getInstance().getItemRenderer().render(pStack,pDisplayContext,false,pPoseStack,pBuffer,pPackedLight,pPackedOverlay,coverModel);
-                }else{
-                    if(cache == null){
-                        cache = new MutableTextureBakedModelWrapper<>(getBasicModel(),true);
-                    }
-
-                    cache.setTexture(System$Material.getTexture(material));
-                    Minecraft.getInstance().getItemRenderer().render(pStack,pDisplayContext,false,pPoseStack,pBuffer,pPackedLight,pPackedOverlay,cache);
-                    BakedModel extra = System$Material.getCoverModel(type);
-                    if(extra!=null) {
-                        Minecraft.getInstance().getItemRenderer().render(pStack, pDisplayContext, false, pPoseStack, pBuffer, pPackedLight, pPackedOverlay + 1, extra);
-                    }
-                }
-            }
-        }
-    }
 }

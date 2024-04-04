@@ -1,3 +1,4 @@
-// 1.20.4	2024-03-29T00:03:56.4539489	Item Models: brea
-7e1a094309a5416a13b1fac8aa4436eec997286d assets/brea/models/item/brea_ingot.json
-d9f5ce0d277277e2a3d91f416b8eb1ab13fe4354 assets/brea/models/mit_cover/brea_ingot.json
+// 1.20.4	2024-04-03T20:34:58.3719983	Item Models: brea
+e0f7b66a84e6588f01abbbce75b1803ffe5d46e2 assets/brea/models/item/brea_ingot.json
+7e1a094309a5416a13b1fac8aa4436eec997286d assets/brea/models/item/mit_basic/ingot.json
+d9f5ce0d277277e2a3d91f416b8eb1ab13fe4354 assets/brea/models/item/mit_cover/ingot.json
