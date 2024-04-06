@@ -53,23 +53,19 @@ public class LevelValue {
             this.targetLevel = targetLevel;
         }
         // 计算并设置到达目标等级所需的总经验值
-        if(this.targetLevel > this.level){
-            this.totalExpToLevel = calculateTotalExpToLevel(this.targetLevel);
-        }else{
-            this.targetLevel = this.level;
-        }
+        if(this.targetLevel < this.level){ this.targetLevel = this.level; }
+        this.totalExpToLevel = calculateTotalExpToLevel(this.targetLevel);
     }
 
     private int calculateTotalExpToLevel(int targetLevel) {
         if (checkStageAndLevel()) return 0; // 超出精英等级限制
-        int expToLevel = 0;
         if (targetLevel > this.level) { // 确保目标等级高于当前等级
             for (int i = this.level; i < targetLevel; i++) {
                 // 根据当前精英阶段和等级计算所需经验值
-                expToLevel += EXP_DATA[eliteStage][(i < EXP_DATA[eliteStage].length ? i : EXP_DATA[eliteStage].length - 1)];
+                totalExpToLevel += EXP_DATA[eliteStage][(i < EXP_DATA[eliteStage].length ? i : EXP_DATA[eliteStage].length - 1)];
             }
         }
-        return expToLevel;
+        return totalExpToLevel;
     }
 
     private boolean checkStageAndLevel() {
