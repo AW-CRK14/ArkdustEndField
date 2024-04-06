@@ -1,6 +1,10 @@
 package com.landis.breakdowncore.operator.value.base;
 
 public class LevelValue {
+    public static final int BASIC_COMBAT_RECORD = 200;
+    public static final int PRIMARY_COMBAT_RECORD = 400;
+    public static final int INTERMEDIATE_COMBAT_RECORD = 1000;
+    public static final int ADVANCED_COMBAT_RECORD = 2000;
     public static final int[][] EXP_DATA = {
             {100, 117, 134, 151, 168, 185, 202, 219, 236, 253, 270, 287, 304, 321, 338, 355, 372, 389, 406, 423, 440, 457, 474, 491, 508, 525, 542, 559, 574, 589, 605, 621, 637, 653, 669, 685, 701, 716, 724, 739, 749, 759, 770, 783, 804, 820, 836, 852, 888},
             {120, 172, 224, 276, 328, 380, 432, 484, 536, 588, 640, 692, 744, 796, 848, 900, 952, 1004, 1056, 1108, 1160, 1212, 1264, 1316, 1368, 1420, 1472, 1524, 1576, 1628, 1706, 1784, 1862, 1940, 2018, 2096, 2174, 2252, 2330, 2408, 2584, 2760, 2936, 3112, 3288, 3464, 3640, 3816, 3992, 4168, 4344, 4520, 4696, 4890, 5326, 6019, 6312, 6505, 6838, 7391, 7657, 7823, 8089, 8355, 8621, 8887, 9153, 9419, 9605, 9951, 10448, 10945, 11442, 11939, 12436, 12933, 13430, 13927, 14549},
@@ -12,6 +16,8 @@ public class LevelValue {
     public final int BASE_MAX_LEVEL;
     public final int MAX_LEVEL_ONE;
     public final int MAX_LEVEL_TWO;
+    private int targetLevel;
+    private int totalExpToLevel;
 
     public LevelValue(int baseMaxLevel, int maxLevelOne, int maxLevelTwo) {
         BASE_MAX_LEVEL = baseMaxLevel;
@@ -24,46 +30,55 @@ public class LevelValue {
         MAX_LEVEL_TWO = maxLevelTwo;
     }
 
-    public int getNextLevelExp() {
-        // 检查是否已经达到最大等级
-        if (level >= MAX_LEVEL_TWO && eliteStage == 2) {
-            return -1; // 已经达到最大等级，无需再获取经验值
-        } else if (level >= MAX_LEVEL_ONE && eliteStage == 1) {
-            return -1; // 已经达到最大等级，无需再获取经验值
-        } else if (level > BASE_MAX_LEVEL && eliteStage == 0) {
-            return -1; // 已经达到最大等级，无需再获取经验值
+    public int getRemoveTargetLevelExp() {
+        // 计算目标等级上一级所需的经验值
+        if (level == targetLevel) {
+            return 0; // 当前等级与目标等级相同时返回0
         }
 
-        int nextExp = 0;
-        if (level <= BASE_MAX_LEVEL && eliteStage == 0) {
-            // 等级在第一个阶段
-            if (experience >= EXP_DATA[0][level - 1]) {
-                // 已经达到当前等级的最大经验值，需要升级到下一个等级
-                nextExp = EXP_DATA[0][level] - EXP_DATA[0][level - 1];
-            } else {
-                // 当前等级尚未达到最大经验值
-                nextExp = EXP_DATA[0][level - 1] - experience;
-            }
-        } else if (level <= MAX_LEVEL_ONE && eliteStage == 1) {
-            // 等级在第二个阶段
-            if (experience >= EXP_DATA[1][level - 1]) {
-                // 已经达到当前等级的最大经验值，需要升级到下一个等级
-                nextExp = EXP_DATA[1][level] - EXP_DATA[1][level - 1];
-            } else {
-                // 当前等级尚未达到最大经验值
-                nextExp = EXP_DATA[1][level - 1] - experience;
-            }
+        if (eliteStage == 0 && level == BASE_MAX_LEVEL) {
+            return -1; // 超出基础等级限制
+        } else if (eliteStage == 1 && level == MAX_LEVEL_ONE) {
+            return -1; // 超出精英等级限制
+        } else if (eliteStage == 2 && level == MAX_LEVEL_TWO) {
+            return -1; // 超出精英等级限制
+        }
+        this.targetLevel -= 1;
+        int previousLevel = Math.max(0, targetLevel);
+        return EXP_DATA[eliteStage][previousLevel] - EXP_DATA[eliteStage][Math.max(0, previousLevel - 1)];
+    }
+
+    public void setTargetLevel(int targetLevel) {
+        // 确保目标等级不超过当前精英阶段的限制
+        if (this.eliteStage == 0 && targetLevel > BASE_MAX_LEVEL) {
+            this.targetLevel = BASE_MAX_LEVEL;
+        } else if (this.eliteStage == 1 && targetLevel > MAX_LEVEL_ONE) {
+            this.targetLevel = MAX_LEVEL_ONE;
+        }else if (this.eliteStage == 2 && targetLevel > MAX_LEVEL_TWO) {
+            this.targetLevel = MAX_LEVEL_TWO;
         } else {
-            // 等级在第三个阶段
-            int index = level - MAX_LEVEL_TWO;
-            if (experience >= EXP_DATA[2][level - 1]) {
-                // 已经达到当前等级的最大经验值，需要升级到下一个等级
-                nextExp = EXP_DATA[2][level] - EXP_DATA[2][level - 1];
-            } else {
-                // 当前等级尚未达到最大经验值
-                nextExp = EXP_DATA[2][level - 1] - experience;
+            this.targetLevel = targetLevel;
+        }
+        // 计算并设置到达目标等级所需的总经验值
+        if(this.targetLevel > this.level){
+            this.totalExpToLevel = calculateTotalExpToLevel(this.targetLevel);
+        }else{
+            this.targetLevel = this.level;
+        }
+    }
+
+    private int calculateTotalExpToLevel(int targetLevel) {
+        int expToLevel = 0;
+        if (targetLevel > this.level) { // 确保目标等级高于当前等级
+            for (int i = this.level; i < targetLevel; i++) {
+                // 根据当前精英阶段和等级计算所需经验值
+                expToLevel += EXP_DATA[eliteStage][(i < EXP_DATA[eliteStage].length ? i : EXP_DATA[eliteStage].length - 1)];
             }
         }
-        return nextExp;
+        return expToLevel;
+    }
+
+    public int getTotalExpToLevel() {
+        return totalExpToLevel;
     }
 }
