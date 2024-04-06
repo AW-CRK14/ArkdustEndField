@@ -32,18 +32,11 @@ public class LevelValue {
 
     public int getRemoveTargetLevelExp() {
         // 计算目标等级上一级所需的经验值
+        this.targetLevel -= 1;
         if (level == targetLevel) {
             return 0; // 当前等级与目标等级相同时返回0
         }
-
-        if (eliteStage == 0 && level == BASE_MAX_LEVEL) {
-            return -1; // 超出基础等级限制
-        } else if (eliteStage == 1 && level == MAX_LEVEL_ONE) {
-            return -1; // 超出精英等级限制
-        } else if (eliteStage == 2 && level == MAX_LEVEL_TWO) {
-            return -1; // 超出精英等级限制
-        }
-        this.targetLevel -= 1;
+        if (checkStageAndLevel()) return 0;
         int previousLevel = Math.max(0, targetLevel);
         return EXP_DATA[eliteStage][previousLevel] - EXP_DATA[eliteStage][Math.max(0, previousLevel - 1)];
     }
@@ -68,6 +61,7 @@ public class LevelValue {
     }
 
     private int calculateTotalExpToLevel(int targetLevel) {
+        if (checkStageAndLevel()) return 0; // 超出精英等级限制
         int expToLevel = 0;
         if (targetLevel > this.level) { // 确保目标等级高于当前等级
             for (int i = this.level; i < targetLevel; i++) {
@@ -76,6 +70,14 @@ public class LevelValue {
             }
         }
         return expToLevel;
+    }
+
+    private boolean checkStageAndLevel() {
+        if (eliteStage == 0 && level == BASE_MAX_LEVEL) {
+            return true;
+        } else if (eliteStage == 1 && level == MAX_LEVEL_ONE) {
+            return true;
+        } else return eliteStage == 2 && level == MAX_LEVEL_TWO;
     }
 
     public int getTotalExpToLevel() {
