@@ -1,16 +1,16 @@
 package com.landis.breakdowncore.operator;
 
-import com.landis.breakdowncore.operator.value.ValuePanel;
-import com.landis.breakdowncore.operator.value.base.LevelValue;
-import com.landis.breakdowncore.operator.value.base.RareLevel;
+import com.landis.breakdowncore.operator.value.RareLevel;
+import com.landis.breakdowncore.operator.value.base.BaseValuePanel;
+import com.landis.breakdowncore.operator.value.LevelValue;
 
-public class BaseOperator {
+public class BaseOperator  {
     public final String NAME;
     public final RareLevel RARE;
     protected LevelValue levelValue;
-    public final ValuePanel valuePanel;
+    public final BaseValuePanel valuePanel;
     public final BaseOperatorModel baseOperatorModel;
-    public BaseOperator(String name, RareLevel rareLevel, ValuePanel valuePanel){
+    public BaseOperator(String name, RareLevel rareLevel, BaseValuePanel valuePanel){
         this.NAME = name;
         this.RARE = rareLevel;
         this.valuePanel = valuePanel;
@@ -18,13 +18,15 @@ public class BaseOperator {
         this.levelValue = rareLevel.getLevelValue();
     }
 
-    public BaseOperator(String name, RareLevel rareLevel, ValuePanel valuePanel, BaseOperatorModel baseOperatorModel){
+    public BaseOperator(String name, RareLevel rareLevel, BaseValuePanel valuePanel, BaseOperatorModel baseOperatorModel){
         this.NAME = name;
         this.RARE = rareLevel;
         this.valuePanel = valuePanel;
         this.baseOperatorModel = baseOperatorModel;
         this.levelValue = rareLevel.getLevelValue();
     }
+
+
 
 
 }

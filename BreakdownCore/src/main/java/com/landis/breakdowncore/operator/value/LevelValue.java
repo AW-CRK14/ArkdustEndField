@@ -1,4 +1,4 @@
-package com.landis.breakdowncore.operator.value.base;
+package com.landis.breakdowncore.operator.value;
 
 public class LevelValue {
     public static final int BASIC_COMBAT_RECORD = 200;

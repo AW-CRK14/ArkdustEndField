@@ -2,16 +2,15 @@ package com.landis.breakdowncore.operator.value.base;
 
 public class VariableValue extends BaseValue{
     private final double trustAddableValue;
-
     private final double potentialAddableValue;
 
-    public VariableValue(int baseValue, int maxValue, int trustAddableValue, int potentialAddableValue) {
+    public VariableValue(double baseValue, double maxValue, double trustAddableValue, double potentialAddableValue) {
         super(baseValue,maxValue);
         this.trustAddableValue = trustAddableValue;
         this.potentialAddableValue = potentialAddableValue;
     }
 
-    public VariableValue(int baseValue, int maxValue) {
+    public VariableValue(double baseValue, double maxValue) {
         super(baseValue,maxValue);
         this.trustAddableValue = 0;
         this.potentialAddableValue = 0;
