@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated(forRemoval = true)
 public class BakedQuadsCache {
     public final List<BakedQuad> quads = new ArrayList<>();
     public final Map<Direction, List<BakedQuad>> directional = new HashMap<>();

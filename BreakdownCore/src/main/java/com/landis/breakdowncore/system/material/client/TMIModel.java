@@ -2,20 +2,26 @@ package com.landis.breakdowncore.system.material.client;
 
 import com.landis.breakdowncore.BreakdownCore;
 import com.landis.breakdowncore.Registries;
-import com.landis.breakdowncore.module.render.model.BakedQuadsCache;
 import com.landis.breakdowncore.module.render.model.ItemORResolveOnly;
-import com.landis.breakdowncore.system.material.*;
+import com.landis.breakdowncore.system.material.ITypedMaterialObj;
 import com.landis.breakdowncore.system.material.Material;
+import com.landis.breakdowncore.system.material.MaterialItemType;
+import com.landis.breakdowncore.system.material.System$Material;
+import com.mojang.math.Transformation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.*;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.model.SimpleModelState;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,11 +44,10 @@ public class TMIModel implements BakedModel {
     });
 
     public final ModelBakery bakery;
-    private BakedModel shapeModel;
+    private UnbakedModel shapeModel;
     public final MaterialItemType type;
-    private final Map<Material, BakedQuadsCache> quadsCache = new HashMap<>();
     private final Map<Material, BakedModel> modelCache = new HashMap<>();
-    private BakedQuadsCache missingModel;
+    private BakedModel missingModel;
 //    public final TextureAtlasSprite MISSING_SPRITE = Minecraft.getInstance().getTextureAtlas(new ResourceLocation(BreakdownCore.MODID,"material")).apply(new ResourceLocation(BreakdownCore.MODID,"material/missing"));
     private TextureAtlasSprite missingSprite;
     private boolean cached = false;
@@ -69,44 +74,36 @@ public class TMIModel implements BakedModel {
     @Override
     public @NotNull List<BakedQuad> getQuads(@Nullable BlockState pState, @Nullable Direction pDirection, RandomSource pRandom) {
         bootstrapCache();
-        return quadsCache.get(materialType).getQuads(pDirection);
+        return missingModel.getQuads(pState, pDirection, pRandom, ModelData.EMPTY, null);
     }
 
     public @NotNull BakedModel getModel(){
         bootstrapCache();
         return modelCache.get(materialType);
-//        return Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(BuiltInRegistries.ITEM.getKey(Items.GOLD_INGOT),"inventory"));
     }
 
     private void bootstrapCache(){
         if(!inited) {
             this.missingSprite = Minecraft.getInstance().getTextureAtlas(BLOCK_ATLAS).apply(new ResourceLocation(BreakdownCore.MODID,"material/missing"));
 
-//            ResourceLocation bakeName = new ResourceLocation(BreakdownCore.MODID, "material_item_bake/" + type.id.toString().replace(":", "_"));
-//            BlockModel model = (BlockModel) bakery
-//                    .getModel(System$Material.MIT_BASIC_MODEL_LOCATION.apply(type.id));
-//            this.shapeModel = BreakdownCore.getItemModelgen()
-//                    .generateBlockModel(net.minecraft.client.resources.model.Material::sprite, model)
-//                    .bake(bakery.new ModelBakerImpl((location, material) -> material.sprite(), bakeName),
-//                            model, net.minecraft.client.resources.model.Material::sprite, BlockModelRotation.X0_Y0, bakeName,false);
+            ResourceLocation bakeName = new ResourceLocation(BreakdownCore.MODID, "material_item_bake/" + type.id.toString().replace(":", "_"));
 
-//            UnbakedModel model = bakery.getModel(System$Material.MIT_BASIC_MODEL_LOCATION.apply(type.id));
-//            this.shapeModel = model.bake(bakery.new ModelBakerImpl((location, material) -> material.sprite(), bakeName),
-//                    net.minecraft.client.resources.model.Material::sprite, BlockModelRotation.X0_Y0, bakeName);//好丑……
-
-            shapeModel = Minecraft.getInstance().getModelManager().getModel(System$Material.basicModel(this.type.id));
-
-            this.missingModel = new BakedQuadsCache(shapeModel);
-//            this.quadsCache.put(materialType, missingModel);
-//            this.modelCache.put(materialType, new Wrapped(missingModel, missingSprite));
+            this.shapeModel = bakery.getModel(System$Material.basicModel(this.type.id));
+            this.missingModel = BreakdownCore.getItemModelgen().generateBlockModel(net.minecraft.client.resources.model.Material::sprite, (BlockModel) shapeModel)
+                    .bake(bakery.new ModelBakerImpl((location, material) -> material.sprite(), bakeName), net.minecraft.client.resources.model.Material::sprite, new SimpleModelState(Transformation.identity()), bakeName);//好丑……
             inited = true;
         }
 
         if(!cached) {
-            if (!quadsCache.containsKey(materialType)) {
-                BakedQuadsCache c = missingModel.copy(withMaterial(materialType));
-                quadsCache.put(materialType,c);
-                modelCache.put(materialType,new Wrapped(c, c.quads.isEmpty() ? missingSprite : c.quads.get(0).getSprite()));
+            if (!modelCache.containsKey(materialType)) {
+                ResourceLocation bakeName = new ResourceLocation(BreakdownCore.MODID, "material_item_bake/" + type.id.toString().replace(":", "_"));
+                BakedModel baked = BreakdownCore.getItemModelgen().generateBlockModel(net.minecraft.client.resources.model.Material::sprite, (BlockModel) shapeModel)
+                        .bake(bakery.new ModelBakerImpl((m,n) -> n.sprite(), bakeName),
+                                m -> System$Material.getTexture(materialType),
+                                new SimpleModelState(Transformation.identity()),
+                                bakeName
+                        );
+                modelCache.put(materialType,baked);
             }
             cached = true;
         }
@@ -142,53 +139,4 @@ public class TMIModel implements BakedModel {
         return ITEM_OVERRIDES;
     }
 
-    private static BakedQuadsCache.BakedQuadHandle WITH_MISSING;
-
-    public static BakedQuadsCache.BakedQuadHandle withMaterial(Material material) {
-        TextureAtlasSprite textures = System$Material.getTexture(material);
-        if (textures == null) {
-            if(WITH_MISSING == null){
-                WITH_MISSING = withMaterial(Registries.MaterialReg.MISSING.get());
-            }
-            return WITH_MISSING;
-        }
-        return (vertices, tintIndex, direction, sprite, shade, hasAmbientOcclusion) -> new BakedQuad(vertices, tintIndex, direction, textures, shade, hasAmbientOcclusion);
-    }
-
-    private record Wrapped(BakedQuadsCache cache,TextureAtlasSprite particle) implements BakedModel{
-        @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState pState, @Nullable Direction pDirection, RandomSource pRandom) {
-            return cache.getQuads(pDirection);
-        }
-
-        @Override
-        public boolean useAmbientOcclusion() {
-            return true;
-        }
-
-        @Override
-        public boolean isGui3d() {
-            return false;
-        }
-
-        @Override
-        public boolean usesBlockLight() {
-            return true;
-        }
-
-        @Override
-        public boolean isCustomRenderer() {
-            return false;
-        }
-
-        @Override
-        public TextureAtlasSprite getParticleIcon() {
-            return particle;
-        }
-
-        @Override
-        public ItemOverrides getOverrides() {
-            return ItemOverrides.EMPTY;
-        }
-    }
 }

@@ -3,6 +3,7 @@ package com.landis.breakdowncore;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
@@ -22,7 +23,12 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.moddiscovery.MinecraftLocator;
+import net.neoforged.fml.loading.targets.CommonLaunchHandler;
+import net.neoforged.fml.loading.targets.FMLClientLaunchHandler;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -37,11 +43,20 @@ public class BreakdownCore {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public BreakdownCore(IEventBus modEventBus) {
+
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft!=null){
+//            ModelManager.VANILLA_ATLASES.put();
+        }
+
+
         Registries.ITEM.register(modEventBus);
         Registries.TAB.register(modEventBus);
         Registries.MaterialReg.MATERIAL.register(modEventBus);
         Registries.MaterialReg.FEATURE.register(modEventBus);
         Registries.MaterialReg.TYPE.register(modEventBus);
+
+
     }
 
     private static ItemModelGenerator ITEM_MODELGEN;

@@ -81,15 +81,15 @@ public class EventConsumer$Material {
 
     @SubscribeEvent
     public static void extraItemModelAttach(ModelEvent.RegisterAdditional event) {
-        List<ResourceLocation> list = new ArrayList<>();
-        for(MaterialItemType type : Registry$Material.MATERIAL_ITEM_TYPE){
-            list.addAll(type.attachToItemModelReg());
-        }
-        for(ResourceLocation location : list){
-            if(BreakdownCore.checkResource(BreakdownCore.covertToModelID(location.withPrefix("item/")))){
-                event.register(System$Material.trans2ModelLocation(location));//false时两种都一样
-            }
-        }
+//        List<ResourceLocation> list = new ArrayList<>();
+//        for(MaterialItemType type : Registry$Material.MATERIAL_ITEM_TYPE){
+//            list.addAll(type.attachToItemModelReg());
+//        }
+//        for(ResourceLocation location : list){
+//            if(BreakdownCore.checkResource(BreakdownCore.covertToModelID(location.withPrefix("item/")))){
+//                event.register(System$Material.trans2ModelLocation(location));
+//            }
+//        }
     }
 
     @SubscribeEvent
