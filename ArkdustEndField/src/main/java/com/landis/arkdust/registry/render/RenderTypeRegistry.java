@@ -19,7 +19,7 @@ public class RenderTypeRegistry {
     public static final RenderStateShard.ShaderStateShard RENDERTYPE_SPIRIT_PORTAL = new RenderStateShard.ShaderStateShard(
             ()->SHADERINS_SPIRIT_PORTAL
     );
-    public static RenderType SPIRIT_PORTAL = RenderType.create("rendertype_spirit_portal",
+    public static RenderType SPIRIT_PORTAL = RenderType.create("arkdust_spirit_portal",
             DefaultVertexFormat.POSITION,
             VertexFormat.Mode.QUADS,
             1536,

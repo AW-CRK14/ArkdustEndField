@@ -1,9 +1,9 @@
 package com.landis.breakdowncore;
 
-import com.landis.breakdowncore.system.material.MaterialItemType;
 import com.landis.breakdowncore.system.material.Registry$Material;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import com.landis.breakdowncore.system.material.client.MaterialAtlasManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -11,13 +11,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.RegisterNamedRenderTypesEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = BreakdownCore.MODID,bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -35,5 +34,18 @@ public class ModBusConsumer {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void reg(RegisterEvent event){
         REGS_MAP.put(event.getRegistryKey(),event.getRegistry());
+    }
+
+    @Mod.EventBusSubscriber(modid = BreakdownCore.MODID,bus = Mod.EventBusSubscriber.Bus.MOD,value = Dist.CLIENT)
+    public static class Client{
+        @SubscribeEvent
+        public static void resourceReload(RegisterClientReloadListenersEvent event){
+            event.registerReloadListener(MaterialAtlasManager.init());
+        }
+
+        @SubscribeEvent
+        public static void renderTypesRegistry(RegisterNamedRenderTypesEvent event){
+            event.register(new ResourceLocation(BreakdownCore.MODID,"material"), RenderType.translucent(), MaterialAtlasManager.RENDER_TYPE);
+        }
     }
 }

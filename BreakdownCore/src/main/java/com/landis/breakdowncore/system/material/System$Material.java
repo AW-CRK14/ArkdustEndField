@@ -37,6 +37,8 @@ public class System$Material {
 
 
 
+
+
     /**以下内容为flag标志，值为true时表示阶段可用。其具体作用请参考introduction.md文件。*/
     public static boolean dataGatherStageFlag() {
         return dataG;
@@ -194,15 +196,11 @@ public class System$Material {
 
 
 
-    public static ModelResourceLocation basicModel(ResourceLocation original){
-        return trans2ModelLocation(MIT_BASIC_MODEL_LOCATION.apply(original));
-    }
-    public static ModelResourceLocation coverModel(ResourceLocation original){
-        return trans2ModelLocation(MIT_COVER_MODEL_LOCATION.apply(original));
+    public static ResourceLocation basicModel(ResourceLocation original){
+        return MIT_BASIC_MODEL_LOCATION.apply(original);
     }
     public static ModelResourceLocation trans2ModelLocation(ResourceLocation original){
         return new ModelResourceLocation(original,"inventory");
     }
     public static final UnaryOperator<ResourceLocation> MIT_BASIC_MODEL_LOCATION = location -> location.withPrefix("mit_basic/");
-    public static final UnaryOperator<ResourceLocation> MIT_COVER_MODEL_LOCATION = location -> location.withPrefix("mit_cover/");
 }

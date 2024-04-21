@@ -35,8 +35,8 @@ public class MaterialSpriteAttachGen extends SpriteSourceProvider {
 //            }
 //        }
 
-        sourceList.addSource(new DirectoryLister("brea/material","brea/material/"));
-        sourceList.addSource(new DirectoryLister("brea/mit","brea/mit/"));
-        sourceList.addSource(new DirectoryLister("brea/mit_cover","brea/mit_cover/"));
+        sourceList.addSource(new DirectoryLister("brea/material/mit","brea/material/mit/"));
+//        sourceList.addSource(new DirectoryLister("brea/mit","brea/mit/"));
+//        sourceList.addSource(new DirectoryLister("brea/mit_cover","brea/mit_cover/"));
     }
 }

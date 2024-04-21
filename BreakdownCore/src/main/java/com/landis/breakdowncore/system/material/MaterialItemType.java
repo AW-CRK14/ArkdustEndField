@@ -77,20 +77,11 @@ public class MaterialItemType {
     }
 
     public void gatherKeyForDatagen(MitModelGen ins){
-        ins.getBuilder(autoRegKey.location()+ "")
-                .parent(new ModelFile.UncheckedModelFile("builtin/entity"));
 
         //basic model
-        ins.getBuilder(id.withPath(s -> "item/mit_basic/" + s) + "")
+        ins.getBuilder(id.withPath(s -> "mit_basic/" + s) + "")
                 .parent(new ModelFile.UncheckedModelFile("item/generated"))
-                .texture("layer0",id.withPath(s -> "brea/mit/" + s));
-
-        //cover model
-        if(ins.existingFileHelper.exists(id.withPath(s -> "textures/brea/mit_cover/" + s + ".png"), PackType.CLIENT_RESOURCES)){
-            ins.getBuilder(id.withPath(s -> "item/mit_cover/" + s) + "")
-                    .parent(new ModelFile.UncheckedModelFile("item/generated"))
-                    .texture("layer0",id.withPath(s -> "brea/mit_cover/" + s));
-        }
+                .texture("layer0",id.withPath(s -> "brea/material/mit/" + s));
     }
 
     public void consumeModelReg(ModelEvent.ModifyBakingResult event){
@@ -102,7 +93,9 @@ public class MaterialItemType {
         event.accept(BuiltInRegistries.ITEM.get(autoRegKey.location()));
     }
 
-    public List<ResourceLocation> attachToItemModelReg(){
-        return List.of(System$Material.MIT_BASIC_MODEL_LOCATION.apply(id),System$Material.MIT_COVER_MODEL_LOCATION.apply(id));
+
+    @Override
+    public String toString() {
+        return super.toString() + "{id=" + id + "}";
     }
 }

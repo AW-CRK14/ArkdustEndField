@@ -67,4 +67,8 @@ public class Material {
         return new ItemStack(Items.AIR);
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "{id=" + id + "}";
+    }
 }

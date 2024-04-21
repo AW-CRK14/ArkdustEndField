@@ -44,12 +44,6 @@ public class BreakdownCore {
 
     public BreakdownCore(IEventBus modEventBus) {
 
-        Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft!=null){
-//            ModelManager.VANILLA_ATLASES.put();
-        }
-
-
         Registries.ITEM.register(modEventBus);
         Registries.TAB.register(modEventBus);
         Registries.MaterialReg.MATERIAL.register(modEventBus);
