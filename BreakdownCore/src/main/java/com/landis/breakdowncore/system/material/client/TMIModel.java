@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -89,7 +90,7 @@ public class TMIModel implements BakedModel {
             ResourceLocation bakeName = new ResourceLocation(BreakdownCore.MODID, "material_item_bake/" + type.id.toString().replace(":", "_"));
 
             this.shapeModel = (BlockModel) bakery.getModel(System$Material.basicModel(this.type.id));
-            this.shapeModel.customData.setRenderTypeHint(new ResourceLocation(BreakdownCore.MODID,"material"));
+//            this.shapeModel.customData.setRenderTypeHint(new ResourceLocation(BreakdownCore.MODID,"material"));
             this.missingModel = BreakdownCore.getItemModelgen().generateBlockModel(net.minecraft.client.resources.model.Material::sprite, shapeModel)
                     .bake(bakery.new ModelBakerImpl((location, material) -> material.sprite(), bakeName), net.minecraft.client.resources.model.Material::sprite, new SimpleModelState(Transformation.identity()), bakeName);//好丑……
             inited = true;
@@ -99,11 +100,10 @@ public class TMIModel implements BakedModel {
             if (!modelCache.containsKey(materialType)) {
                 ResourceLocation bakeName = new ResourceLocation(BreakdownCore.MODID, "material_item_bake/" + type.id.toString().replace(":", "_"));
 //                BakedModel baked = BreakdownCore.getItemModelgen().generateBlockModel(m -> MaterialAtlasManager.getInstance().getSprite(materialType,type), shapeModel)
-                BakedModel baked = BreakdownCore.getItemModelgen().generateBlockModel(net.minecraft.client.resources.model.Material::sprite, shapeModel)
-                        .bake(bakery.new ModelBakerImpl((m,n) -> MaterialAtlasManager.getInstance().getSprite(materialType,type), bakeName),
-//                        .bake(bakery.new ModelBakerImpl((m,n) -> n.sprite(), bakeName),
-                                m -> MaterialAtlasManager.getInstance().getSprite(materialType,type),
-//                                m -> m.sprite(),
+                TextureAtlasSprite sprite = ((TextureAtlas)Minecraft.getInstance().getTextureManager().getTexture(BLOCK_ATLAS)).getSprite(System$Material.combineForAtlasID(materialType,type));
+                BakedModel baked = BreakdownCore.getItemModelgen().generateBlockModel(m -> sprite, shapeModel)
+                        .bake(bakery.new ModelBakerImpl((m,n) -> sprite, bakeName),
+                                m -> sprite,
                                 new SimpleModelState(Transformation.identity()),
                                 bakeName
                         );

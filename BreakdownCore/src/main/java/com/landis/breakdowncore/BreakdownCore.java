@@ -50,7 +50,6 @@ public class BreakdownCore {
         Registries.MaterialReg.FEATURE.register(modEventBus);
         Registries.MaterialReg.TYPE.register(modEventBus);
 
-
     }
 
     private static ItemModelGenerator ITEM_MODELGEN;

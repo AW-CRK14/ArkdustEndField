@@ -1,9 +1,12 @@
+
+
 plugins {
     id 'java-library'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.80'
+    id 'net.neoforged.gradle.mixin' version '7.0.80'
 }
 
 version = core_mod_version
@@ -33,6 +36,10 @@ repositories {
         name 'Curse Maven'
         url = "https://www.cursemaven.com"
     }
+}
+
+mixin {
+    config("${core_mod_id}.mixins.json")
 }
 
 base {

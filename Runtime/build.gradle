@@ -4,6 +4,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.80'
+    id 'net.neoforged.gradle.mixin' version '7.0.80'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -30,8 +31,12 @@ repositories {
 
     maven {
         name 'Curse Maven'
-        url = "https://www.cursemaven.com"
+        url "https://www.cursemaven.com"
     }
+}
+
+mixin {
+    config("${core_mod_id}.mixins.json")
 }
 
 runs {

@@ -4,11 +4,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.landis.breakdowncore.BreakdownCore;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -24,11 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-
-import static net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS;
 
 /**System$Material<br>
  * System$Material是Material系统的额外内容总控中心，用于统一管理额外处理与额外的表生成。*/
@@ -203,4 +197,9 @@ public class System$Material {
         return new ModelResourceLocation(original,"inventory");
     }
     public static final UnaryOperator<ResourceLocation> MIT_BASIC_MODEL_LOCATION = location -> location.withPrefix("mit_basic/");
+
+
+    public static ResourceLocation combineForAtlasID(Material material, MaterialItemType type){
+        return new ResourceLocation("brea" + material.id.getNamespace() + "_" + type.id.getNamespace(),material.id.getPath() + "_" + type.id.getPath());
+    }
 }

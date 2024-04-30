@@ -35,6 +35,7 @@ import java.util.function.Function;
 
 import static net.minecraft.client.renderer.texture.SpriteLoader.runSpriteSuppliers;
 
+@Deprecated(forRemoval = true)
 public class MaterialAtlasManager extends TextureAtlasHolder {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Material:AtlasManager");
     public static final ResourceLocation MISSING = new ResourceLocation(BreakdownCore.MODID,"textures/brea/material/material/missing.png");
