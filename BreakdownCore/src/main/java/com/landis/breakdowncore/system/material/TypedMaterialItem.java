@@ -1,8 +1,11 @@
 package com.landis.breakdowncore.system.material;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
@@ -38,4 +41,19 @@ public class TypedMaterialItem extends Item implements ITypedMaterialObj{
         return type.get();
     }
 
+    @Override
+    public @NotNull Component getName(@NotNull ItemStack pStack) {
+        return materialId2Component(getMaterialId(pStack)).append(" ").append(mitId2Component(getMIType().id));
+    }
+
+    public static MutableComponent materialId2Component(ResourceLocation id){
+        if(Registry$Material.MATERIAL.containsKey(id)){
+            return Component.translatable("brea.material." + id.getNamespace() + "." + id.getPath());
+        }
+        return Component.translatable("brea.material.missing");
+    }
+
+    public static MutableComponent mitId2Component(ResourceLocation id){
+        return Component.translatable("brea.mit." + id.getNamespace() + "." + id.getPath());
+    }
 }
