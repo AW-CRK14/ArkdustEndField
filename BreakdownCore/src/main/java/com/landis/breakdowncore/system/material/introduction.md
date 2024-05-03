@@ -50,6 +50,10 @@
 
 材料中存在一个可能会需要被覆写的方法`createItem`，这一方法与`MaterialItemType`中的功能相似。但是其可以返回null，表示回落给对应的`MaterialItemType`进行处理。
 
+对于那些在游戏中不太常用的，作为中间产物的材料，您可以将其指定为`intermediateProduct`，并为其选择颜色。这将直接使用纯色对材质基础进行叠加，并允许相同颜色的材质共用以降低占用。因此，请尽量使用少的颜色种类。
+
+参考：银色使用`0xEBEEF0FF`。
+
 ## [Handler$Material材料额外处理器](Handler$Material.java)
 
 材料额外处理器提供了一些特殊功能，如为其它mod的`MaterialFeature`添加`MaterialItemType`，为`Material`添加`MaterialFeature`，以及为物品标记材料信息和添加材料信息到物品的获取。

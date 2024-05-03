@@ -48,6 +48,7 @@ public class TMIModel implements BakedModel {
     private BlockModel shapeModel;
     public final MaterialItemType type;
     private final Map<Material, BakedModel> modelCache = new HashMap<>();
+    private final Map<Integer,BakedModel> idpCache = new HashMap<>();
     private BakedModel missingModel;
 //    public final TextureAtlasSprite MISSING_SPRITE = Minecraft.getInstance().getTextureAtlas(new ResourceLocation(BreakdownCore.MODID,"material")).apply(new ResourceLocation(BreakdownCore.MODID,"material/missing"));
     private TextureAtlasSprite missingSprite;
@@ -100,13 +101,18 @@ public class TMIModel implements BakedModel {
             if (!modelCache.containsKey(materialType)) {
                 ResourceLocation bakeName = new ResourceLocation(BreakdownCore.MODID, "material_item_bake/" + type.id.toString().replace(":", "_"));
 //                BakedModel baked = BreakdownCore.getItemModelgen().generateBlockModel(m -> MaterialAtlasManager.getInstance().getSprite(materialType,type), shapeModel)
-                TextureAtlasSprite sprite = ((TextureAtlas)Minecraft.getInstance().getTextureManager().getTexture(BLOCK_ATLAS)).getSprite(materialType.intermediateProduct ? System$Material.idpForAtlasID(type) : System$Material.combineForAtlasID(materialType,type));
-                BakedModel baked = BreakdownCore.getItemModelgen().generateBlockModel(m -> sprite, shapeModel)
-                        .bake(bakery.new ModelBakerImpl((m,n) -> sprite, bakeName),
-                                m -> sprite,
-                                new SimpleModelState(Transformation.identity()),
-                                bakeName
-                        );
+                BakedModel baked;
+                if(!materialType.intermediateProduct || idpCache.containsKey(materialType.x16color)) {
+                    TextureAtlasSprite sprite = ((TextureAtlas) Minecraft.getInstance().getTextureManager().getTexture(BLOCK_ATLAS)).getSprite(materialType.intermediateProduct ? System$Material.idpForAtlasID(materialType.x16color, type) : System$Material.combineForAtlasID(materialType, type));
+                    baked = BreakdownCore.getItemModelgen().generateBlockModel(m -> sprite, shapeModel)
+                            .bake(bakery.new ModelBakerImpl((m, n) -> sprite, bakeName),
+                                    m -> sprite,
+                                    new SimpleModelState(Transformation.identity()),
+                                    bakeName
+                            );
+                }else {
+                    baked = idpCache.get(materialType.x16color);
+                }
                 modelCache.put(materialType,baked);
             }
             cached = true;
