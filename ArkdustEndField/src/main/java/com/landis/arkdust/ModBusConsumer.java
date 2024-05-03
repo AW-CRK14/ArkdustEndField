@@ -1,7 +1,7 @@
 package com.landis.arkdust;
 
 import com.landis.arkdust.blockentity.portal.SpiritPortalBlockEntity;
-import com.landis.arkdust.blocks.TestMachineBlock;
+//import com.landis.arkdust.blocks.TestMachineBlock;
 import com.landis.arkdust.datagen.*;
 import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.arkdust.registry.BlockRegistry;
@@ -93,13 +93,13 @@ public class ModBusConsumer {
     }
 
     @SubscribeEvent
-    public static void attachCapabilities(RegisterCapabilitiesEvent event){
-        event.registerBlock(Capabilities.ItemHandler.BLOCK,(block, pos, state, entity, direction)->{
-            if(entity instanceof TestMachineBlock.Entity t){
-                return t.itemHandler;
-            }
-            return new ItemStackHandler(3);
-        }, BlockRegistry.TEST_MACHINE_BLOCK.get());
+    public static void attachCapabilities(RegisterCapabilitiesEvent event){//TODO ThermoTest
+//        event.registerBlock(Capabilities.ItemHandler.BLOCK,(block, pos, state, entity, direction)->{
+//            if(entity instanceof TestMachineBlock.Entity t){
+//                return t.itemHandler;
+//            }
+//            return new ItemStackHandler(3);
+//        }, BlockRegistry.TEST_MACHINE_BLOCK.get());
     }
 
 
