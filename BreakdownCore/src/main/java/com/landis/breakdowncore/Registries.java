@@ -3,6 +3,8 @@ package com.landis.breakdowncore;
 import com.landis.breakdowncore.system.material.*;
 import com.landis.breakdowncore.system.material.expansion.IngotType;
 import com.landis.breakdowncore.system.material.expansion.MissingMaterial;
+import com.landis.breakdowncore.system.material.expansion.materialfeature.PhaseTransitMF;
+import com.landis.breakdowncore.system.material.expansion.materialfeature.ThermoMF;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -46,5 +48,8 @@ public class Registries {
 
         public static final DeferredHolder<MaterialItemType, IngotType> INGOT = type("ingot", location -> new IngotType(90,location));
         public static final DeferredHolder<Material,Material> MISSING = MATERIAL.register("missing", MissingMaterial::new);
+
+        public static final DeferredHolder<MaterialFeatureType<?>,MaterialFeatureType<PhaseTransitMF>> PHASE_TRANSIT = feature("phase_transit",l -> new MaterialFeatureType<>(l, PhaseTransitMF.class));
+        public static final DeferredHolder<MaterialFeatureType<?>,MaterialFeatureType<ThermoMF>> THERMO = feature("thermo", l -> new MaterialFeatureType<>(l, ThermoMF.class));
     }
 }

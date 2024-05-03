@@ -3,14 +3,17 @@ package com.landis.breakdowncore.system.material;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Arrays;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Material {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Material/M");
@@ -18,16 +21,42 @@ public class Material {
     public final int x16color;
     public final boolean intermediateProduct;
     public final ImmutableList<IMaterialFeature<?>> fIns;
-    private ImmutableMap<MaterialFeatureType<?>,IMaterialFeature<?>> toFeature;
+    public final ImmutableSet<ResourceLocation> featureIDs;
+    private ImmutableMap<MaterialFeatureType<? extends IMaterialFeature<?>>,IMaterialFeature<?>> toFeature;
     private ImmutableSet<MaterialItemType> toTypes;
 
     public Material(ResourceLocation id, int x16color, boolean isIntermediateProduct, IMaterialFeature<?>... fIns){
         this.id = id;
         this.x16color = x16color;
-        ImmutableList.Builder<IMaterialFeature<?>> builder = new ImmutableList.Builder<>();
-        builder.addAll(Arrays.asList(fIns));
-        builder.addAll(System$Material.MF4M_ADDITION.get(id));
-        this.fIns = builder.build();
+        List<IMaterialFeature<?>> l = new ArrayList<>();
+        l.addAll(Arrays.asList(fIns));
+        l.addAll(System$Material.MF4M_ADDITION.get(id));
+
+        HashSet<ResourceLocation> fids = (HashSet<ResourceLocation>) l.stream().map(i -> i.getType().getId()).collect(Collectors.toSet());
+        List<Integer> indexes = new ArrayList<>();
+
+        for(int i = 0 ; i < l.size() ; i++){
+            IMaterialFeature<?> m = l.get(i);
+            if(m.dependencies() != null){
+                boolean flag = false;
+                for(ResourceLocation d : m.dependencies()){
+                    if(!fids.contains(d)){
+                        LOGGER.warn("Unable to find depended MaterialFeature(id={}) in material(id={}), this feature will be skipped. Required by MaterialFeature(id={}).",d,this.id,m.getType().getId());
+                        flag = true;
+                    }
+                };
+                if(flag){
+                    fids.remove(m.getType().getId());
+                    indexes.add(i);
+                }
+            }
+        }
+
+        for(int index : indexes){
+            l.set(index,null);
+        }
+        this.featureIDs = ImmutableSet.copyOf(fids.iterator());
+        this.fIns = ImmutableList.copyOf(l.stream().filter(Objects::nonNull).toList());
         this.intermediateProduct = isIntermediateProduct;
     }
 
@@ -39,7 +68,7 @@ public class Material {
         this(id,0xEBEEF0,isIntermediateProduct,fIns);
     }
 
-    public ImmutableMap<MaterialFeatureType<?>,IMaterialFeature<?>> getOrCreateFeatures(){
+    public ImmutableMap<MaterialFeatureType<? extends IMaterialFeature<?>>,IMaterialFeature<?>> getOrCreateFeatures(){
         if(toFeature == null){
             if(!System$Material.release){
                 LOGGER.warn("Can't get CLASS2MFH map as it's not exist right now. It will be automatically created in method System$Material#init()");
@@ -55,8 +84,8 @@ public class Material {
         return toFeature;
     }
 
-    public IMaterialFeature<?> getFeature(MaterialFeatureType<?> handle){
-        return getOrCreateFeatures().get(handle);
+    public <I extends IMaterialFeature<I>> IMaterialFeature<I> getFeature(MaterialFeatureType<I> handle){
+        return (IMaterialFeature<I>) getOrCreateFeatures().get(handle);
     }
 
     public ImmutableSet<MaterialItemType> getOrCreateTypes(){

@@ -1,8 +1,11 @@
 package com.landis.breakdowncore.system.material;
 
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.List;
 
 /**IMaterialFeature材料特征接口<br>
  * 此接口的实例在被创建后其内容不应被以任何形式进行任何更改，这有可能导致出现不可预料的严重问题。<br>
@@ -19,4 +22,8 @@ public interface IMaterialFeature<I extends IMaterialFeature<I>> {
 
     /**获取该特征所包含的物品类型。原则上允许根据材料特性的不同内容返回不同的物品类型组。*/
     HashSet<? extends MaterialItemType> forItemTypes();
+
+    default @Nullable List<ResourceLocation> dependencies(){
+        return null;
+    };
 }
