@@ -200,6 +200,10 @@ public class System$Material {
 
 
     public static ResourceLocation combineForAtlasID(Material material, MaterialItemType type){
-        return new ResourceLocation("brea" + material.id.getNamespace() + "_" + type.id.getNamespace(),material.id.getPath() + "_" + type.id.getPath());
+        return new ResourceLocation("brea_" + material.id.getNamespace() + "_" + type.id.getNamespace(),material.id.getPath() + "_" + type.id.getPath());
+    }
+
+    public static ResourceLocation idpForAtlasID(int x16color,MaterialItemType type){
+        return type.id.withPrefix("breaidp_" + Integer.toHexString(x16color) + "_");
     }
 }

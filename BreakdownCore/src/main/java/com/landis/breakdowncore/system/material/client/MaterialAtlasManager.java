@@ -8,6 +8,7 @@ import com.landis.breakdowncore.system.material.MaterialItemType;
 import com.landis.breakdowncore.system.material.Registry$Material;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -85,7 +86,13 @@ public class MaterialAtlasManager extends TextureAtlasHolder {
                     Map<MaterialItemType, SpriteContents> alphaCache = new HashMap<>();
                     Map<MaterialItemType, SpriteContents> coverCache = new HashMap<>();
 
+                    IntOpenHashSet colors = new IntOpenHashSet();
+
                     for (Material material : Registry$Material.MATERIAL) {
+                        if(material.intermediateProduct){
+                            colors.add(material.x16color);
+                        };
+
                         //加载材料纹理
                         SpriteContents mat;
                         {
@@ -98,7 +105,7 @@ public class MaterialAtlasManager extends TextureAtlasHolder {
 
 //                        contents.add(mat);
 
-                        for (MaterialItemType type : material.equals(Registries.MaterialReg.MISSING.get()) ? Registry$Material.MATERIAL_ITEM_TYPE : material.getOrCreateTypes()) {
+                        for (MaterialItemType type : (material.equals(Registries.MaterialReg.MISSING.get())) ? Registry$Material.MATERIAL_ITEM_TYPE : material.getOrCreateTypes()) {
                             //创建物品类型alpha通道缓存
                             if (!alphaCache.containsKey(type)) {
                                 ResourceLocation location = type.id.withPath(s -> "textures/brea/material/mit/" + s + ".png");

@@ -2,6 +2,7 @@ package com.landis.breakdowncore;
 
 import com.landis.breakdowncore.system.material.*;
 import com.landis.breakdowncore.system.material.expansion.IngotType;
+import com.landis.breakdowncore.system.material.expansion.MissingMaterial;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -44,6 +45,6 @@ public class Registries {
         }
 
         public static final DeferredHolder<MaterialItemType, IngotType> INGOT = type("ingot", location -> new IngotType(90,location));
-        public static final DeferredHolder<Material,Material> MISSING = material("missing", location -> new Material(location,0x888888));
+        public static final DeferredHolder<Material,Material> MISSING = MATERIAL.register("missing", MissingMaterial::new);
     }
 }

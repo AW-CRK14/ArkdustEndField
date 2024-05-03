@@ -16,16 +16,27 @@ public class Material {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Material/M");
     public final ResourceLocation id;
     public final int x16color;
+    public final boolean intermediateProduct;
     public final ImmutableList<IMaterialFeature<?>> fIns;
     private ImmutableMap<MaterialFeatureType<?>,IMaterialFeature<?>> toFeature;
     private ImmutableSet<MaterialItemType> toTypes;
-    public Material(ResourceLocation id, int x16color , IMaterialFeature<?>... fIns){
+
+    public Material(ResourceLocation id, int x16color, boolean isIntermediateProduct, IMaterialFeature<?>... fIns){
         this.id = id;
         this.x16color = x16color;
         ImmutableList.Builder<IMaterialFeature<?>> builder = new ImmutableList.Builder<>();
         builder.addAll(Arrays.asList(fIns));
         builder.addAll(System$Material.MF4M_ADDITION.get(id));
         this.fIns = builder.build();
+        this.intermediateProduct = isIntermediateProduct;
+    }
+
+    public Material(ResourceLocation id, int x16color, IMaterialFeature<?>... fIns){
+        this(id,x16color,false,fIns);
+    }
+
+    public Material(ResourceLocation id, boolean isIntermediateProduct, IMaterialFeature<?>... fIns){
+        this(id,0xEBEEF0,isIntermediateProduct,fIns);
     }
 
     public ImmutableMap<MaterialFeatureType<?>,IMaterialFeature<?>> getOrCreateFeatures(){

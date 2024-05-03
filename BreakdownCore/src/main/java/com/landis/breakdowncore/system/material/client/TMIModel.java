@@ -100,7 +100,7 @@ public class TMIModel implements BakedModel {
             if (!modelCache.containsKey(materialType)) {
                 ResourceLocation bakeName = new ResourceLocation(BreakdownCore.MODID, "material_item_bake/" + type.id.toString().replace(":", "_"));
 //                BakedModel baked = BreakdownCore.getItemModelgen().generateBlockModel(m -> MaterialAtlasManager.getInstance().getSprite(materialType,type), shapeModel)
-                TextureAtlasSprite sprite = ((TextureAtlas)Minecraft.getInstance().getTextureManager().getTexture(BLOCK_ATLAS)).getSprite(System$Material.combineForAtlasID(materialType,type));
+                TextureAtlasSprite sprite = ((TextureAtlas)Minecraft.getInstance().getTextureManager().getTexture(BLOCK_ATLAS)).getSprite(materialType.intermediateProduct ? System$Material.idpForAtlasID(type) : System$Material.combineForAtlasID(materialType,type));
                 BakedModel baked = BreakdownCore.getItemModelgen().generateBlockModel(m -> sprite, shapeModel)
                         .bake(bakery.new ModelBakerImpl((m,n) -> sprite, bakeName),
                                 m -> sprite,

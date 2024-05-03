@@ -1,7 +1,11 @@
 package com.landis.breakdowncore.helper;
 
+import com.landis.breakdowncore.BreakdownCore;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.resources.metadata.animation.FrameSize;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +55,16 @@ public class SpriteHelper {
         return i;
     }
 
+    public static NativeImage withColor(int x, int y, int colorABGR){
+        NativeImage i = new NativeImage(x,y,false);
+        i.fillRect(0,0,x - 1,y - 1,colorABGR);
+        return i;
+    }
+
+    public static SpriteContents pack(NativeImage image){
+        return new SpriteContents(new ResourceLocation(BreakdownCore.MODID,"invalid"),new FrameSize(image.getWidth(),image.getHeight()),image, ResourceMetadata.EMPTY);
+    }
+
 
     public static NativeImage colorCombineHandle(NativeImage a, NativeImage b, Color.ColorHandle handle){
         NativeImage copied = copy(a);
@@ -72,6 +86,10 @@ public class SpriteHelper {
     }
 
     public static class Color{
+        public static int invert(int x16rgbaColor){
+            return ((x16rgbaColor & 0xff) << 24) | ((x16rgbaColor & 0xff00) << 8) | ((x16rgbaColor & 0xff0000) >>> 8) | ((x16rgbaColor >>> 24) & 0xff);
+        }
+
         public static int blend(int backgroundColor, int foregroundColor) {
 
             // 将Alpha值标准化到[0, 1]范围
