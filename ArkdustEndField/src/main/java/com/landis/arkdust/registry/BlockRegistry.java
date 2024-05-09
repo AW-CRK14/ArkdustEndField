@@ -4,6 +4,7 @@ import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.blocks.ExplainableBlock;
 //import com.landis.arkdust.blocks.TestGeneratorBlock;
 //import com.landis.arkdust.blocks.TestMachineBlock;
+import com.landis.arkdust.blocks.levelblocks.CombustorBlock;
 import com.landis.arkdust.blocks.levelblocks.SpiritStoneBlocks;
 import com.landis.arkdust.datagen.BlockStateGen;
 import com.landis.arkdust.datagen.BlockTagGen;
@@ -33,6 +34,7 @@ public class BlockRegistry{
 //    public static final DeferredBlock<Block> TEST_MACHINE_BLOCK = Builder.create("test_machine_block",()-> new TestMachineBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)),false).breakLev(3).state(BlockStateGen.cubeAll()).build();
 
 
+    public static final DeferredBlock<Block> TEST_COMBUSTOR = BLOCKS.register("test_combustor", CombustorBlock::new);
 
 
 

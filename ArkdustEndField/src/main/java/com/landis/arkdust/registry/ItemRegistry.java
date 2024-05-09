@@ -30,8 +30,8 @@ public class ItemRegistry {
 /**/    public static final DeferredItem<BlockItem> SPIRIT_PORTAL = ITEMS_DEFAULT.registerSimpleBlockItem(BlockRegistry.SPIRIT_PORTAL,new Item.Properties().fireResistant());
     //public static final DeferredItem<BlockItem> BASIC_THERM_BLOCK = ITEMS_DEFAULT.registerSimpleBlockItem(BlockRegistry.BASIC_THERM_BLOCK,new Item.Properties().fireResistant());
     //TODO THERMODYNAMICS TEST
-    public static final DeferredItem<BlockItem> TEST_GENERATOR_BLOCK = ITEMS_DEFAULT.registerSimpleBlockItem(BlockRegistry.TEST_GENERATOR_BLOCK,new Item.Properties().fireResistant());
-    public static final DeferredItem<BlockItem> TEST_MACHINE_BLOCK = ITEMS_DEFAULT.registerSimpleBlockItem(BlockRegistry.TEST_MACHINE_BLOCK,new Item.Properties().fireResistant());
+//    public static final DeferredItem<BlockItem> TEST_GENERATOR_BLOCK = ITEMS_DEFAULT.registerSimpleBlockItem(BlockRegistry.TEST_GENERATOR_BLOCK,new Item.Properties().fireResistant());
+//    public static final DeferredItem<BlockItem> TEST_MACHINE_BLOCK = ITEMS_DEFAULT.registerSimpleBlockItem(BlockRegistry.TEST_MACHINE_BLOCK,new Item.Properties().fireResistant());
 
     public static Collection<DeferredHolder<Item, ? extends Item>> getEntries() {
         List<DeferredHolder<Item, ? extends Item>> list = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.landis.arkdust.registry;
 
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.blockentity.portal.SpiritPortalBlockEntity;
+import com.landis.arkdust.blockentity.thermo.ThermoCombustorBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -15,8 +16,8 @@ public class BlockEntityRegistry {
    // public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<BasicThermBlock.Entity>> BASIC_THERM =
     //        REGISTER.register("basic_therm",()->BlockEntityType.Builder.of(BasicThermBlock.Entity::new,BlockRegistry.BASIC_THERM_BLOCK.get()).build(null));
     //TODO ThermoTest
-//    public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<TestGeneratorBlock.Entity>> TEST_GENERATOR =
-//            REGISTER.register("test_generator",()->BlockEntityType.Builder.of(TestGeneratorBlock.Entity::new,BlockRegistry.TEST_GENERATOR_BLOCK.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<ThermoCombustorBlockEntity>> TEST_GENERATOR =
+            REGISTER.register("test_combustor",()->BlockEntityType.Builder.of(ThermoCombustorBlockEntity::new,BlockRegistry.TEST_COMBUSTOR.get()).build(null));
 //    public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<TestMachineBlock.Entity>> TEST_MACHINE =
 //            REGISTER.register("test_machine",()->BlockEntityType.Builder.of(TestMachineBlock.Entity::new,BlockRegistry.TEST_MACHINE_BLOCK.get()).build(null));
 }

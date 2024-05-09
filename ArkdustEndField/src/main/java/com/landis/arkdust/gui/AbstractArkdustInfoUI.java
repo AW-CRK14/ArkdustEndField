@@ -84,7 +84,7 @@ public abstract class AbstractArkdustInfoUI extends Fragment {
         ShapeDrawable shape = new ShapeDrawable();
         shape.setShape(ShapeDrawable.RECTANGLE);//形状为矩形
         shape.setCornerRadius(10);//圆角半径
-        shape.setStroke(2,Color.WHITE);//设置边框
+        shape.setStroke(2,Color.BLUE);//设置边框
         return shape;
     }
 }

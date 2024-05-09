@@ -12,7 +12,7 @@ import java.util.HashSet;
 
 public class ThermoMF implements IMaterialFeature<ThermoMF> {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Material/MF:Thermo");
-    public final float c;//比热容(Specific Heat Capacity) 适应mc体系，单位为J/ml*C° 在现实世界体系中，这应当是J/g*C°
+    public final float c;//比热容(Specific Heat Capacity) 适应mc体系，单位为J/ml*C° 在现实世界体系中，这应当是J/g*C°,数值等价kJ/kg*C°
     public final float k;//热导率(Heat Transfer Rate) 适应mc体系，单位变为J/C°，即面积，距离，时间均取1 在现实世界中，这应当是W/m*C°
 
     public ThermoMF(float specificHeatCapacity, float heatTransferRate) {

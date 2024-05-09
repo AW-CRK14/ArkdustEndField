@@ -1,7 +1,7 @@
 package com.landis.arkdust.registry;
 
 import com.landis.arkdust.Arkdust;
-import com.landis.arkdust.screen.TestMachineMenu;
+//import com.landis.arkdust.screen.TestMachineMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
@@ -11,5 +11,5 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class MenuTypeRegistry {
     public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(Registries.MENU, Arkdust.MODID);
 
-    public static final DeferredHolder<MenuType<?>,MenuType<TestMachineMenu>> TESTING = REGISTER.register("testing",()-> IMenuTypeExtension.create(TestMachineMenu::new));
+//    public static final DeferredHolder<MenuType<?>,MenuType<TestMachineMenu>> TESTING = REGISTER.register("testing",()-> IMenuTypeExtension.create(TestMachineMenu::new));
 }

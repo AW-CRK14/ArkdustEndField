@@ -19,5 +19,6 @@
   "climate.arkdust.humidity": "Humidity",
   "climate.arkdust.windy": "Windy",
   "climate.arkdust.bioactivity": "Bioactivity",
-  "climate.arkdust.orirock_activity": "Oriactivity"
+  "climate.arkdust.orirock_activity": "Oriactivity",
+  "arkdust.industry.arkdust.test.name": "TestMac"
 }

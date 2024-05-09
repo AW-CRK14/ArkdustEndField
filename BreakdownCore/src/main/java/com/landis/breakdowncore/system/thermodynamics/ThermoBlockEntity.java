@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMatBackground{
     public final Material material;
-    private long q = 0;
+    protected long q = 0;
     public ThermoBlockEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, Material material) {
         super(pType, pPos, pBlockState);
         this.material = material;
