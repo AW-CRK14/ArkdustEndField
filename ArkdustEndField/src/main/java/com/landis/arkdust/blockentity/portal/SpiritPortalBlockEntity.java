@@ -14,6 +14,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 
+/*TODO
+*  bug：在新维度内放传送门跳进去会卡死，并且重复播放传送音效直到游戏彻底崩溃
+*  修改：1.添加维度检测，在新维度禁用
+*       2.传送回主世界
+* */
+
 public class SpiritPortalBlockEntity extends BlockEntity {
     public SpiritPortalBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityRegistry.SPIRIT_PORTAL.get(), pPos, pBlockState);
