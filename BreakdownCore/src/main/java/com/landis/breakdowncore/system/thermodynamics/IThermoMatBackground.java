@@ -7,11 +7,17 @@ public interface IThermoMatBackground extends IThermoBackground{
 
     Material getMaterial();
 
-    default int maxTx100() {
-        return (int) (getMaterial().getFeature(Registries.MaterialReg.THERMO.get()).getInstance().k * 100);
+    default int maxT() {
+        return (int) (getMaterial().getFeature(Registries.MaterialReg.PHASE_TRANSIT.get()).getInstance().mp * 0.6F);
     }
 
-    default int getCx100() {
-        return (int) (getMaterial().getFeature(Registries.MaterialReg.THERMO.get()).getInstance().c * 100);
+    default int getMC() {
+        return (int) (getMaterial().getFeature(Registries.MaterialReg.THERMO.get()).getInstance().c * getM());
     }
+
+    default float getK(){
+        return getMaterial().getFeature(Registries.MaterialReg.THERMO.get()).getInstance().k;
+    }
+
+    int getM();
 }

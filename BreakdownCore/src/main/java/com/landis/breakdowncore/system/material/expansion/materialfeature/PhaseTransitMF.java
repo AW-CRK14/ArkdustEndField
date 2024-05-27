@@ -8,11 +8,12 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.HashSet;
 
+//以摄氏度作为温度单位
 public class PhaseTransitMF implements IMaterialFeature<PhaseTransitMF> {
-    public final float mp;//熔点
-    public final float bp;//沸点
+    public final int mp;//熔点
+    public final int bp;//沸点
 
-    public PhaseTransitMF(float meltingPoint, float boilingPoint){
+    public PhaseTransitMF(int meltingPoint, int boilingPoint){
         this.mp = meltingPoint;
         this.bp = boilingPoint;
     }

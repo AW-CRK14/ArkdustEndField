@@ -4,6 +4,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.80'
+    id 'net.neoforged.gradle.mixin' version '7.0.80'
 }
 
 version = main_mod_id
@@ -39,6 +40,11 @@ repositories {
     }
 }
 
+
+mixin {
+    config("${main_mod_id}.mixins.json")
+}
+
 jarJar.enable()
 
 jarJar { }
@@ -66,6 +72,7 @@ minecraft {
 base {
     archivesName = main_mod_id
 }
+
 
 
 

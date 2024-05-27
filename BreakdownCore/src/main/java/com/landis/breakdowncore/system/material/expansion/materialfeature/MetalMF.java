@@ -16,7 +16,8 @@ public class MetalMF implements IMaterialFeature<MetalMF> {
 
     @Override
     public DeferredHolder<MaterialFeatureType<?>, MaterialFeatureType<MetalMF>> getType() {
-        return null;
+//        return Registries.MaterialReg.METAL;
+        return Registries.MaterialReg.METAL;
     }
 
     @Override

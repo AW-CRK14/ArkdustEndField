@@ -5,13 +5,14 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ListAndMapHelper {
 
     public static <T> void addAll(List<T> list,T... elements){
         Collections.addAll(list, elements);
     }
-
 
     public static <T> List<T> toList(T[] l){
         return Arrays.stream(l).collect(ArrayList::new,ArrayList::add,ArrayList::addAll);
@@ -29,9 +30,23 @@ public class ListAndMapHelper {
     }
 
     public static <T> List<T> copyList(List<T> list){
-        List<T> newList = new ArrayList<>(list);
-        return newList;
+        return new ArrayList<>(list);
     }
+
+    /**不必要的设计方法。
+     * @see Collections#nCopies
+     * */
+    @Deprecated
+    public static <T> List<T> fill(int length,T obj){
+        List<T> list = new ArrayList<>(length);
+        for(int i = 0; i < length; i++){
+            list.set(i,obj);
+        }
+        return list;
+//        return Stream.generate(()->obj).limit(length).toList();
+    }
+
+
 
     public static <S> int getIndexFromMap(Map<S,?> map,S key){
         if (!map.containsKey(key)) return -1;
@@ -121,4 +136,5 @@ public class ListAndMapHelper {
     public static <T,K> void tryAddElementToMapList(Map<K,List<T>> map,K key,T... obj){
         tryAddElementToMapList(map,key,Arrays.asList(obj));
     }
+
 }

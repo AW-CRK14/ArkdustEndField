@@ -35,7 +35,7 @@ public class AbstractArkdustIndustUI extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, DataSet savedInstanceState) {
         ViewGroup base = new RelativeLayout(getContext());
-        base.addView(new IndsGroup(getContext(),new ResourceLocation(Arkdust.MODID,"test"),2),new ViewGroup.LayoutParams(3000,800));
+        base.addView(new IndsGroup(getContext(),new ResourceLocation(Arkdust.MODID,"test"),2,false),new ViewGroup.LayoutParams(2500,800));
         return base;
     }
 }

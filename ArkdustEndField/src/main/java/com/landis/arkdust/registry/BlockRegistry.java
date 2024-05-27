@@ -2,15 +2,12 @@ package com.landis.arkdust.registry;
 
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.blocks.ExplainableBlock;
-//import com.landis.arkdust.blocks.TestGeneratorBlock;
-//import com.landis.arkdust.blocks.TestMachineBlock;
-import com.landis.arkdust.blocks.levelblocks.CombustorBlock;
 import com.landis.arkdust.blocks.levelblocks.SpiritStoneBlocks;
+import com.landis.arkdust.blocks.levelblocks.ThermoBlocks;
 import com.landis.arkdust.datagen.BlockStateGen;
 import com.landis.arkdust.datagen.BlockTagGen;
 import com.landis.arkdust.datagen.ItemExplainGen;
 import com.landis.arkdust.datagen.LootTableGen;
-//import com.arkdust.system.industry.thermodynamics.BasicThermBlock;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -29,12 +26,12 @@ public class BlockRegistry{
     public static final DeferredBlock<Block> SPIRIT_STELA = Builder.create("spirit_stela",SpiritStoneBlocks.Stela::new,true).breakLev(3).state(BlockStateGen.specialModel(new ResourceLocation(Arkdust.MODID,"block/spirit_stela"))).tool(BlockTagGen.ToolType.PICKAXE).loot(LootTableGen.SELF).build();
     public static final DeferredBlock<Block> SPIRIT_PORTAL = Builder.create("spirit_portal",SpiritStoneBlocks.Portal::new,false).breakLev(3).state(BlockStateGen.cubeAll()).build();
     //public static final DeferredBlock<Block> BASIC_THERM_BLOCK = Builder.create("basic_therm_block",()-> new BasicThermBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)),false).breakLev(3).state(BlockStateGen.cubeAll()).build();
-    //TODO ThermoTest
 //    public static final DeferredBlock<Block> TEST_GENERATOR_BLOCK = Builder.create("test_generator_block",()-> new TestGeneratorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)),false).breakLev(3).state(BlockStateGen.cubeAll()).build();
 //    public static final DeferredBlock<Block> TEST_MACHINE_BLOCK = Builder.create("test_machine_block",()-> new TestMachineBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)),false).breakLev(3).state(BlockStateGen.cubeAll()).build();
 
 
-    public static final DeferredBlock<Block> TEST_COMBUSTOR = BLOCKS.register("test_combustor", CombustorBlock::new);
+    public static final DeferredBlock<Block> TEST_COMBUSTOR = BLOCKS.register("test_combustor", ThermoBlocks.CombustorBlock::new);
+    public static final DeferredBlock<Block> TEST_CARRIER = BLOCKS.register("test_carrier", ThermoBlocks.CarrierBlock::new);
 
 
 

@@ -3,6 +3,7 @@ package com.landis.breakdowncore;
 import com.landis.breakdowncore.system.material.*;
 import com.landis.breakdowncore.system.material.expansion.IngotType;
 import com.landis.breakdowncore.system.material.expansion.MissingMaterial;
+import com.landis.breakdowncore.system.material.expansion.materialfeature.MetalMF;
 import com.landis.breakdowncore.system.material.expansion.materialfeature.PhaseTransitMF;
 import com.landis.breakdowncore.system.material.expansion.materialfeature.ThermoMF;
 import net.minecraft.network.chat.Component;
@@ -51,5 +52,9 @@ public class Registries {
 
         public static final DeferredHolder<MaterialFeatureType<?>,MaterialFeatureType<PhaseTransitMF>> PHASE_TRANSIT = feature("phase_transit",l -> new MaterialFeatureType<>(l, PhaseTransitMF.class));
         public static final DeferredHolder<MaterialFeatureType<?>,MaterialFeatureType<ThermoMF>> THERMO = feature("thermo", l -> new MaterialFeatureType<>(l, ThermoMF.class));
+        public static final DeferredHolder<MaterialFeatureType<?>,MaterialFeatureType<MetalMF>> METAL = feature("metal", l -> new MaterialFeatureType<>(l, MetalMF.class));
+
+
+        public static final DeferredHolder<Material,Material> IRON = material("iron",r -> new Material(r,true,new MetalMF(),new PhaseTransitMF(1539,3000),new ThermoMF(0.46F,80.9F,7.87F)));
     }
 }

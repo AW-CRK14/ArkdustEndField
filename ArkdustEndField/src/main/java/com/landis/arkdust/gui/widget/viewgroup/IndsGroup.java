@@ -2,6 +2,7 @@ package com.landis.arkdust.gui.widget.viewgroup;
 
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.gui.AbstractArkdustInfoUI;
+import com.landis.arkdust.helper.MUIHelper;
 import icyllis.modernui.animation.ObjectAnimator;
 import icyllis.modernui.animation.TimeInterpolator;
 import icyllis.modernui.core.Context;
@@ -11,6 +12,7 @@ import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.graphics.Rect;
 import icyllis.modernui.graphics.drawable.Drawable;
 import icyllis.modernui.graphics.drawable.ImageDrawable;
+import icyllis.modernui.graphics.drawable.ShapeDrawable;
 import icyllis.modernui.util.FloatProperty;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.MotionEvent;
@@ -22,15 +24,13 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class IndsGroup extends RelativeLayout {
-    public static final int MIN_WIDTH = 0;
-    public static final int MIN_HEIGHT = 40;
     private static final int TOP_H = 20;
 
     public final ResourceLocation id;
     public final int lv;
     public final int thickness = dp(0.5F);
 
-    public IndsGroup(Context context, ResourceLocation id, int lv) {
+    public IndsGroup(Context context, ResourceLocation id, int lv, boolean recipeBar) {
         super(context);
         this.id = id;
         this.lv = lv;
@@ -40,10 +40,10 @@ public class IndsGroup extends RelativeLayout {
 
         ImageView logo = new ImageView(context);
         logo.setImage(Image.create(id.getNamespace(), "ind_mac/" + id.getPath() + ".png"));
-//        logo.setX(4);
-//        logo.setY(4);
-//        this.addView(logo,new LayoutParams(12,12));
-        this.addView(logo, new LayoutParams(dp(20), dp(20)));
+//        logo.setBackground(AbstractArkdustInfoUI.withBorder());
+        LayoutParams paraLogo = new LayoutParams(dp(16), dp(16));
+        paraLogo.setMargins(dp(2), dp(2), dp(2), dp(2));
+        this.addView(logo, paraLogo);
 
         RelativeLayout topBar = new RelativeLayout(context);
         topBar.setGravity(RelativeLayout.CENTER_VERTICAL);
@@ -103,9 +103,9 @@ public class IndsGroup extends RelativeLayout {
             paraButtons.addRule(RelativeLayout.CENTER_VERTICAL);
 //            paraButtons.addRule(Gravity.CENTER);
             {
-                buttons.addView(new TopBarButton(context, 1001, new ResourceLocation(Arkdust.MODID, "gui/element/ind/close.png"), v -> Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(null))), new LayoutParams(dp(12),dp(12)));
+                buttons.addView(new TopBarButton(context, 1001, new ResourceLocation(Arkdust.MODID, "gui/element/ind/close.png"), v -> Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(null))), new LayoutParams(dp(12), dp(12)));
             }
-            topBar.addView(buttons,paraButtons);
+            topBar.addView(buttons, paraButtons);
         }
         this.addView(topBar, paraTopBar);
 
@@ -131,7 +131,7 @@ public class IndsGroup extends RelativeLayout {
             int x1 = b.right;
             int y0 = b.top;
             int y1 = y0 + dp(TOP_H);
-            int y2 = Math.min(b.bottom, y1 + dp(30));
+            int y2 = (int) Math.min(b.bottom, y1 + b.height() * 0.4F);
             boolean flag = y2 < b.bottom;
             PAINT.setColor(CA);
             canvas.drawRoundRect(x0, y0, x1, y1, dp(4), Gravity.TOP, PAINT);
@@ -144,6 +144,9 @@ public class IndsGroup extends RelativeLayout {
             PAINT.setColor(CTS);
             canvas.drawLine(x0, y1, x1, y1, thickness, PAINT);
             canvas.drawLine(x0 + dp(20), y0, x0 + dp(20), y1, thickness, PAINT);
+
+            //left_net左侧渲染
+            MUIHelper.extendImage(canvas, new Rect(0, dp(20), dp(15), b.bottom), new ResourceLocation(Arkdust.MODID, "gui/element/ind/left_net.png"), false, true, 1, PAINT);
         }
     }
 
