@@ -1,15 +1,10 @@
 package com.landis.breakdowncore.module.blockentity.container;
 
 import com.google.common.collect.HashMultimap;
-import com.landis.breakdowncore.helper.ContainerHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +53,7 @@ public class ExpandedContainer extends SimpleContainer implements ISlotTypeExpan
         return indexMap;
     }
 
-    public Set<Integer> indexes(SlotType type) {
+    public Set<Integer> indexesForType(SlotType type) {
         return getOrCreateIndexMap().get(type);
     }
 
@@ -77,8 +72,9 @@ public class ExpandedContainer extends SimpleContainer implements ISlotTypeExpan
         return getItem(slot);
     }
 
+
     @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return true;
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        setItem(slot,stack);
     }
 }

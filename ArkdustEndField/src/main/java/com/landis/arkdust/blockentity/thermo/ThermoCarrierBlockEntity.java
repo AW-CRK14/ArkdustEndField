@@ -2,13 +2,8 @@ package com.landis.arkdust.blockentity.thermo;
 
 import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.breakdowncore.Registries;
-import com.landis.breakdowncore.system.material.Material;
-import com.landis.breakdowncore.system.thermodynamics.IThermoBackground;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ThermoCarrierBlockEntity extends ThermoBlockEntity {

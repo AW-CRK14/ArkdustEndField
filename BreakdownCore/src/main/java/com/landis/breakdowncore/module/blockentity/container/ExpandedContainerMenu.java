@@ -72,7 +72,7 @@ public abstract class ExpandedContainerMenu extends AbstractContainerMenu implem
     }
 
     @Override
-    public void setItem(int index, ItemStack stack) {
+    public void setStackInSlot(int index, ItemStack stack) {
         Slot slot = slots.get(index);
         slot.container.setItem(slot.getSlotIndex(), stack);
     }

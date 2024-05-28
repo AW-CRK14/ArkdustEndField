@@ -32,21 +32,4 @@ public class EventConsumer$Thermo {
             }
         }
     }
-
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = BreakdownCore.MODID)
-    public static class ForgeBus {
-        private static int timer = 0;
-
-        @SubscribeEvent
-        public static void thermoTickHandle(TickEvent.ServerTickEvent event) {
-            timer++;
-            if (timer > 5) {
-                timer = 0;
-            }
-        }
-
-        public static int getTick() {
-            return timer;
-        }
-    }
 }

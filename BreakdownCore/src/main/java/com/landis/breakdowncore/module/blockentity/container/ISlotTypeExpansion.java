@@ -1,15 +1,12 @@
 package com.landis.breakdowncore.module.blockentity.container;
 
-import com.landis.breakdowncore.helper.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ISlotTypeExpansion extends IItemHandler {
+public interface ISlotTypeExpansion extends IAutoHandleItemHandle {
     List<SlotType> getSlotTypeReflect();
 
     default SlotType getForType(int index) {
@@ -45,23 +42,7 @@ public interface ISlotTypeExpansion extends IItemHandler {
         return stacks;
     }
 
-    @Override
-    default @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        Pair<ItemStack, ItemStack> r = ContainerHelper.itemInsert(getStackInSlot(slot), getSlotLimit(slot), stack, simulate);
-        if (!simulate && r.getLeft() != getStackInSlot(slot)) {
-            setItem(slot, r.getLeft());
-        }
-        return r.getRight();
-    }
 
-    @Override
-    default @NotNull ItemStack extractItem(int slot, int amount, boolean simulate){
-        Pair<ItemStack, ItemStack> r = ContainerHelper.itemExtract(getStackInSlot(slot), amount, simulate);
-        if (!simulate && r.getLeft() != getStackInSlot(slot)) {
-            setItem(slot, r.getLeft());
-        }
-        return r.getRight();
-    }
 
     @Override
     default int getSlotLimit(int slot){
@@ -73,5 +54,4 @@ public interface ISlotTypeExpansion extends IItemHandler {
         return true;
     };
 
-    void setItem(int index, ItemStack stack);
 }
