@@ -19,7 +19,7 @@ public abstract class AbstractOperator {
     public VariableValue attackInterval;
     public VariableValue respawnTime;
     public VariableValue cost;
-    private float natural_regen_rate = 1.0f;
+    private float naturalRegenRate = 1.0f;
     private final List<AbstractOperatorSkill> skills = this.initSkills();
     private int currentSkillIndex = 0; // 当前激活的技能索引
     public final BaseOperatorModel baseOperatorModel = this.initModel();
@@ -42,12 +42,23 @@ public abstract class AbstractOperator {
         }
     }
 
+    public int getSkillCount(){
+        return this.skills.size();
+    }
+
     // 切换到下一个技能
     public void switchToNextSkill() {
-        if (skills.size() > 1) { // 如果有多个技能
-            currentSkillIndex = (currentSkillIndex + 1) % skills.size();
+        if(this.getSkillCount() == 3){
+            if(this.currentSkillIndex == 2){
+                this.currentSkillIndex = 0;
+            }else{
+                currentSkillIndex += 1;
+            }
+        }else{
+
         }
     }
+
 
     // 结束当前技能
     public void endCurrentSkill() {
@@ -67,8 +78,8 @@ public abstract class AbstractOperator {
     }
 
 
-    public final float getNatural_regen_rate(){
-        return this.natural_regen_rate;
+    public final float getNaturalRegenRate(){
+        return this.naturalRegenRate;
     }
 
 }

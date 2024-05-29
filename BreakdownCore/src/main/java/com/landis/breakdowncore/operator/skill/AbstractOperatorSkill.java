@@ -15,8 +15,15 @@ public abstract class AbstractOperatorSkill{
     private float sp;
     private int chargeCount = 1;
     private int totalSP;
-    private float lastTickTime;
 
+    public AbstractOperatorSkill(TriggerType type, AbstractOperator owner, int duration, int sp){
+        this.TYPE = type;
+        this.owner = owner;
+        this.isInfinite = false;
+        this.duration = duration;
+        this.skillPoint = sp;
+        this.totalSP = this.skillPoint * this.chargeCount;
+    }
 
     public AbstractOperatorSkill(TriggerType type, AbstractOperator owner, boolean isInfinite, int duration, int sp){
         this.TYPE = type;
@@ -26,24 +33,28 @@ public abstract class AbstractOperatorSkill{
         this.skillPoint = sp;
         this.totalSP = this.skillPoint * this.chargeCount;
     }
+    public AbstractOperatorSkill(TriggerType type, AbstractOperator owner, boolean isInfinite, int duration, int sp,int chargeCount){
+        this.TYPE = type;
+        this.owner = owner;
+        this.isInfinite = isInfinite;
+        this.duration = duration;
+        this.skillPoint = sp;
+        this.chargeCount = chargeCount;
+        this.totalSP = this.skillPoint * this.chargeCount;
+    }
 
     public void addSPOne() {
-        // 受到攻击时增加SP
         this.sp += 1;
-        // 确保SP不会超过最大值
         if (this.sp > this.totalSP) {
             this.sp = this.totalSP;
         }
     }
 
     // 每个游戏刻度调用的tick方法
-    public void tick(AbstractOperatorEntity operatorEntity) {
-        if(operatorEntity.getServer() != null && this.TYPE == TriggerType.AUTO && !this.isFullSP()){
-            float currentTickTime = operatorEntity.getServer().getCurrentSmoothedTickTime();
-            float tickDelta = currentTickTime - this.lastTickTime;
-            if(tickDelta >= 20.0f){
-                this.sp += operatorEntity.OPERATOR.getNatural_regen_rate();
-                this.lastTickTime = currentTickTime;
+    public void tick(int tickCount) {
+        if(this.TYPE == TriggerType.AUTO && !this.isFullSP()){
+            if(tickCount % 20 == 0){
+                this.sp += owner.getNaturalRegenRate();
             }
             if (this.sp > this.totalSP) {
                 this.sp = this.totalSP;
@@ -70,6 +81,7 @@ public abstract class AbstractOperatorSkill{
     public final void activateSkill(){
         if(this.isReady()){
             this.sp -= this.skillPoint;
+            this.isActive = true;
             this.effectSkill();
         }
     };
