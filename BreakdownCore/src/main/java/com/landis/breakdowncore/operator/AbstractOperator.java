@@ -5,7 +5,9 @@ import com.landis.breakdowncore.operator.model.EmptyModel;
 import com.landis.breakdowncore.operator.skill.AbstractOperatorSkill;
 import com.landis.breakdowncore.operator.value.RareLevel;
 import com.landis.breakdowncore.operator.value.base.VariableValue;
+import net.minecraft.world.entity.ai.goal.Goal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractOperator {
@@ -48,17 +50,24 @@ public abstract class AbstractOperator {
 
     // 切换到下一个技能
     public void switchToNextSkill() {
-        if(this.getSkillCount() == 3){
-            if(this.currentSkillIndex == 2){
-                this.currentSkillIndex = 0;
-            }else{
-                currentSkillIndex += 1;
-            }
-        }else{
-
+        // 获取技能列表中的技能数量
+        int skillCount = this.getSkillCount();
+        // 如果有技能可供切换
+        if (skillCount > 1) {
+            // 使用模运算来循环切换技能
+            this.currentSkillIndex = (this.currentSkillIndex + 1) % skillCount;
+        } else if (skillCount == 1) {
+            // 如果只有一个技能，不需要切换
+            // 可以在这里添加处理逻辑，例如不执行任何操作或重置技能状态
+        } else {
+            // 如果没有技能，处理错误情况
+            // 可以在这里添加错误处理或日志记录
         }
     }
 
+    public List<Goal> getOtherOperatorGoal(){
+        return new ArrayList<>();
+    }
 
     // 结束当前技能
     public void endCurrentSkill() {
@@ -67,18 +76,18 @@ public abstract class AbstractOperator {
             skill.endSkill();
         }
     }
-    public AbstractOperatorSkill getCurrentSkill(){
+    public AbstractOperatorSkill getCurrentSkill() {
         return this.skills.get(this.currentSkillIndex);
     }
 
     // 检查技能是否就绪
     public boolean isSkillReady() {
         // 实现具体的检查逻辑，例如检查冷却时间
-        return this.skills.get(this.currentSkillIndex).isActive();
+        return this.getCurrentSkill().isActive();
     }
 
 
-    public final float getNaturalRegenRate(){
+    public float getNaturalRegenRate(){
         return this.naturalRegenRate;
     }
 
