@@ -37,6 +37,7 @@ public abstract class AbstractOperatorEntity extends TamableAnimal implements Ne
         }
         return flag;
     }
+
     @Override
     public boolean doHurtTarget(Entity pEntity) {
         boolean flag = super.doHurtTarget(pEntity);

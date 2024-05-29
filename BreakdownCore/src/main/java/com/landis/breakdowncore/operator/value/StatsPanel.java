@@ -6,7 +6,9 @@ import com.landis.breakdowncore.operator.value.base.BaseValue;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StatsPanel {
@@ -19,8 +21,8 @@ public class StatsPanel {
     private final BaseValue cost;
     private final BaseValue naturalRegenRate;
     private final RareLevel rareLevel;
-
-    private final Map<BaseValue.ValueType, AddonValue> addonValues = new HashMap<>();
+    private final List<AddonValue> addonValues = new ArrayList<>();
+    private boolean isLoadDone = false;
 
     /**
      * 构造一个新的StatsPanel实例。
@@ -72,10 +74,38 @@ public class StatsPanel {
      * 这个附加值会直接应用在BaseValue上。
      * @param addonValue 要添加的附加值对象。
      */
-    public void putAddonValueToMap(AddonValue addonValue){
-        BaseValue.ValueType type = addonValue.getTYPE();
-        this.addonValues.put(type,addonValue);
-        BaseValue bv = this.getBaseValueFromType(type);
+    public void putAddonValueToList(AddonValue addonValue){
+        this.addonValues.add(addonValue);
+        updateStatePanel();
+    }
+
+    public void updateStatePanel(){
+        List<AddonValue> skipped_final_add_calculate = new ArrayList<>();
+        List<AddonValue> skipped_final_multiply_calculate = new ArrayList<>();
+        List<AddonValue> skipped_multiply_calculate = new ArrayList<>();
+        for (AddonValue addonValue : this.addonValues) {
+            if(addonValue.IS_FINAL_CALCULATE){
+                if(addonValue.IS_MULTIPLY){
+                    skipped_final_multiply_calculate.add(addonValue);
+                }else{
+                    skipped_final_add_calculate.add(addonValue);
+                }
+            }else{
+                if(addonValue.IS_MULTIPLY){
+                    skipped_multiply_calculate.add(addonValue);
+                }else{
+                    this.applyAddonValue(addonValue);
+                }
+            }
+        }
+
+        skipped_multiply_calculate.forEach((this::applyAddonValue));
+        skipped_final_add_calculate.forEach((this::applyAddonValue));
+        skipped_final_multiply_calculate.forEach((this::applyAddonValue));
+    }
+
+    public void applyAddonValue(AddonValue addonValue){
+        BaseValue bv = this.getBaseValueFromType(addonValue.getTYPE());
         double addedValue = addonValue.addonToValue(bv.getValue());
         bv.setValue(addedValue);
     }
@@ -85,12 +115,9 @@ public class StatsPanel {
      * 这个BaseValue会直接移除这个附加值。
      * @param addonValue 要移除的附加值对象。
      */
-    public void removeAddonValueFromMap(AddonValue addonValue) {
-        if(this.addonValues.values().removeIf(av -> av.getTYPE() == addonValue.getTYPE() && av.getAddonName().equals(addonValue.getAddonName()))){
-            BaseValue.ValueType type = addonValue.getTYPE();
-            BaseValue bv = this.getBaseValueFromType(type);
-            double removedValue = addonValue.removeToValue(bv.getValue());
-            bv.setValue(removedValue);
+    public void removeAddonValueFromList(AddonValue addonValue) {
+        if(this.addonValues.removeIf(av -> av.getTYPE() == addonValue.getTYPE() && av.getAddonName().equals(addonValue.getAddonName()))){
+            updateStatePanel();
         };
     }
 
@@ -138,24 +165,26 @@ public class StatsPanel {
         CompoundTag tag = writeAddonValuesToNBT(compoundTag);
         return this.rareLevel.getLevelValue().writeNbt(tag);
     }
+
     public CompoundTag writeAddonValuesToNBT(CompoundTag compoundTag) {
         ListTag addonValueList = new ListTag();
 
-        for (AddonValue addonValue : this.addonValues.values()) {
+        for (AddonValue addonValue : this.addonValues) {
             CompoundTag addonValueCompoundTag = addonValue.asNBT();
             // 将CompoundTag添加到ListTag中
             addonValueList.add(addonValueCompoundTag);
         }
         // 将ListTag添加到CompoundTag中
-        compoundTag.put("AddonValues", addonValueList);
+        compoundTag.put("operator_base_addon_values", addonValueList);
         return compoundTag;
     }
+
     private void readAddonValuesFromNbt(CompoundTag compoundTag) {
         // 清除现有的附加值
         addonValues.clear();
 
         // 从NBT获取AddonValues列表
-        ListTag addonValueList = compoundTag.getList("AddonValues", 10); // 10 是 CompoundTag 类型的ID
+        ListTag addonValueList = compoundTag.getList("operator_base_addon_values", 10); // 10 是 CompoundTag 类型的ID
 
         for (int i = 0; i < addonValueList.size(); ++i) {
             CompoundTag addonValueCompoundTag = addonValueList.getCompound(i);
@@ -164,7 +193,7 @@ public class StatsPanel {
             double addonValue = addonValueCompoundTag.getDouble("AddonValue");
             String typeString = addonValueCompoundTag.getString("ValueType");
             boolean isMultiply = addonValueCompoundTag.getBoolean("IsMultiply");
-            int priorityValue = addonValueCompoundTag.getInt("PriorityValue");
+            boolean isFinalCalculate = addonValueCompoundTag.getBoolean("IsFinalCalculate");
 
             // 将字符串类型的TYPE转换回ValueType枚举
             BaseValue.ValueType type = null;
@@ -180,8 +209,8 @@ public class StatsPanel {
                 AbstractOperator.LOGGER.error("Unknown ValueType in NBT: " + typeString);
             }else{
                 // 创建新的AddonValue实例并添加到映射中
-                AddonValue addonValue_obj = new AddonValue(type, priorityValue, addonName, addonValue, isMultiply);
-                addonValues.put(type, addonValue_obj);
+                AddonValue addonValue_obj = new AddonValue(type, addonName, addonValue, isMultiply, isFinalCalculate);
+                addonValues.add(addonValue_obj);
             }
         }
     }

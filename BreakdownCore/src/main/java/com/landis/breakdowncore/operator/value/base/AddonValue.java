@@ -7,26 +7,14 @@ public class AddonValue {
     private final double addonValue;
     private final BaseValue.ValueType TYPE;
     public final boolean IS_MULTIPLY;
-    private int priorityValue;
+    public final boolean IS_FINAL_CALCULATE;
 
-    public AddonValue(BaseValue.ValueType type, int priorityValue,String addonName, double addonValue ,boolean isMultiply){
+    public AddonValue(BaseValue.ValueType type, String addonName, double addonValue , boolean isMultiply, boolean isFinalCalculate){
         this.TYPE = type;
         this.addonName = addonName;
         this.addonValue = addonValue;
         this.IS_MULTIPLY = isMultiply;
-        this.priorityValue = priorityValue;
-    }
-
-    public AddonValue(BaseValue.ValueType type, int priorityValue,String addonName, double addonValue){
-        this.TYPE = type;
-        this.addonName = addonName;
-        this.addonValue = addonValue;
-        this.IS_MULTIPLY = false;
-        this.priorityValue = priorityValue;
-    }
-
-    public void changePriority(int value){
-        this.priorityValue = value;
+        this.IS_FINAL_CALCULATE = isFinalCalculate;
     }
 
     public double addonToValue(double originValue){
@@ -43,7 +31,7 @@ public class AddonValue {
         tag.putDouble("AddonValue", addonValue);
         tag.putString("ValueType", TYPE.name());
         tag.putBoolean("IsMultiply", IS_MULTIPLY);
-        tag.putInt("PriorityValue", priorityValue);
+        tag.putBoolean("IsFinalCalculate", IS_FINAL_CALCULATE);
         return tag;
     }
 
@@ -65,10 +53,6 @@ public class AddonValue {
 
     public BaseValue.ValueType getTYPE() {
         return TYPE;
-    }
-
-    public int getPriorityValue() {
-        return priorityValue;
     }
 
 
