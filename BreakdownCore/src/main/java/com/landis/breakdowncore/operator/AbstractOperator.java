@@ -1,36 +1,25 @@
 package com.landis.breakdowncore.operator;
 
 import com.landis.breakdowncore.operator.model.BaseOperatorModel;
-import com.landis.breakdowncore.operator.model.EmptyModel;
 import com.landis.breakdowncore.operator.skill.AbstractOperatorSkill;
-import com.landis.breakdowncore.operator.value.RareLevel;
-import com.landis.breakdowncore.operator.value.base.VariableValue;
-import net.minecraft.world.entity.ai.goal.Goal;
+import com.landis.breakdowncore.operator.value.StatsPanel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractOperator {
+    public static final Logger LOGGER = LogManager.getLogger("BREA:Operator:System");
     public final String NAME;
-    public RareLevel rareLevel;
-    public int skillLevel = 1;
-    public VariableValue health;
-    public VariableValue defense;
-    public VariableValue offensiveCapability;
-    public VariableValue magicResistance;
-    public VariableValue attackInterval;
-    public VariableValue respawnTime;
-    public VariableValue cost;
-    private float naturalRegenRate = 1.0f;
+    public final StatsPanel STATS;
     private final List<AbstractOperatorSkill> skills = this.initSkills();
     private int currentSkillIndex = 0; // 当前激活的技能索引
     public final BaseOperatorModel baseOperatorModel = this.initModel();
 
-    public AbstractOperator(String name){
+    public AbstractOperator(String name, StatsPanel stats){
         this.NAME = name;
+        this.STATS = stats;
     }
-
-    abstract void initValues();
 
     // 添加技能到干员
     abstract List<AbstractOperatorSkill> initSkills();
@@ -64,31 +53,15 @@ public abstract class AbstractOperator {
             // 可以在这里添加错误处理或日志记录
         }
     }
-
-    public List<Goal> getOtherOperatorGoal(){
-        return new ArrayList<>();
-    }
-
-    // 结束当前技能
-    public void endCurrentSkill() {
-        if (!skills.isEmpty() && currentSkillIndex < skills.size()) {
-            AbstractOperatorSkill skill = skills.get(currentSkillIndex);
-            skill.endSkill();
-        }
-    }
     public AbstractOperatorSkill getCurrentSkill() {
-        return this.skills.get(this.currentSkillIndex);
-    }
-
-    // 检查技能是否就绪
-    public boolean isSkillReady() {
-        // 实现具体的检查逻辑，例如检查冷却时间
-        return this.getCurrentSkill().isActive();
+        if (!skills.isEmpty()) {
+            return this.skills.get(this.currentSkillIndex);
+        }else return null;
     }
 
 
-    public float getNaturalRegenRate(){
-        return this.naturalRegenRate;
+    public double getNaturalRegenRate(){
+        return this.STATS.getNaturalRegenRate().getValue();
     }
 
 }

@@ -54,7 +54,7 @@ public abstract class AbstractOperatorSkill{
     public void tick(int tickCount) {
         if(this.TYPE == TriggerType.AUTO && !this.isFullSP()){
             if(tickCount % 20 == 0){
-                this.sp += owner.getNaturalRegenRate();
+                this.sp += (float) owner.getNaturalRegenRate();
             }
             if (this.sp > this.totalSP) {
                 this.sp = this.totalSP;
