@@ -19,6 +19,7 @@ public abstract class AbstractOperator {
     public VariableValue attackInterval;
     public VariableValue respawnTime;
     public VariableValue cost;
+    private float natural_regen_rate = 1.0f;
     private final List<AbstractOperatorSkill> skills = this.initSkills();
     private int currentSkillIndex = 0; // 当前激活的技能索引
     public final BaseOperatorModel baseOperatorModel = this.initModel();
@@ -37,7 +38,7 @@ public abstract class AbstractOperator {
     public void activateCurrentSkill() {
         if (!skills.isEmpty() && currentSkillIndex < skills.size()) {
             AbstractOperatorSkill skill = skills.get(currentSkillIndex);
-            skill.activateSkill(this);
+            skill.activateSkill();
         }
     }
 
@@ -52,14 +53,22 @@ public abstract class AbstractOperator {
     public void endCurrentSkill() {
         if (!skills.isEmpty() && currentSkillIndex < skills.size()) {
             AbstractOperatorSkill skill = skills.get(currentSkillIndex);
-            skill.endSkill(this);
+            skill.endSkill();
         }
+    }
+    public AbstractOperatorSkill getCurrentSkill(){
+        return this.skills.get(this.currentSkillIndex);
     }
 
     // 检查技能是否就绪
-    private boolean isSkillReady(AbstractOperatorSkill skill) {
+    public boolean isSkillReady() {
         // 实现具体的检查逻辑，例如检查冷却时间
-        return true;
+        return this.skills.get(this.currentSkillIndex).isActive();
+    }
+
+
+    public final float getNatural_regen_rate(){
+        return this.natural_regen_rate;
     }
 
 }

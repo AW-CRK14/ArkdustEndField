@@ -1,9 +1,14 @@
 package com.landis.breakdowncore.operator.entity;
 
+import com.landis.breakdowncore.operator.AbstractOperator;
+import com.landis.breakdowncore.operator.skill.AbstractOperatorSkill;
+import com.landis.breakdowncore.operator.skill.TriggerType;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.*;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -11,16 +16,34 @@ import java.util.function.Predicate;
 
 public abstract class AbstractOperatorEntity extends TamableAnimal implements NeutralMob, RangedAttackMob {
 
-
+    public final AbstractOperator OPERATOR;
     public static final Predicate<LivingEntity> PREY_SELECTOR = p_308741_ -> {
         EntityType<?> entitytype = p_308741_.getType();
         return entitytype == EntityType.SHEEP || entitytype == EntityType.RABBIT || entitytype == EntityType.FOX;
     };
 
-    protected AbstractOperatorEntity(EntityType<? extends TamableAnimal> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
-    }
 
+    protected AbstractOperatorEntity(EntityType<? extends TamableAnimal> pEntityType, AbstractOperator operator,Level pLevel) {
+        super(pEntityType, pLevel);
+        this.OPERATOR = operator;
+    }
+    public boolean hurt(DamageSource source, float amount) {
+        boolean flag = super.hurt(source, amount);
+        AbstractOperatorSkill skill = this.OPERATOR.getCurrentSkill();
+        if(skill.TYPE == TriggerType.BLOCKED){
+            skill.addSPOne();
+        }
+        return flag;
+    }
+    @Override
+    public boolean doHurtTarget(Entity pEntity) {
+        boolean flag = super.doHurtTarget(pEntity);
+        AbstractOperatorSkill skill = this.OPERATOR.getCurrentSkill();
+        if(skill.TYPE == TriggerType.ATTACK){
+            skill.addSPOne();
+        }
+        return flag;
+    }
 
     @Override
     protected void registerGoals() {
