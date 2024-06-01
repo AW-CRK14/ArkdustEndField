@@ -21,11 +21,13 @@ public class ExpandedContainer extends SimpleContainer implements ISlotTypeExpan
     }
 
     public ExpandedContainer(int length, SlotType type) {
+        super(length);
         this.length = length;
         this.typeList = Collections.nCopies(length, type);
     }
 
     public ExpandedContainer(int length, IntFunction<SlotType> typeProvider) {
+        super(length);
         this.length = length;
         typeList = new ArrayList<>(length);
         for (int i = 0; i < length; i++){
@@ -34,11 +36,13 @@ public class ExpandedContainer extends SimpleContainer implements ISlotTypeExpan
     }
 
     public ExpandedContainer(List<SlotType> types) {
+        super(types.size());
         this.length = types.size();
         this.typeList = types;
     }
 
     public ExpandedContainer(SlotType... types) {
+        super(types.length);
         this.length = types.length;
         this.typeList = List.of(types);
     }

@@ -1,7 +1,6 @@
-package com.landis.arkdust.gui.widget.viewgroup;
+package com.landis.arkdust.mui.widget.viewgroup;
 
 import com.landis.arkdust.Arkdust;
-import com.landis.arkdust.gui.AbstractArkdustInfoUI;
 import com.landis.arkdust.helper.MUIHelper;
 import icyllis.modernui.animation.ObjectAnimator;
 import icyllis.modernui.animation.TimeInterpolator;
@@ -12,7 +11,6 @@ import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.graphics.Rect;
 import icyllis.modernui.graphics.drawable.Drawable;
 import icyllis.modernui.graphics.drawable.ImageDrawable;
-import icyllis.modernui.graphics.drawable.ShapeDrawable;
 import icyllis.modernui.util.FloatProperty;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.MotionEvent;
@@ -21,73 +19,81 @@ import icyllis.modernui.widget.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 public class IndsGroup extends RelativeLayout {
-    private static final int TOP_H = 20;
+    private static final int TOP_H = 40;
 
     public final ResourceLocation id;
     public final int lv;
     public final int thickness = dp(0.5F);
+    public final RelativeLayout child;
 
-    public IndsGroup(Context context, ResourceLocation id, int lv, boolean recipeBar) {
+    private boolean leftDecEnable = true;
+
+    private boolean closeButtonEnable = true;
+
+    public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton) {
         super(context);
         this.id = id;
         this.lv = lv;
         this.setBackground(new Background());
-//        this.setBackground(AbstractArkdustInfoUI.withBorder());
+//        this.setBackground(MUIHelper.withBorder());//test
 
 
         ImageView logo = new ImageView(context);
         logo.setImage(Image.create(id.getNamespace(), "ind_mac/" + id.getPath() + ".png"));
-//        logo.setBackground(AbstractArkdustInfoUI.withBorder());
-        LayoutParams paraLogo = new LayoutParams(dp(16), dp(16));
-        paraLogo.setMargins(dp(2), dp(2), dp(2), dp(2));
+//        logo.setBackground(MUIHelper.withBorder());//test
+        LayoutParams paraLogo = new LayoutParams(dp(TOP_H * 0.8F), dp(TOP_H * 0.8F));
+        paraLogo.setMargins(dp(TOP_H * 0.1F), dp(TOP_H * 0.1F), dp(TOP_H * 0.1F), dp(TOP_H * 0.1F));
         this.addView(logo, paraLogo);
 
         RelativeLayout topBar = new RelativeLayout(context);
         topBar.setGravity(RelativeLayout.CENTER_VERTICAL);
-//        topBar.setBackground(AbstractArkdustInfoUI.withBorder());//test
-        LayoutParams paraTopBar = new LayoutParams(-1, dp(20));
-        paraTopBar.setMarginsRelative(dp(20), 0, 0, dp(getHeight() - 20));
+//        topBar.setBackground(MUIHelper.withBorder());//test
+        LayoutParams paraTopBar = new LayoutParams(-2, dp(TOP_H));
+        paraTopBar.setMarginsRelative(dp(TOP_H), 0, 0, dp(getHeight() - TOP_H));
         {
             LinearLayout titles = new LinearLayout(context);
             titles.setOrientation(LinearLayout.VERTICAL);
             titles.setGravity(Gravity.LEFT);
-//            titles.setBackground(AbstractArkdustInfoUI.withBorder());//test
-            LayoutParams paraTitles = new LayoutParams(-1, -2);
-            paraTitles.setMarginsRelative(dp(2), 0, 0, 0);
+//            titles.setBackground(MUIHelper.withBorder());//test
+            LayoutParams paraTitles = new LayoutParams(-2, -2);
+            paraTitles.setMarginsRelative(dp(TOP_H * 0.1F), 0, 0, 0);
             paraTitles.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             {
                 ImageView nameDec = new ImageView(context);
                 nameDec.setImage(Image.create(Arkdust.MODID, "gui/element/ind/name_dec.png"));
-                LayoutParams paraNameDec = new LayoutParams(dp(25), dp(5));
-                paraNameDec.setMargins(dp(3), dp(2.5F), 0, 0);
+                LayoutParams paraNameDec = new LayoutParams(dp(TOP_H * 1.25F), dp(TOP_H * 0.25F));
+                paraNameDec.setMargins(dp(TOP_H * 0.15F), dp(TOP_H / 8F), 0, 0);
                 titles.addView(nameDec, paraNameDec);
 
                 LinearLayout nameGroup = new LinearLayout(context);
                 nameGroup.setGravity(Gravity.BOTTOM);
                 nameGroup.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
                 nameGroup.setOrientation(LinearLayout.HORIZONTAL);
+//                nameGroup.setBackground(MUIHelper.withBorder());//test
                 nameGroup.setDividerDrawable(new Divider());
                 {
                     TextView name = new TextView(context);
                     name.setText(I18n.get(nameKey()));
-                    name.setTextSize(dp(1.05F));//TODO
+                    name.setTextSize(dp(TOP_H * 0.135F));//TODO
                     name.setTextColor(CTM);
                     LayoutParams paraName = new LayoutParams(-2, -2);
-                    paraName.setMargins(dp(3), 0, dp(3), 0);
+                    paraName.setMargins(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.15F), 0);
                     nameGroup.addView(name, paraName);
 
-                    TextView lvText = new TextView(context);
-                    lvText.setText("Lv." + lv);
-                    lvText.setTextSize(dp(0.7F));
-                    lvText.setTextColor(CTS);
-                    LayoutParams paraLv = new LayoutParams(-2, -2);
-                    paraLv.setMargins(dp(3), 0, dp(4), 0);
-                    nameGroup.addView(lvText, paraLv);
+                    if (lv >= 0) {
+                        TextView lvText = new TextView(context);
+                        lvText.setText("Lv." + lv);
+                        lvText.setTextSize(dp(TOP_H * 0.09F));
+                        lvText.setTextColor(CTS);
+                        LayoutParams paraLv = new LayoutParams(-2, -2);
+                        paraLv.setMargins(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.2F), 0);
+                        nameGroup.addView(lvText, paraLv);
+                    }
                 }
-                titles.addView(nameGroup);
+                titles.addView(nameGroup,new LayoutParams(-2,-1));
+
             }
             topBar.addView(titles, paraTitles);
 
@@ -96,21 +102,31 @@ public class IndsGroup extends RelativeLayout {
             buttons.setGravity(Gravity.RIGHT);
             buttons.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
             buttons.setDividerDrawable(new Divider());
-//            buttons.setBackground(AbstractArkdustInfoUI.withBorder());//test
+//            buttons.setBackground(MUIHelper.withBorder());//test
             LayoutParams paraButtons = new LayoutParams(-2, -2);
-            paraButtons.setMarginsRelative(dp(3), 0, dp(3), 0);
-            paraButtons.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            paraButtons.setMarginsRelative(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.15F), 0);
+            paraButtons.addRule(RelativeLayout.ALIGN_RIGHT);
             paraButtons.addRule(RelativeLayout.CENTER_VERTICAL);
+            paraButtons.addRule(RelativeLayout.RIGHT_OF);
 //            paraButtons.addRule(Gravity.CENTER);
             {
-                buttons.addView(new TopBarButton(context, 1001, new ResourceLocation(Arkdust.MODID, "gui/element/ind/close.png"), v -> Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(null))), new LayoutParams(dp(12), dp(12)));
+                if(enableCloseButton) {
+                    buttons.addView(new TopBarButton(context, 1001, new ResourceLocation(Arkdust.MODID, "gui/element/ind/close.png"), v -> Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(null))), new LayoutParams(dp(TOP_H * 0.6F), dp(TOP_H * 0.6F)));
+                }
             }
             topBar.addView(buttons, paraButtons);
+
         }
         this.addView(topBar, paraTopBar);
 
+        //TODO RecipeBar
+        this.child = new RelativeLayout(getContext());
+        LayoutParams paraChild = new LayoutParams(-2, -2);
+        paraChild.setMarginsRelative(0, dp(TOP_H), 0, 0);
+        this.addView(child, paraChild);
 
     }
+
 
     public static final int CTM = 0xFF2E2E2E;
     public static final int CTS = 0xFF8C8C8C;
@@ -138,15 +154,18 @@ public class IndsGroup extends RelativeLayout {
             canvas.drawRectGradient(x0, y1, x1, y2, CA, CA, CB, CB, PAINT);
             if (flag) {
                 PAINT.setColor(CB);
-                canvas.drawRoundRect(x0, y2, x1, b.bottom, dp(4), Gravity.BOTTOM, PAINT);
+                canvas.drawRoundRect(x0, y2, x1, b.bottom, dp(TOP_H * 0.2F), Gravity.BOTTOM, PAINT);
             }
 
             PAINT.setColor(CTS);
             canvas.drawLine(x0, y1, x1, y1, thickness, PAINT);
-            canvas.drawLine(x0 + dp(20), y0, x0 + dp(20), y1, thickness, PAINT);
+            canvas.drawLine(x0 + dp(TOP_H), y0, x0 + dp(TOP_H), y1, thickness, PAINT);
 
-            //left_net左侧渲染
-            MUIHelper.extendImage(canvas, new Rect(0, dp(20), dp(15), b.bottom), new ResourceLocation(Arkdust.MODID, "gui/element/ind/left_net.png"), false, true, 1, PAINT);
+            if (leftDecEnable) {
+
+                //left_net左侧渲染
+                MUIHelper.repeatedGridImage(canvas, new Rect(0, dp(TOP_H), dp(TOP_H * 0.75F), b.bottom), new ResourceLocation(Arkdust.MODID, "gui/element/ind/left_net.png"), false, true, 1, PAINT);
+            }
         }
     }
 
@@ -208,6 +227,15 @@ public class IndsGroup extends RelativeLayout {
                 return object.getAlpha();
             }
         };
+    }
+
+
+    public void setLeftDecEnable(boolean leftDecEnable) {
+        this.leftDecEnable = leftDecEnable;
+    }
+
+    public void disableLeftDec() {
+        this.leftDecEnable = false;
     }
 
 }

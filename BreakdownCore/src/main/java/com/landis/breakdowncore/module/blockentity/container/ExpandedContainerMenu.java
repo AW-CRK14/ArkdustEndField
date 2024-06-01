@@ -1,6 +1,7 @@
 package com.landis.breakdowncore.module.blockentity.container;
 
 import com.landis.breakdowncore.helper.ContainerHelper;
+import com.landis.breakdowncore.module.blockentity.gmui.ISlotChangeNotify;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public abstract class ExpandedContainerMenu extends AbstractContainerMenu implements ISlotTypeExpansion {
     public final NonNullList<SlotType> typeList = NonNullList.create();
+    private @Nullable ISlotChangeNotify belonging;
 
     protected ExpandedContainerMenu(@Nullable MenuType<?> pMenuType, int pContainerId) {
         super(pMenuType, pContainerId);
@@ -85,5 +87,19 @@ public abstract class ExpandedContainerMenu extends AbstractContainerMenu implem
     @Override
     public @NotNull ItemStack getStackInSlot(int slot) {
         return slots.get(slot).getItem();
+    }
+
+    @Override
+    public void onContentsChanged(int slot) {
+        ISlotTypeExpansion.super.onContentsChanged(slot);
+        if (belonging != null) {
+            belonging.notify(slot);
+        }
+    }
+
+    public void setBelonging(ISlotChangeNotify belonging) {
+        if(this.belonging == null){
+            this.belonging = belonging;
+        }
     }
 }

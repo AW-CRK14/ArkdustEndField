@@ -20,5 +20,7 @@
   "climate.arkdust.windy": "Windy",
   "climate.arkdust.bioactivity": "Bioactivity",
   "climate.arkdust.orirock_activity": "Oriactivity",
-  "arkdust.industry.arkdust.test.name": "TestMac"
+  "arkdust.industry.arkdust.test.name": "TestMac",
+  "arkdust.industry.arkdust.backpack.name": "BackPack",
+  "arkdust.industry.arkdust.mac.thermo.combustor.test": "TestingCombustor"
 }

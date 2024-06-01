@@ -1,8 +1,6 @@
-package com.landis.arkdust.gui;
+package com.landis.arkdust.mui;
 
 import icyllis.modernui.ModernUI;
-import icyllis.modernui.R;
-import icyllis.modernui.TestFragment;
 import icyllis.modernui.animation.*;
 import icyllis.modernui.annotation.NonNull;
 import icyllis.modernui.annotation.Nullable;
@@ -17,14 +15,9 @@ import icyllis.modernui.fragment.FragmentTransaction;
 import icyllis.modernui.graphics.*;
 import icyllis.modernui.graphics.drawable.Drawable;
 import icyllis.modernui.graphics.font.GlyphManager;
-import icyllis.modernui.graphics.text.FontFamily;
-import icyllis.modernui.graphics.text.LineBreakConfig;
-import icyllis.modernui.material.MaterialCheckBox;
-import icyllis.modernui.material.MaterialRadioButton;
 import icyllis.modernui.mc.MarkdownFragment;
 import icyllis.modernui.resources.SystemTheme;
 import icyllis.modernui.text.*;
-import icyllis.modernui.text.style.*;
 import icyllis.modernui.util.DataSet;
 import icyllis.modernui.util.FloatProperty;
 import icyllis.modernui.view.*;
@@ -35,12 +28,8 @@ import org.apache.logging.log4j.core.config.Configurator;
 import javax.annotation.Nonnull;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
 
 import static icyllis.modernui.ModernUI.LOGGER;
-import static icyllis.modernui.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static icyllis.modernui.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class TestingScreen extends Fragment {
 

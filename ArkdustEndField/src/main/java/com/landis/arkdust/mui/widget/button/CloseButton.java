@@ -1,4 +1,4 @@
-package com.landis.arkdust.gui.widget.button;
+package com.landis.arkdust.mui.widget.button;
 
 import com.landis.arkdust.Arkdust;
 import icyllis.modernui.core.Context;
@@ -46,8 +46,6 @@ public class CloseButton extends CompoundButton {
 
 
 
-        setOnCheckedChangeListener((button,id)-> {
-            Minecraft.getInstance().execute(()->Minecraft.getInstance().setScreen(null));
-        });
+        setOnCheckedChangeListener((button,id)-> Minecraft.getInstance().execute(()->Minecraft.getInstance().setScreen(null)));
     }
 }

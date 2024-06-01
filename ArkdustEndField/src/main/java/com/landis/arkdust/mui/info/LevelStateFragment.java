@@ -1,7 +1,7 @@
-package com.landis.arkdust.gui.info;
+package com.landis.arkdust.mui.info;
 
-import com.landis.arkdust.gui.AbstractArkdustInfoUI;
-import com.landis.arkdust.gui.widget.button.EndFieldStyleWidgets;
+import com.landis.arkdust.mui.AbstractArkdustInfoUI;
+import com.landis.arkdust.mui.widget.button.EndFieldStyleWidgets;
 import com.landis.arkdust.helper.MUIHelper;
 import com.landis.arkdust.registry.regtype.ArkdustRegistry;
 import com.landis.arkdust.system.world.weather.ClimateParameter;

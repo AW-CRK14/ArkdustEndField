@@ -1,4 +1,4 @@
-package com.landis.arkdust.gui.widget.button;
+package com.landis.arkdust.mui.widget.button;
 
 import icyllis.modernui.animation.Animator;
 import icyllis.modernui.animation.AnimatorListener;
@@ -9,15 +9,11 @@ import icyllis.modernui.graphics.BlendMode;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Color;
 import icyllis.modernui.graphics.Paint;
-import icyllis.modernui.mc.neoforge.UIManagerForge;
 import icyllis.modernui.util.FloatProperty;
-import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.MotionEvent;
 import icyllis.modernui.view.ViewGroup;
 import icyllis.modernui.widget.RadioButton;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 public class EndFieldStyleWidgets {
     public static class RadioButtonA extends RadioButton {

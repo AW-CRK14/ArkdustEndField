@@ -1,4 +1,4 @@
-package com.landis.arkdust.gui;
+package com.landis.arkdust.mui;
 
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.helper.MUIHelper;
@@ -80,11 +80,5 @@ public abstract class AbstractArkdustInfoUI extends Fragment {
 
     }
 
-    public static ShapeDrawable withBorder(){
-        ShapeDrawable shape = new ShapeDrawable();
-        shape.setShape(ShapeDrawable.RECTANGLE);//形状为矩形
-        shape.setCornerRadius(10);//圆角半径
-        shape.setStroke(2,Color.BLUE);//设置边框
-        return shape;
-    }
+
 }

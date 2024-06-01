@@ -8,6 +8,8 @@ public enum SlotType {
     ITEM(null,null),
     INPUT(ITEM,Direct.INPUT),
     OUTPUT(ITEM,Direct.OUTPUT),
+    ARMOR(ITEM,Direct.CONTAIN),
+    HAND(ITEM,Direct.MARK),
     ENERGY(null,null),
     ENERGY_INPUT(ENERGY,Direct.INPUT),
     ENERGY_OUTPUT(ENERGY,Direct.OUTPUT),
@@ -21,7 +23,8 @@ public enum SlotType {
     BYPRODUCT(null,Direct.OUTPUT),
     PLAYER_INVENTORY(ITEM,Direct.CONTAIN),
     CONTAINER_INVENTORY(ITEM,Direct.CONTAIN),
-    DEFAULT(null,null);
+    DEFAULT(null,null),
+    INFO(null,null);
 
     public final SlotType root;
     public final Direct direct;

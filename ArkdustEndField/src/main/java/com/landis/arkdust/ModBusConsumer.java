@@ -2,9 +2,11 @@ package com.landis.arkdust;
 
 import com.landis.arkdust.blockentity.portal.SpiritPortalBlockEntity;
 //import com.landis.arkdust.blocks.TestMachineBlock;
+import com.landis.arkdust.blockentity.thermo.ThermoCombustorBlockEntity;
 import com.landis.arkdust.datagen.*;
 import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.arkdust.registry.BlockRegistry;
+import com.landis.arkdust.registry.MenuTypeRegistry;
 import com.landis.arkdust.registry.regtype.ArkdustRegistry;
 import com.landis.arkdust.registry.render.RenderTypeRegistry;
 import com.landis.arkdust.registry.worldgen.level.BiomeRegistry;
@@ -12,6 +14,8 @@ import com.landis.arkdust.registry.worldgen.level.DimensionTypeRegistry;
 import com.landis.arkdust.registry.worldgen.level.LevelStemRegistry;
 import com.landis.arkdust.registry.worldgen.level.NoiseGenSettingRegistry;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import icyllis.modernui.mc.neoforge.MenuScreenFactory;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
@@ -21,6 +25,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -90,6 +95,14 @@ public class ModBusConsumer {
         event.register(ArkdustRegistry.CLIMATE_PARAMETER);
         event.register(ArkdustRegistry.WEATHER);
         event.register(ArkdustRegistry.WEATHER_PROVIDER);
+    }
+
+    @SubscribeEvent
+    public static void menuSetup(FMLCommonSetupEvent event){
+        event.enqueueWork(()->{
+
+            MenuScreens.register(MenuTypeRegistry.THERMO_COMBUSTOR.get(), MenuScreenFactory.create(ThermoCombustorBlockEntity.UI::new));
+        });
     }
 
     @SubscribeEvent

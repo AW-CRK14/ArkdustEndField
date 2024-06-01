@@ -1,7 +1,7 @@
 package com.landis.arkdust.network;
 
 import com.landis.arkdust.Arkdust;
-import com.landis.arkdust.gui.info.LevelStateFragment;
+import com.landis.arkdust.mui.info.LevelStateFragment;
 import com.landis.arkdust.resource.Tags;
 import icyllis.modernui.mc.MuiModApi;
 import net.minecraft.client.Minecraft;

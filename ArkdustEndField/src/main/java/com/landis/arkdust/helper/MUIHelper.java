@@ -1,11 +1,12 @@
 package com.landis.arkdust.helper;
 
-import com.landis.arkdust.gui.widget.button.CloseButton;
+import com.landis.arkdust.mui.widget.button.CloseButton;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
 import icyllis.modernui.graphics.Rect;
+import icyllis.modernui.graphics.drawable.ShapeDrawable;
 import icyllis.modernui.text.SpannableString;
 import icyllis.modernui.text.Spanned;
 import icyllis.modernui.text.style.ForegroundColorSpan;
@@ -71,7 +72,15 @@ public class MUIHelper {
         return Pair.of(imageView, titlePara);
     }
 
-    public static void extendImage(Canvas canvas, Rect rect, ResourceLocation texture, boolean useImageSize, boolean horizontalLock, float zoom, Paint paint) {
+    public static ShapeDrawable withBorder(){
+        ShapeDrawable shape = new ShapeDrawable();
+        shape.setShape(ShapeDrawable.RECTANGLE);//形状为矩形
+        shape.setCornerRadius(10);//圆角半径
+        shape.setStroke(2, icyllis.arc3d.core.Color.BLUE);//设置边框
+        return shape;
+    }
+
+    public static void repeatedGridImage(Canvas canvas, Rect rect, ResourceLocation texture, boolean useImageSize, boolean horizontalLock, float zoom, Paint paint) {
         Image image = Image.create(texture.getNamespace(), texture.getPath());
         int x = rect.x();
         int y = rect.y();

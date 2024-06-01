@@ -13,10 +13,16 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
@@ -43,4 +49,18 @@ public abstract class SpriteLoaderMixin {
                 .thenApply(list -> EventHooks.postSpriteBeforeStitchEvent(new SpriteBeforeStitchEvent(pResourceManager,pLocation,pMipLevel,pExecutor,spriteresourceloader,list)))
                 .thenApply(p_261393_ -> this.stitch(p_261393_, pMipLevel, pExecutor));
     }
+
+//    @ModifyArg(method = "loadAndStitch(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/resources/ResourceLocation;ILjava/util/concurrent/Executor;Ljava/util/Collection;)Ljava/util/concurrent/CompletableFuture;",
+//            at = @At(value = "INVOKE", target = "Ljava/util/concurrent/CompletableFuture;thenCompose(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;"),
+//            index = -1)
+//    private <T> Function<? super T, ? extends CompletionStage<List<SpriteContents>>> eventPoster(Function<? super T, ? extends CompletionStage<List<SpriteContents>>> fn, ResourceManager pResourceManager, ResourceLocation pLocation, int pMipLevel, Executor pExecutor, Collection<MetadataSectionSerializer<?>> pSectionSerializers){
+//        SpriteResourceLoader spriteresourceloader = SpriteResourceLoader.create(pSectionSerializers);
+//        return l -> fn.apply(l).thenApply(list -> EventHooks.postSpriteBeforeStitchEvent(new SpriteBeforeStitchEvent(pResourceManager,pLocation,pMipLevel,pExecutor,spriteresourceloader,list)));
+//    }
+
+//    @Inject(method = "lambda$loadAndStitch$7",
+//            at = @At(value = "HEAD"))
+//    private static void eventPoster(SpriteResourceLoader spriteresourceloader, Executor pExecutor, List p_293671_, CallbackInfoReturnable<CompletionStage> cir){
+//
+//    }
 }
