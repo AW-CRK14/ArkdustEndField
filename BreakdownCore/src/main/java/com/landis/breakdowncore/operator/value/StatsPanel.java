@@ -7,9 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class StatsPanel {
     private final BaseValue health;
@@ -80,28 +78,28 @@ public class StatsPanel {
     }
 
     public void updateStatePanel(){
-        List<AddonValue> skipped_final_add_calculate = new ArrayList<>();
-        List<AddonValue> skipped_final_multiply_calculate = new ArrayList<>();
-        List<AddonValue> skipped_multiply_calculate = new ArrayList<>();
+        List<AddonValue> skippedFinalAddCalculate = new ArrayList<>();
+        List<AddonValue> skippedFinalMultiplyCalculate = new ArrayList<>();
+        List<AddonValue> skippedMultiplyCalculate = new ArrayList<>();
         for (AddonValue addonValue : this.addonValues) {
-            if(addonValue.IS_FINAL_CALCULATE){
-                if(addonValue.IS_MULTIPLY){
-                    skipped_final_multiply_calculate.add(addonValue);
+            if(addonValue.isFinalCalculate){
+                if(addonValue.isMultiply){
+                    skippedFinalMultiplyCalculate.add(addonValue);
                 }else{
-                    skipped_final_add_calculate.add(addonValue);
+                    skippedFinalAddCalculate.add(addonValue);
                 }
             }else{
-                if(addonValue.IS_MULTIPLY){
-                    skipped_multiply_calculate.add(addonValue);
+                if(addonValue.isMultiply){
+                    skippedMultiplyCalculate.add(addonValue);
                 }else{
                     this.applyAddonValue(addonValue);
                 }
             }
         }
 
-        skipped_multiply_calculate.forEach((this::applyAddonValue));
-        skipped_final_add_calculate.forEach((this::applyAddonValue));
-        skipped_final_multiply_calculate.forEach((this::applyAddonValue));
+        skippedMultiplyCalculate.forEach((this::applyAddonValue));
+        skippedFinalAddCalculate.forEach((this::applyAddonValue));
+        skippedFinalMultiplyCalculate.forEach((this::applyAddonValue));
     }
 
     public void applyAddonValue(AddonValue addonValue){

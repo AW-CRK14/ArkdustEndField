@@ -16,14 +16,10 @@ public class BaseValue {
         return value;
     }
 
-    public double addValue(double value){
-        return this.value += value;
-    }
+    public void setValue(double value){ this.value = value; }
 
-    public double setValue(double value){ return this.value = value; }
-
-    public double setValueToDefault(){
-        return this.value = this.BASE_VALUE;
+    public void setValueToDefault(){
+        this.value = this.BASE_VALUE;
     }
 
     public double getBASE_VALUE() {
