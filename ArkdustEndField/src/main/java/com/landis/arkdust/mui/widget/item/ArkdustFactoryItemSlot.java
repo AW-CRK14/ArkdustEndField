@@ -8,7 +8,7 @@ import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
 import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.graphics.RectF;
-import icyllis.modernui.mc.neoforge.ContainerDrawHelper;
+import icyllis.modernui.mc.ContainerDrawHelper;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.widget.TextView;
 import net.minecraft.world.inventory.Slot;

@@ -1,4 +1,14 @@
-
+buildscript {
+    repositories {
+        // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+}
 
 plugins {
     id 'java-library'
@@ -85,6 +95,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
+//    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
     implementation "net.neoforged:neoforge:${neo_version}"
 }
 

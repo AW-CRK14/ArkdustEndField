@@ -3,9 +3,12 @@
 	"package": "com.landis.arkdust.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"client.LoadingClientMixin"
+
 	],
 	"injectors": {
 		"defaultRequire": 1
-	}
+	},
+	"client": [
+		"mui.ItemRender"
+	]
 }

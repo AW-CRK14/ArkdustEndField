@@ -28,17 +28,28 @@ public class IndsGroup extends RelativeLayout {
     public final int thickness = dp(0.5F);
     public final RelativeLayout child;
 
+
+    private final float renderNodeA;
+    private final float renderNodeB;
+
+
     private boolean leftDecEnable = true;
 
     private boolean closeButtonEnable = true;
 
     public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton) {
+        this(context, id, lv, enableCloseButton, 0, 0.4F);
+    }
+
+    public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton, float renderNodeA, float renderNodeB) {
         super(context);
         this.id = id;
         this.lv = lv;
         this.setBackground(new Background());
 //        this.setBackground(MUIHelper.withBorder());//test
 
+        this.renderNodeA = renderNodeA;
+        this.renderNodeB = renderNodeB;
 
         ImageView logo = new ImageView(context);
         logo.setImage(Image.create(id.getNamespace(), "ind_mac/" + id.getPath() + ".png"));
@@ -92,7 +103,7 @@ public class IndsGroup extends RelativeLayout {
                         nameGroup.addView(lvText, paraLv);
                     }
                 }
-                titles.addView(nameGroup,new LayoutParams(-2,-1));
+                titles.addView(nameGroup, new LayoutParams(-2, -1));
 
             }
             topBar.addView(titles, paraTitles);
@@ -110,7 +121,7 @@ public class IndsGroup extends RelativeLayout {
             paraButtons.addRule(RelativeLayout.RIGHT_OF);
 //            paraButtons.addRule(Gravity.CENTER);
             {
-                if(enableCloseButton) {
+                if (enableCloseButton) {
                     buttons.addView(new TopBarButton(context, 1001, new ResourceLocation(Arkdust.MODID, "gui/element/ind/close.png"), v -> Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(null))), new LayoutParams(dp(TOP_H * 0.6F), dp(TOP_H * 0.6F)));
                 }
             }
@@ -137,7 +148,7 @@ public class IndsGroup extends RelativeLayout {
 
     public class Background extends Drawable {
         public static final int CA = 0xFFE6E6E6;
-        public static final int CB = 0xDA1E1E1E;
+        public static final int CB = 0x9F1E1E1E;
         private final Paint PAINT = new Paint();
 
         @Override
@@ -146,8 +157,8 @@ public class IndsGroup extends RelativeLayout {
             int x0 = b.left;
             int x1 = b.right;
             int y0 = b.top;
-            int y1 = y0 + dp(TOP_H);
-            int y2 = (int) Math.min(b.bottom, y1 + b.height() * 0.4F);
+            float y1 = y0 + dp(TOP_H) + b.height() * renderNodeA;
+            float y2 = Math.min(b.bottom, y1 + b.height() * renderNodeB);
             boolean flag = y2 < b.bottom;
             PAINT.setColor(CA);
             canvas.drawRoundRect(x0, y0, x1, y1, dp(4), Gravity.TOP, PAINT);

@@ -28,7 +28,7 @@ public abstract class InventoryWidgets extends IndsGroup {
     protected final RelativeLayout itemsTable;
 
     public InventoryWidgets(Context context, AbstractContainerMenu menu, int itemsHeadIndex, int signLosOri) {//TODO 更多兼容
-        super(context,new ResourceLocation(Arkdust.MODID,"backpack"),-1,false);
+        super(context,new ResourceLocation(Arkdust.MODID,"backpack"),-1,false,0,0.2F);
         disableLeftDec();
         int signLos = dp(signLosOri);
         this.menu = menu;
@@ -55,7 +55,7 @@ public abstract class InventoryWidgets extends IndsGroup {
             int yPos = (y * (signLos + interval) + (y == 3 ? 2 * interval : 0));
             for (int x = 0; x < 9; x++) {
                 int xPos = x * (signLos + interval);
-                int index = itemsHeadIndex + y * 9 + x;
+                int index = y == 3 ? itemsHeadIndex + x : itemsHeadIndex + y * 9 + x + 9;
                 ItemWidget item = createItemWidget(index,signLosOri);
                 RelativeLayout.LayoutParams params = item.defaultPara();
                 item.setTranslationX(xPos);

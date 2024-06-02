@@ -42,7 +42,7 @@ public abstract class ItemWidget extends RelativeLayout {
         setClickable(true);
         setFocusable(true);
         if (this.text != null) {
-            this.text.setBackground(MUIHelper.withBorder());
+            refresh();
         }
 //        this.setBackground(MUIHelper.withBorder());//test
     }
@@ -54,12 +54,15 @@ public abstract class ItemWidget extends RelativeLayout {
     }
 
     public void refresh() {
-        if (slot.hasItem() && slot.getItem().getMaxStackSize() != 1) {
-            text.setText("" + slot.getItem().getCount());
-        } else {
-            text.setText("");
+        if(text != null){
+            if (slot.hasItem() && slot.getItem().getMaxStackSize() != 1) {
+                text.setText("" + slot.getItem().getCount());
+            } else {
+                text.setText("");
+            }
+            invalidate();
+            text.invalidate();
         }
-        invalidate();
     }
 
     @Override
