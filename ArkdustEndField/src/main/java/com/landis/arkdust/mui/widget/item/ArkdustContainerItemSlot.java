@@ -21,7 +21,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class ArkdustContainerItemSlot extends ItemWidget {
+public abstract class ArkdustContainerItemSlot extends ItemWidget {
     public static final Image FOREGROUND = Image.create(Arkdust.MODID, "gui/slot_c.png");
 
     public final Paint EDGE_PAINT = new Paint();

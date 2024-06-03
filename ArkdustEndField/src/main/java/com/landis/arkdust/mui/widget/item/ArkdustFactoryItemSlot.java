@@ -15,7 +15,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class ArkdustFactoryItemSlot extends ItemWidget {
+public abstract class ArkdustFactoryItemSlot extends ItemWidget {
     public static final Image FOREGROUND = Image.create(Arkdust.MODID, "gui/slot.png");
 
     public final Paint PAINT = new Paint();

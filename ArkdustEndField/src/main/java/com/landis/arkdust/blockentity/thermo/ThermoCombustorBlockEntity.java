@@ -131,14 +131,14 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
         private void addSlots(Inventory inventory, Container container, ThermoCombustorBlockEntity entity) {
             for (int i = 0; i < container.getContainerSize(); i++) {
-                addSlot(new Slot(container, i, 0, 0), SlotType.INPUT);
+                addSlot(new FixedSlot(container, i, 0, 0), SlotType.INPUT);
             }
 
             for (int i = 0; i < inventory.getContainerSize(); i++) {
-                addSlot(new Slot(inventory, i, 0, 0), SlotType.PLAYER_INVENTORY);
+                addSlot(new FixedSlot(inventory, i, 0, 0), SlotType.PLAYER_INVENTORY);
             }
 
-            addSlot(new Slot(entity.burning, 0, 0, 0), SlotType.INFO);//index = 37
+            addSlot(new FixedSlot(entity.burning, 0, 0, 0), SlotType.INFO);//index = 37
 
             addDataSlots(new Data());
         }
@@ -198,18 +198,8 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 //            s1.setTranslationY(group.dp(40));
 //            group.addView(s1, s1.defaultPara());
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-2, -2);
-            group.addView(new InventoryWidgets(getContext(), menu, ((Menu) menu).invStartIndex, 16){
-                @Override
-                public ItemWidget createItemWidget(int index, int los) {
-                    return UI.this.createItemWidgetCType(index,los);
-                }
-            }, params);
+            group.addView(new Inventory(((Menu)menu).invStartIndex,16), params);
             return group;
-        }
-
-        @Override
-        protected Pair<ItemWidget, RelativeLayout.LayoutParams> createWidget(int index, Slot slot, @Nullable SlotType type) {
-            return null;
         }
 
         @Override

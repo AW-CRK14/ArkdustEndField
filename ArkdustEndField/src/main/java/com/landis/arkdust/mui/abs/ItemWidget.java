@@ -5,6 +5,8 @@ import com.landis.arkdust.helper.MUIHelper;
 import icyllis.modernui.animation.ObjectAnimator;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.*;
+import icyllis.modernui.graphics.Canvas;
+import icyllis.modernui.graphics.Image;
 import icyllis.modernui.util.FloatProperty;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.MotionEvent;
@@ -12,14 +14,22 @@ import icyllis.modernui.widget.ImageView;
 import icyllis.modernui.widget.RelativeLayout;
 import icyllis.modernui.widget.TextView;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.Input;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
+import java.awt.event.InputEvent;
 
 
 public abstract class ItemWidget extends RelativeLayout {
@@ -37,7 +47,7 @@ public abstract class ItemWidget extends RelativeLayout {
     protected ImageView hoverImage;
 
     public ItemWidget(Context context, Slot slot, AbstractContainerMenu menu) {
-        this(context, slot, 16,menu);
+        this(context, slot, 16, menu);
     }
 
     public ItemWidget(Context context, Slot slot, float width, AbstractContainerMenu menu) {
@@ -57,6 +67,7 @@ public abstract class ItemWidget extends RelativeLayout {
         if (this.text != null) {
             refresh();
         }
+        setOnClickListener(v -> ((ItemWidget)v).onClick());
 //        this.setBackground(MUIHelper.withBorder());//test
     }
 
@@ -79,12 +90,6 @@ public abstract class ItemWidget extends RelativeLayout {
         }
     }
 
-    protected void attachMouseEventListener(){
-//        setOnTouchListener((v,event)->{
-//
-//        });
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -98,11 +103,56 @@ public abstract class ItemWidget extends RelativeLayout {
 
     public abstract void drawContext(int actuallyLos, float xAmend, float yAmend, Canvas canvas);
 
-    protected void onClick(int mouseButton, int typeIndex){
-        ClickType type = null;//TODOc
-        menu.clicked(slot.index,mouseButton,type, Minecraft.getInstance().player);
+    protected void onClick() {
+        Player player = Minecraft.getInstance().player;
+        if(Screen.hasShiftDown()){
+            menu.quickMoveStack(player,slot.index);
+        }else {//非快速移动
+
+            MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
+            ItemStack floating = getFloating();
+            ItemStack item = slot.getItem();
+            if (floating.isEmpty()) {//无悬浮物品
+                int count = slot.getItem().getCount();
+                if(item.isEmpty() || !slot.isActive() || !slot.mayPickup(player)){
+
+                }else if (mouseHandler.isLeftPressed()) {//左键提取
+                    floating = slot.safeTake(count, slot.getItem().getMaxStackSize(), player);
+                } else if (mouseHandler.isRightPressed()) {//右键提取
+                    floating = slot.safeTake(count, (count + 1) / 2, player);
+                }
+            } else {//有悬浮物品
+                if(slot.isActive()){
+                    if(slot.mayPlace(floating)){//如果允许放入
+                        if(mouseHandler.isLeftPressed()){//左键全部放入
+                            floating = slot.safeInsert(floating);
+                        }else if (mouseHandler.isRightPressed()){//右键放入一个
+                            floating = slot.safeInsert(floating,1);
+                        }
+                    }else if(ItemStack.isSameItemSameTags(floating,item) && slot.mayPickup(player)){//在不允许放入时，尝试取出
+                        floating.grow(slot.safeTake(slot.getItem().getCount(),floating.getMaxStackSize() - floating.getCount(),player).getCount());
+                    }
+                }
+            }
+            setFloating(floating);
+        }
     }
 
-//    public abstract @Nonnull ItemStack getFloating();
-//    public abstract void setFloating();
+    /**
+     * 预留方法<br>
+     * 可以在onHoverEvent中选择性调用
+     */
+    protected boolean handleShiftSlideQuickMove() {
+        if (Screen.hasShiftDown()) {
+            Player player = Minecraft.getInstance().player;
+            if (slot.isActive() && slot.allowModification(player)) {
+                menu.quickMoveStack(player, slot.index);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public abstract @Nonnull ItemStack getFloating();
+    public abstract void setFloating(ItemStack stack);
 }
