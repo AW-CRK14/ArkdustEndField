@@ -1,4 +1,4 @@
-package com.landis.breakdowncore.operator.skill;
+package com.landis.arkdust.operator.skill;
 
 public enum TriggerType {
     ATTACK,AUTO,BLOCKED;

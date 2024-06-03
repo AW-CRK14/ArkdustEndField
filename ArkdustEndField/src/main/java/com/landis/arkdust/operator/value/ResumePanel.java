@@ -1,4 +1,4 @@
-package com.landis.breakdowncore.operator.value;
+package com.landis.arkdust.operator.value;
 
 public class ResumePanel {
     public static final ResumePanel VANGUARD = null;

@@ -1,9 +1,6 @@
-package com.landis.breakdowncore.operator.skill;
+package com.landis.arkdust.operator.skill;
 
-import com.landis.breakdowncore.operator.AbstractOperator;
-import com.landis.breakdowncore.operator.entity.AbstractOperatorEntity;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.entity.LivingEntity;
+import com.landis.arkdust.operator.AbstractOperator;
 
 public abstract class AbstractOperatorSkill{
     public final TriggerType TYPE;

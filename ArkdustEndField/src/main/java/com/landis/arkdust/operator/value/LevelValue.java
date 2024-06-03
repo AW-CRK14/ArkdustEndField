@@ -1,6 +1,6 @@
-package com.landis.breakdowncore.operator.value;
+package com.landis.arkdust.operator.value;
 
-import com.landis.breakdowncore.operator.AbstractOperator;
+import com.landis.arkdust.operator.AbstractOperator;
 import net.minecraft.nbt.CompoundTag;
 
 public class LevelValue {

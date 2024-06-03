@@ -1,8 +1,8 @@
-package com.landis.breakdowncore.operator.entity;
+package com.landis.arkdust.operator.entity;
 
-import com.landis.breakdowncore.operator.AbstractOperator;
-import com.landis.breakdowncore.operator.skill.AbstractOperatorSkill;
-import com.landis.breakdowncore.operator.skill.TriggerType;
+import com.landis.arkdust.operator.AbstractOperator;
+import com.landis.arkdust.operator.skill.AbstractOperatorSkill;
+import com.landis.arkdust.operator.skill.TriggerType;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.*;

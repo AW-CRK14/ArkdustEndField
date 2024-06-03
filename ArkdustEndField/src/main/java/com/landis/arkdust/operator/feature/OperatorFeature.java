@@ -1,6 +1,6 @@
-package com.landis.breakdowncore.operator.feature;
+package com.landis.arkdust.operator.feature;
 
-import com.landis.breakdowncore.operator.AbstractOperator;
+import com.landis.arkdust.operator.AbstractOperator;
 
 public class OperatorFeature {
     private String name; // 特性名称

@@ -1,4 +1,4 @@
-package com.landis.breakdowncore.operator.value;
+package com.landis.arkdust.operator.value;
 
 public enum RareLevel{
 

@@ -1,8 +1,8 @@
-package com.landis.breakdowncore.operator.value;
+package com.landis.arkdust.operator.value;
 
-import com.landis.breakdowncore.operator.AbstractOperator;
-import com.landis.breakdowncore.operator.value.base.AddonValue;
-import com.landis.breakdowncore.operator.value.base.BaseValue;
+import com.landis.arkdust.operator.value.base.AddonValue;
+import com.landis.arkdust.operator.value.base.BaseValue;
+import com.landis.arkdust.operator.AbstractOperator;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 
