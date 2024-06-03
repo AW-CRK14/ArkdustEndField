@@ -1,13 +1,15 @@
 {
-	"required": true,
-	"package": "com.landis.breakdowncore.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"client": [
-		"SpriteLoaderMixin"
-	]
+  "required": true,
+  "package": "com.landis.breakdowncore.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "LoadingClientMixin",
+    "SpriteLoaderMixin"
+  ]
 }
