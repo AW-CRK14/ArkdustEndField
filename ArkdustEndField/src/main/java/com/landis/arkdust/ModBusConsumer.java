@@ -5,7 +5,6 @@ import com.landis.arkdust.blockentity.portal.SpiritPortalBlockEntity;
 import com.landis.arkdust.blockentity.thermo.ThermoCombustorBlockEntity;
 import com.landis.arkdust.datagen.*;
 import com.landis.arkdust.registry.BlockEntityRegistry;
-import com.landis.arkdust.registry.BlockRegistry;
 import com.landis.arkdust.registry.MenuTypeRegistry;
 import com.landis.arkdust.registry.regtype.ArkdustRegistry;
 import com.landis.arkdust.registry.render.RenderTypeRegistry;
@@ -26,14 +25,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
 import java.io.IOException;
@@ -92,6 +89,10 @@ public class ModBusConsumer {
 
     @SubscribeEvent
     public static void newRegistry(NewRegistryEvent event){
+        event.register(ArkdustRegistry.OPERATOR_SKILL);
+        event.register(ArkdustRegistry.OPERATOR_TYPE);
+
+
         event.register(ArkdustRegistry.CLIMATE_PARAMETER);
         event.register(ArkdustRegistry.WEATHER);
         event.register(ArkdustRegistry.WEATHER_PROVIDER);
