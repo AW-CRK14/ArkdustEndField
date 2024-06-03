@@ -3,15 +3,21 @@ package com.landis.arkdust.mui.widget.item;
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.mui.abs.ItemWidget;
 import com.landis.breakdowncore.helper.RenderHelper;
+import icyllis.modernui.animation.ObjectAnimator;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
 import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.graphics.RectF;
+import icyllis.modernui.graphics.drawable.ImageDrawable;
 import icyllis.modernui.mc.ContainerDrawHelper;
+import icyllis.modernui.util.FloatProperty;
 import icyllis.modernui.view.Gravity;
+import icyllis.modernui.view.MotionEvent;
+import icyllis.modernui.widget.ImageView;
 import icyllis.modernui.widget.RelativeLayout;
 import icyllis.modernui.widget.TextView;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -26,14 +32,54 @@ public class ArkdustContainerItemSlot extends ItemWidget {
         EDGE_PAINT.setStroke(true);
     }
 
-    public final Paint FILL_PAINT = new Paint();
+    protected final ImageView hoverImage = new ImageView(getContext()) {
+        private final ObjectAnimator hlaAnimator = ObjectAnimator.ofFloat(this, hlaProperty, 0F, 1F);
 
-    public ArkdustContainerItemSlot(Context context, Slot slot) {
-        super(context, slot);
+        private static final FloatProperty<ImageView> hlaProperty = new FloatProperty<>("hla") {
+            @Override
+            public void setValue(ImageView object, float value) {
+                object.setAlpha(value);
+            }
+
+            @Override
+            public Float get(ImageView object) {
+                return object.getAlpha();
+            }
+        };
+
+        {
+            setFocusable(true);
+            hlaAnimator.setDuration(100);
+            setOnHoverListener((view, event) -> {
+                boolean flag = true;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_HOVER_ENTER -> hlaAnimator.start();
+                    case MotionEvent.ACTION_HOVER_EXIT -> hlaAnimator.reverse();
+                    default -> flag = false;
+                }
+                if (flag) invalidate();
+                return false;
+            });
+        }
+
+    };
+
+    {
+        hoverImage.setImage(SLOT_HOVER);
+        hoverImage.setAlpha(0);
+        LayoutParams imageLayoutParams = new LayoutParams(dp(2 * width), dp(2 * width));
+        imageLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        this.addView(hoverImage, imageLayoutParams);
     }
 
-    public ArkdustContainerItemSlot(Context context, Slot slot, float width) {
-        super(context, slot, width);
+    public final Paint FILL_PAINT = new Paint();
+
+    public ArkdustContainerItemSlot(Context context, Slot slot, AbstractContainerMenu menu) {
+        super(context, slot, menu);
+    }
+
+    public ArkdustContainerItemSlot(Context context, Slot slot, float width, AbstractContainerMenu menu) {
+        super(context, slot, width, menu);
     }
 
     @Override
@@ -53,7 +99,17 @@ public class ArkdustContainerItemSlot extends ItemWidget {
     private boolean rise = false;
 
     @Override
+    public void refresh() {
+        if (slot.hasItem() && (slot.getItem().getCount() > 1 || slot.getItem().getMaxStackSize() > 1) && slot.getItem().isBarVisible() != rise) {
+            rise = !rise;
+            if (rise) textLayout.setMarginsRelative(0, 0, dp(width / 8F), 0);
+            else textLayout.setMarginsRelative(0, 0, dp(width / 16F), 0);
+            text.requestLayout();
+        }
+        super.refresh();
+    }
 
+    @Override
     public void drawContext(int actuallyLos, float xAmend, float yAmend, Canvas canvas) {
         ItemStack stack = slot.getItem();
         float itemLos = actuallyLos * 0.9F;
@@ -62,21 +118,19 @@ public class ArkdustContainerItemSlot extends ItemWidget {
         float y1 = y0 + actuallyLos;
         float x1 = x0 + actuallyLos;
 
-//        canvas.drawImage(SLOT_BACKGROUND, null, new RectF(x0, y0, x1, y1), null);
 
         if (!stack.isEmpty()) {
             //背景渲染
             canvas.drawImage(FOREGROUND, null, new RectF(x0, y0, x1, y1), null);
             //物品渲染
             ContainerDrawHelper.drawItem(canvas, stack, x0 + actuallyLos * 0.5F, y0 + 0.45F * actuallyLos, 0, itemLos, 1713015070);
-            //耐久条渲染
 
             float decHeight = actuallyLos * 0.06F;
             float interval = actuallyLos * 0.09F;
             if (stack.isBarVisible()) {
+                //渲染底部修饰圆与耐久条
                 renderRDCircle(actuallyLos, canvas, x1, y1, stack);
                 float width = actuallyLos - 3 * interval - 0.5F * decHeight;
-//                float width = actuallyLos * 0.7875F;
 
                 FILL_PAINT.setColor(stack.getBarColor() | 0xFF000000);
                 canvas.drawRoundRect(x0 + interval, y1 - interval - decHeight, x0 + interval + width * (1 - (float) stack.getDamageValue() / stack.getMaxDamage()), y1 - interval, decHeight / 2, FILL_PAINT);
@@ -97,11 +151,5 @@ public class ArkdustContainerItemSlot extends ItemWidget {
         float interval = actuallyLos * 0.09F;
         canvas.drawCircle(x1 - decHeight * 0.5F - interval, y1 - decHeight * 0.5F - interval, decHeight * 0.5F, FILL_PAINT);
         canvas.drawCircle(x1 - decHeight * 0.5F - interval, y1 - decHeight * 0.5F - interval, decHeight * 0.5F, EDGE_PAINT);
-    }
-
-
-    @Override
-    public void drawWhenHovering(int actuallyLos, float xAmend, float yAmend, Canvas canvas, float alpha) {
-
     }
 }

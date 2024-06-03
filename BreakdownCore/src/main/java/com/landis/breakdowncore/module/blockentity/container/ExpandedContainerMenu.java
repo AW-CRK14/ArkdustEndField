@@ -26,14 +26,14 @@ public abstract class ExpandedContainerMenu extends AbstractContainerMenu implem
      */
     @Override
     @Deprecated
-    protected Slot addSlot(Slot pSlot) {
+    protected @NotNull Slot addSlot(@NotNull Slot pSlot) {
         return addSlot(pSlot, null);
     }
 
     public abstract int inventoryStartIndex();
 
     @Override
-    public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
+    public @NotNull ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
         int invStartIndex = inventoryStartIndex();
         ItemStack stack = getSlot(pIndex).getItem();
         if (!stack.isEmpty()) {
@@ -47,7 +47,7 @@ public abstract class ExpandedContainerMenu extends AbstractContainerMenu implem
     }
 
     @Override
-    public boolean stillValid(Player pPlayer) {
+    public boolean stillValid(@NotNull Player pPlayer) {
         return true;
     }
 
@@ -74,7 +74,7 @@ public abstract class ExpandedContainerMenu extends AbstractContainerMenu implem
     }
 
     @Override
-    public void setStackInSlot(int index, ItemStack stack) {
+    public void setStackInSlot(int index, @NotNull ItemStack stack) {
         Slot slot = slots.get(index);
         slot.container.setItem(slot.getSlotIndex(), stack);
     }

@@ -77,9 +77,9 @@ public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIn
     public ItemWidget createItemWidgetCType(int index, float los){
         ItemWidget widget;
         if(los > 0){
-            widget = new ArkdustContainerItemSlot(getContext(), menu.getSlot(index), los);
+            widget = new ArkdustContainerItemSlot(getContext(), menu.getSlot(index), los, menu);
         }else {
-            widget = new ArkdustContainerItemSlot(getContext(), menu.getSlot(index));
+            widget = new ArkdustContainerItemSlot(getContext(), menu.getSlot(index), menu);
         }
         widgets.set(index, widget);
         return widget;

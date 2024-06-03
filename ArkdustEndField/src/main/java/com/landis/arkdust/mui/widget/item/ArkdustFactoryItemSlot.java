@@ -11,6 +11,7 @@ import icyllis.modernui.graphics.RectF;
 import icyllis.modernui.mc.ContainerDrawHelper;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.widget.TextView;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,12 +23,12 @@ public class ArkdustFactoryItemSlot extends ItemWidget {
         PAINT.setColor(0x707070);
     }
 
-    public ArkdustFactoryItemSlot(Context context, Slot slot) {
-        super(context, slot);
+    public ArkdustFactoryItemSlot(Context context, Slot slot, AbstractContainerMenu menu) {
+        super(context, slot,menu);
     }
 
-    public ArkdustFactoryItemSlot(Context context, Slot slot, float width) {
-        super(context, slot, width);
+    public ArkdustFactoryItemSlot(Context context, Slot slot, float width, AbstractContainerMenu menu) {
+        super(context, slot, width,menu);
     }
 
     @Override
@@ -70,11 +71,6 @@ public class ArkdustFactoryItemSlot extends ItemWidget {
             canvas.drawRoundRect(x0, y0 + 0.9F * actuallyLos, x1, y1, 0.05F * actuallyLos, Gravity.BOTTOM, PAINT);
             canvas.restore();
         }
-
-    }
-
-    @Override
-    public void drawWhenHovering(int actuallyLos, float xAmend, float yAmend, Canvas canvas, float alpha) {
 
     }
 }
