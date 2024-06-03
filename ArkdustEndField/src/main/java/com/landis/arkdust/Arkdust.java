@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 public class Arkdust
 {
     public static final String MODID = "arkdust";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     //ModId/type.element.xxx
     public static String getLogName(String type){
