@@ -10,15 +10,15 @@ import java.util.List;
 
 public abstract class AbstractOperator {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Operator:System");
-    public final String NAME;
-    public final StatsPanel STATS;
+    public final String name;
+    public final StatsPanel stats;
     private final List<AbstractOperatorSkill> skills = this.initSkills();
     private int currentSkillIndex = 0; // 当前激活的技能索引
     public final BaseOperatorModel baseOperatorModel = this.initModel();
 
     public AbstractOperator(String name, StatsPanel stats){
-        this.NAME = name;
-        this.STATS = stats;
+        this.name = name;
+        this.stats = stats;
     }
 
     // 添加技能到干员
@@ -53,6 +53,7 @@ public abstract class AbstractOperator {
             // 可以在这里添加错误处理或日志记录
         }
     }
+
     public AbstractOperatorSkill getCurrentSkill() {
         if (!skills.isEmpty()) {
             return this.skills.get(this.currentSkillIndex);
@@ -61,7 +62,7 @@ public abstract class AbstractOperator {
 
 
     public double getNaturalRegenRate(){
-        return this.STATS.getNaturalRegenRate().getValue();
+        return this.stats.getNaturalRegenRate().getValue();
     }
 
 }
