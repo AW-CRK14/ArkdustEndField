@@ -15,7 +15,6 @@ public class StatsPanel implements INBTSerializable<CompoundTag> {
     private final ImmutableMap<StatsValueGroup.ValueType, StatsValueGroup> VALUES;
     private boolean isLoadDone = false;
 
-
     /**
      * 构造一个新的StatsPanel实例。
      *

@@ -11,7 +11,9 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class StatsValueGroup implements INBTSerializable<CompoundTag> {
     private final ValueType type;
@@ -54,6 +56,10 @@ public class StatsValueGroup implements INBTSerializable<CompoundTag> {
         updateValue();
     }
 
+    public void addonValueApplyToValue(AddonValue addonValue){
+        this.setValue(addonValue.addonToValue(this.getValue()));
+    }
+
     public void cleanUp() {
         this.value = this.baseValue;
         this.valueAmend = 0;
@@ -61,11 +67,12 @@ public class StatsValueGroup implements INBTSerializable<CompoundTag> {
         this.WITH_STATS.clear();
     }
 
-    protected void updateValue(){
-        //TODO
+    protected void updateValue() {
+        WITH_STATS.get((byte) 0).forEach((this::addonValueApplyToValue));
+        WITH_STATS.get((byte) 1).forEach((this::addonValueApplyToValue));
+        WITH_STATS.get((byte) 2).forEach((this::addonValueApplyToValue));
+        WITH_STATS.get((byte) 3).forEach((this::addonValueApplyToValue));
     }
-
-
 
     public @Nullable AddonValue applyAddon(@Nonnull AddonValue addon){
         AddonValue fallout = ADDONS.put(addon.getAddonName(),addon);
@@ -78,7 +85,7 @@ public class StatsValueGroup implements INBTSerializable<CompoundTag> {
     }
 
     public @Nullable AddonValue removeAddon(@Nonnull AddonValue addon){
-        addon = ADDONS.remove(addon);
+        addon = ADDONS.remove(addon.getAddonName());
         if(addon != null){
             WITH_STATS.remove(addon.getStatsIndex(),addon);
         }

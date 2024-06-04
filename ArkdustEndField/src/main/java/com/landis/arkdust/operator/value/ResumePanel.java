@@ -26,7 +26,7 @@ public class ResumePanel {
         GUARD, // 近卫
         DEFENDER, // 重装
         SNIPER, // 射手
-        CASTER, // 术士
+        CASTER, // 狙击
         MEDIC, // 医疗
         SUPPORTER, // 辅助
         SPECIALIST, // 特种
