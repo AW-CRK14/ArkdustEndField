@@ -1,6 +1,35 @@
 package com.landis.arkdust.mui.mouse;
 
+import icyllis.modernui.view.MotionEvent;
+import icyllis.modernui.view.View;
+
 public class BaseMouseInfo  {
+
+//    {
+//        //---[Mouse Event Handle鼠标事件处理]---
+//
+//        protected BaseMouseInfo mouseInfo = new BaseMouseInfo();
+//        private boolean mouseInfoRedirected = false;
+//        public boolean isMouseInfoRedirected() {
+//        return mouseInfoRedirected;
+//    }
+//
+//        public void redirectMouseInfo(BaseMouseInfo info){
+//        this.mouseInfo = info;
+//        if(!mouseInfoRedirected){
+//            setOnTouchListener(null);
+//        }
+//        this.mouseInfoRedirected = true;
+//    }
+//
+//        public final View.OnTouchListener mouseListener = (v, m)->{
+//            this.mouseInfo.updateMouseInfo(m);
+//            return false;
+//        };
+//    }
+
+
+
     // 鼠标指针的当前位置
     private float x;
     private float y;
@@ -78,6 +107,11 @@ public class BaseMouseInfo  {
 
     public void setPressed(boolean pressed) {
         isPressed = pressed;
+    }
+
+
+    public void updateMouseInfo(MotionEvent event){
+        updateMouseInfo(event.getX(),event.getY(),event.isButtonPressed(1),event.isButtonPressed(2),event.isButtonPressed(4));
     }
 
     // 更新鼠标状态，通常由鼠标事件触发

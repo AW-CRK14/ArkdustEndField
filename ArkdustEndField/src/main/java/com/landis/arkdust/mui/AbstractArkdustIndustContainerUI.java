@@ -29,8 +29,6 @@ public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIn
     protected final List<ItemWidget> widgets;
     public final boolean autoAddSlots;
 
-    public ItemStack floating = ItemStack.EMPTY;
-
     protected ViewGroup itemsGroup;
     public AbstractArkdustIndustContainerUI(boolean addPlayerSlots, AbstractContainerMenu menu){
         this(addPlayerSlots,menu,true);
@@ -93,16 +91,6 @@ public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIn
         @Override
         protected void setItemWidget(ItemWidget widget, int index) {
             widgets.set(index,widget);
-        }
-
-        @Override
-        protected void setFloating(ItemStack stack) {
-            floating = stack;
-        }
-
-        @Override
-        protected ItemStack getFloating() {
-            return floating;
         }
     }
 }

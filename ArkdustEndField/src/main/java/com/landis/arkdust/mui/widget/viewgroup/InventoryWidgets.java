@@ -2,10 +2,12 @@ package com.landis.arkdust.mui.widget.viewgroup;
 
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.mui.abs.ItemWidget;
+import com.landis.arkdust.mui.mouse.BaseMouseInfo;
 import com.landis.arkdust.mui.widget.item.ArkdustContainerItemSlot;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Paint;
+import icyllis.modernui.view.MotionEvent;
 import icyllis.modernui.widget.RelativeLayout;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -73,9 +75,12 @@ public abstract class InventoryWidgets extends IndsGroup {
         LayoutParams para = new LayoutParams(width * 2, height * 2);
         para.setMarginsRelative(dp(signLos * 1.6F), dp(signLos * 0.3F), dp(signLos * 0.4F), dp(signLos * 0.4F));
         child.addView(itemsTable, para);
-//        itemsTable.setBackground(MUIHelper.withBorder());
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
+    }
 
     public ItemWidget createItemWidget(int index, float los) {
         ItemWidget widget;
@@ -90,10 +95,6 @@ public abstract class InventoryWidgets extends IndsGroup {
 
     protected abstract void setItemWidget(ItemWidget widget, int index);
 
-    protected abstract void setFloating(ItemStack stack);
-
-    protected abstract ItemStack getFloating();
-
     protected class SlotView extends ArkdustContainerItemSlot {
         public SlotView(int index, AbstractContainerMenu menu) {
             super(InventoryWidgets.this.getContext(), menu.getSlot(index), menu);
@@ -102,21 +103,6 @@ public abstract class InventoryWidgets extends IndsGroup {
         public SlotView(int index, float width, AbstractContainerMenu menu) {
             super(InventoryWidgets.this.getContext(), menu.getSlot(index), width, menu);
         }
-
-        @NotNull
-        @Override
-        public ItemStack getFloating() {
-            return InventoryWidgets.this.getFloating();
-        }
-
-        @Override
-        public void setFloating(ItemStack stack) {
-            InventoryWidgets.this.setFloating(stack);
-        }
     }
-
-//    public abstract ItemStack getFloating();
-//
-//    public abstract void setFloating(ItemStack stack);
 
 }

@@ -3,6 +3,7 @@ package com.landis.breakdowncore.module.blockentity.container;
 import com.landis.breakdowncore.helper.ContainerHelper;
 import com.landis.breakdowncore.module.blockentity.gmui.ISlotChangeNotify;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
