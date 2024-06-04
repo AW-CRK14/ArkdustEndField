@@ -67,7 +67,4 @@ public class AddonValue {
         return (byte) ((isFinalCalculate ? 2 : 0) + (isMultiply ? 1 : 0));
     }
 
-
-
-
 }
