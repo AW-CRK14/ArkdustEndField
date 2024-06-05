@@ -3,6 +3,7 @@ package com.landis.arkdust.mui.abs;
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.mui.mouse.BaseMouseInfo;
 import com.landis.arkdust.network.SynMenuSlotClick;
+import com.landis.breakdowncore.helper.ContainerHelper;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
@@ -66,15 +67,17 @@ public abstract class ItemWidget extends RelativeLayout {
     }
 
     public void refresh() {
-        if (text != null) {
-            if (slot.hasItem() && slot.getItem().getMaxStackSize() != 1) {
-                text.setText("" + slot.getItem().getCount());
-            } else {
-                text.setText("");
+        post(()->{
+            if (text != null) {
+                if (slot.hasItem() && slot.getItem().getMaxStackSize() != 1) {
+                    text.setText("" + slot.getItem().getCount());
+                } else {
+                    text.setText("");
+                }
+                invalidate();
+                text.invalidate();
             }
-            invalidate();
-            text.invalidate();
-        }
+        });
     }
 
 
@@ -98,9 +101,13 @@ public abstract class ItemWidget extends RelativeLayout {
     //---[Interaction Part 交互部分]---
 
     protected void onClick(MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_DOWN){
-            SynMenuSlotClick.send(menu.getType(),slot.index,(Screen.hasShiftDown() ? -1 : 1) * event.getActionButton());
+        int actionIndex = (Screen.hasShiftDown() ? -1 : 1) * event.getActionButton();
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            SynMenuSlotClick.send(menu.getType(), slot.index, actionIndex);
         }
+
+//        ContainerHelper.handleSlotClick(actionIndex, slot.index, Minecraft.getInstance().player, menu, true);
+//        this.refresh();
     }
 
     /**

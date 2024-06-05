@@ -2,33 +2,33 @@ package com.landis.breakdowncore.module.blockentity.container;
 
 import com.landis.breakdowncore.helper.ContainerHelper;
 import com.landis.breakdowncore.module.blockentity.gmui.ISlotChangeNotify;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class ExpandedContainerMenu extends AbstractContainerMenu implements ISlotTypeExpansion {
-    public final NonNullList<SlotType> typeList = NonNullList.create();
-    private @Nullable ISlotChangeNotify belonging;
+public abstract class ExpandedContainerMenu<T extends BlockEntity> extends AbstractContainerMenu implements ISlotTypeExpansion, ContainerListener {
 
-    protected ExpandedContainerMenu(@Nullable MenuType<?> pMenuType, int pContainerId) {
+    public final T belonging;
+    public final Player user;
+    public final boolean isClient;
+
+    protected ExpandedContainerMenu(@Nullable MenuType<?> pMenuType, int pContainerId, T blockEntity, Player player) {
         super(pMenuType, pContainerId);
-    }
-
-    /**
-     * @see ExpandedContainerMenu#addSlot(Slot, SlotType) addSlot(Slot, SlotType)
-     */
-    @Override
-    @Deprecated
-    protected @NotNull Slot addSlot(@NotNull Slot pSlot) {
-        return addSlot(pSlot, null);
+        addSlotListener(this);
+        this.belonging = blockEntity;
+        this.user = player;
+        this.isClient = player instanceof LocalPlayer;
     }
 
     public abstract int inventoryStartIndex();
@@ -48,15 +48,40 @@ public abstract class ExpandedContainerMenu extends AbstractContainerMenu implem
     }
 
     @Override
+    public void setStackInSlot(int index, @NotNull ItemStack stack) {
+        setItem(index,0,stack);
+    }
+
+    @Override
     public boolean stillValid(@NotNull Player pPlayer) {
         return true;
+    }
+
+    //由Menu下发
+    public void slotChanged(AbstractContainerMenu menu, int slotIndex, ItemStack stack){
+        onContentsChanged(slotIndex);//IFIH已收到提醒
+
+    };
+
+    public void dataChanged(AbstractContainerMenu pContainerMenu, int pDataSlotIndex, int pValue){
+
+    };
+
+
+    /**
+     * @see ExpandedContainerMenu#addSlot(Slot, SlotType) addSlot(Slot, SlotType)
+     */
+    @Override
+    @Deprecated
+    protected @NotNull Slot addSlot(@NotNull Slot pSlot) {
+        return addSlot(pSlot, null);
     }
 
     protected Slot addSlot(Slot slot, SlotType type) {
         super.addSlot(slot);
         if (type == null) {
             if (slot.container instanceof ISlotTypeExpansion t) {
-                type = t.getForType(slot.getSlotIndex());
+                type = t.getSlotType(slot.getSlotIndex());
             } else {
                 type = SlotType.DEFAULT;
             }
@@ -68,16 +93,11 @@ public abstract class ExpandedContainerMenu extends AbstractContainerMenu implem
         return slot;
     }
 
+    public final NonNullList<SlotType> typeList = NonNullList.create();
 
     @Override
-    public List<SlotType> getSlotTypeReflect() {
-        return null;
-    }
-
-    @Override
-    public void setStackInSlot(int index, @NotNull ItemStack stack) {
-        Slot slot = slots.get(index);
-        slot.container.setItem(slot.getSlotIndex(), stack);
+    public SlotType getSlotType(int index) {
+        return typeList.get(index);
     }
 
     @Override
@@ -88,19 +108,5 @@ public abstract class ExpandedContainerMenu extends AbstractContainerMenu implem
     @Override
     public @NotNull ItemStack getStackInSlot(int slot) {
         return slots.get(slot).getItem();
-    }
-
-    @Override
-    public void onContentsChanged(int slot) {
-        ISlotTypeExpansion.super.onContentsChanged(slot);
-        if (belonging != null) {
-            belonging.notify(slot);
-        }
-    }
-
-    public void setBelonging(ISlotChangeNotify belonging) {
-        if(this.belonging == null){
-            this.belonging = belonging;
-        }
     }
 }

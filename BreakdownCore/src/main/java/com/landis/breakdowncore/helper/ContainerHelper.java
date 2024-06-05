@@ -1,6 +1,8 @@
 package com.landis.breakdowncore.helper;
 
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
@@ -80,5 +82,47 @@ public class ContainerHelper {
             return ItemStack.EMPTY;
         }
         return stack;
+    }
+
+    public static void handleSlotClick(int actionIndex, int slotIndex, Player player, AbstractContainerMenu menu, boolean isClient) {
+        Slot slot = menu.getSlot(slotIndex);
+        if (actionIndex == -1) {
+            menu.quickMoveStack(player, slotIndex);
+        } else {//非快速移动
+            ItemStack item = slot.getItem();
+            ItemStack carried = isClient ? menu.remoteCarried : menu.getCarried();
+            ItemStack newCarried = null;
+            if (carried.isEmpty()) {//无悬浮物品
+                int count = slot.getItem().getCount();
+                if (item.isEmpty() || !slot.isActive() || !slot.mayPickup(player)) {
+
+                } else if ((actionIndex & 0b1) == 1) {//左键提取
+                    newCarried = slot.safeTake(count, slot.getItem().getMaxStackSize(), player);
+                } else if ((actionIndex & 0b10 >> 1) == 1) {//右键提取
+                    newCarried = slot.safeTake(count, (count + 1) / 2, player);
+                }
+            } else {//有悬浮物品
+                if (slot.isActive()) {
+                    if (slot.mayPlace(carried)) {//如果允许放入
+                        if ((actionIndex & 0b1) == 1) {//左键全部放入
+                            newCarried = slot.safeInsert(carried);
+                        } else if ((actionIndex & 0b10 >> 1) == 1) {//右键放入一个
+                            newCarried = slot.safeInsert(carried, 1);
+                        }
+                    } else if (ItemStack.isSameItemSameTags(carried, item) && slot.mayPickup(player) && (actionIndex & 0b1) == 1) {//在不允许放入时，尝试取出
+                        carried.grow(slot.safeTake(slot.getItem().getCount(), carried.getMaxStackSize() - carried.getCount(), player).getCount());
+                        newCarried = carried;
+                    }
+                }
+            }
+            if(newCarried != null && newCarried != carried){
+                if (isClient) {
+                    menu.remoteCarried = newCarried;
+                } else {
+                    menu.setCarried(newCarried);
+                }
+            }
+//            menu.slotsChanged(slot.container);//服务端玩家每tick会自动请求同步数据
+        }
     }
 }

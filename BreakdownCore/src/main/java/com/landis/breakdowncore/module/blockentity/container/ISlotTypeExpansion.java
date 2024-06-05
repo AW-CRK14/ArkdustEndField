@@ -6,23 +6,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ISlotTypeExpansion extends IAutoHandleItemHandle {
-    List<SlotType> getSlotTypeReflect();
-
-    default SlotType getForType(int index) {
-        return getSlotTypeReflect().get(index);
-    }
-
-    ;
+public interface ISlotTypeExpansion extends IFriendlyItemHandle {
+    SlotType getSlotType(int index);
 
     default List<Integer> getSlotIndexForType(SlotType type, boolean useRootCheck) {
-        List<SlotType> types = getSlotTypeReflect();
-        List<Integer> indexes = new ArrayList<>();
-        for (int i = 0; i < types.size(); i++) {
-            if (useRootCheck ? types.get(i).isFor(type) : types.get(i) == type)
-                indexes.add(i);
+        List<Integer> list = new ArrayList<>();
+        for(int i = 0 ; i < getSlots() ; i++){
+            if(useRootCheck ? getSlotType(i).isFor(type) : getSlotType(i) == type){
+                list.add(i);
+            }
         }
-        return indexes;
+        return list;
     }
 
     default ItemStack getSlot(SlotType type, int index, boolean useRootCheck) {

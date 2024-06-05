@@ -1,6 +1,7 @@
 package com.landis.arkdust.network;
 
 import com.landis.arkdust.Arkdust;
+import com.landis.breakdowncore.helper.ContainerHelper;
 import icyllis.modernui.view.MotionEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -48,39 +49,10 @@ public class SynMenuSlotClick {
         context.workHandler().execute(() -> context.player().ifPresent(player -> {
             AbstractContainerMenu menu = ((ServerPlayer) player).containerMenu;
             if (BuiltInRegistries.MENU.getKey(menu.getType()).equals(pack.menuType)) {
-
-                int slotIndex = pack.slotIndex;
-                Slot slot = menu.getSlot(slotIndex);
-                if (pack.mouseButtonIndex == -1) {
-                    menu.quickMoveStack(player, slotIndex);
-                } else {//非快速移动
-                    ItemStack item = slot.getItem();
-                    ItemStack carried = menu.getCarried();
-                    if (carried.isEmpty()) {//无悬浮物品
-                        int count = slot.getItem().getCount();
-                        if (item.isEmpty() || !slot.isActive() || !slot.mayPickup(player)) {
-
-                        } else if (pack.mouseButtonIndex == MotionEvent.BUTTON_PRIMARY) {//左键提取
-                            menu.setCarried(slot.safeTake(count, slot.getItem().getMaxStackSize(), player));
-                        } else if (pack.mouseButtonIndex == MotionEvent.BUTTON_SECONDARY) {//右键提取
-                            menu.setCarried(slot.safeTake(count, (count + 1) / 2, player));
-                        }
-                    } else {//有悬浮物品
-                        if (slot.isActive()) {
-                            if (slot.mayPlace(carried)) {//如果允许放入
-                                if (pack.mouseButtonIndex == MotionEvent.BUTTON_PRIMARY) {//左键全部放入
-                                    menu.setCarried(slot.safeInsert(carried));
-                                } else if (pack.mouseButtonIndex == MotionEvent.BUTTON_SECONDARY) {//右键放入一个
-                                    menu.setCarried(slot.safeInsert(carried, 1));
-                                }
-                            } else if (ItemStack.isSameItemSameTags(carried, item) && slot.mayPickup(player) && pack.mouseButtonIndex == MotionEvent.BUTTON_PRIMARY) {//在不允许放入时，尝试取出
-                                carried.grow(slot.safeTake(slot.getItem().getCount(), carried.getMaxStackSize() - carried.getCount(), player).getCount());
-                            }
-                        }
-                    }
-                    menu.slotsChanged(slot.container);
-                }
+                ContainerHelper.handleSlotClick(pack.mouseButtonIndex, pack.slotIndex, player, menu, false);
             }
         }));
     }
+
+
 }

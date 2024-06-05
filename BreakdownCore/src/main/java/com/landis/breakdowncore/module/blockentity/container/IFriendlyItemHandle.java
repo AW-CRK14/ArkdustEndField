@@ -10,7 +10,7 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
-public interface IAutoHandleItemHandle extends IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundTag> {
+public interface IFriendlyItemHandle extends IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundTag> {
     @Override
     @NotNull
     default ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
@@ -102,6 +102,7 @@ public interface IAutoHandleItemHandle extends IItemHandler, IItemHandlerModifia
         return Math.min(getSlotLimit(slot),stack.getMaxStackSize());
     };
 
+    //value: -1 表示不计索引的变动
     default void onContentsChanged(int slot){};
 
     @Override

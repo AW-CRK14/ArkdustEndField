@@ -1,10 +1,12 @@
 package com.landis.arkdust.blockentity.thermo;
 
 import com.landis.arkdust.mui.AbstractArkdustIndustContainerUI;
+import com.landis.arkdust.mui.abs.IMenu2ScreenNotifiable;
 import com.landis.arkdust.mui.abs.ItemWidget;
 import com.landis.arkdust.mui.widget.viewgroup.InventoryWidgets;
 import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.arkdust.registry.MenuTypeRegistry;
+import com.landis.arkdust.system.ArkdustContainerMenu;
 import com.landis.breakdowncore.Registries;
 import com.landis.breakdowncore.module.blockentity.container.*;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
@@ -19,6 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +31,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWrappedMenuProvider, MenuScreenFactory<ThermoCombustorBlockEntity.Menu> {
 
@@ -54,6 +60,9 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
     private int remainTime;
     private int thermalEfficiency;
 
+
+    //---[基础数据处理 basic data handle]--
+
     @Override
     protected void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
@@ -72,6 +81,8 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         thermalEfficiency = pTag.getInt("te");
     }
 
+    //---[热力处理 thermo handle]---
+
     @Override
     public int getM() {
         return 1000;
@@ -86,6 +97,8 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         this.insertHeat(2000000, false);
         super.thermoTick(pLevel, pPos, pState);
     }
+
+    //---[菜单与容器 menu and container]---
 
     @Override
     public Container getContainer() {
@@ -110,22 +123,19 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
     }
 
 
-    public static class Menu extends ExpandedContainerMenu {
+    public static class Menu extends ExpandedContainerMenu<ThermoCombustorBlockEntity> implements IMenu2ScreenNotifiable {
 
         public final Container container;
         public final Inventory inventory;
-        public final Player user;
-        public final ThermoCombustorBlockEntity entity;
         public final int invStartIndex;
+        private @Nullable AbstractArkdustIndustContainerUI fragment;
 
         public Menu(int pContainerId, Inventory inventory, FriendlyByteBuf buffer) {
-            super(MenuTypeRegistry.THERMO_COMBUSTOR.get(), pContainerId);
-            this.user = inventory.player;
-            this.entity = (ThermoCombustorBlockEntity) user.level().getBlockEntity(buffer.readBlockPos());
-            this.container = entity.container;
+            super(MenuTypeRegistry.THERMO_COMBUSTOR.get(), pContainerId, (ThermoCombustorBlockEntity) inventory.player.level().getBlockEntity(buffer.readBlockPos()), inventory.player);
+            this.container = belonging.container;
             this.inventory = inventory;
             this.invStartIndex = container.getContainerSize();
-            addSlots(inventory, container, entity);
+            addSlots(inventory, container, belonging);
         }
 
         private void addSlots(Inventory inventory, Container container, ThermoCombustorBlockEntity entity) {
@@ -143,12 +153,10 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         }
 
         public Menu(int pContainerId, Inventory inventory, Container container, Player user, ThermoCombustorBlockEntity entity) {
-            super(MenuTypeRegistry.THERMO_COMBUSTOR.get(), pContainerId);
+            super(MenuTypeRegistry.THERMO_COMBUSTOR.get(), pContainerId, entity, inventory.player);
             this.container = container;
             this.inventory = inventory;
             this.invStartIndex = container.getContainerSize();
-            this.user = user;
-            this.entity = entity;
             addSlots(inventory, container, entity);
         }
 
@@ -157,20 +165,40 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             return invStartIndex;
         }
 
+        //---[UI响应处理 UI response handle]---
+
+        @Override
+        public void bingFragment(AbstractArkdustIndustContainerUI mui) {
+            if (fragment == null) {
+                fragment = mui;
+            }
+        }
+
+        @Override
+        public void notifySlotChanged(int index) {
+            if (fragment != null)
+                fragment.notify(index);
+        }
+
+        @Override
+        public void setItem(int pSlotId, int pStateId, ItemStack pStack) {
+            super.setItem(pSlotId, pStateId, pStack);
+            notifySlotChanged(pSlotId);
+        }
 
         public class Data implements ContainerData {
 
             @Override
             public int get(int pIndex) {
-                return pIndex == 0 ? entity.thermalEfficiency : entity.remainTime;
+                return pIndex == 0 ? belonging.thermalEfficiency : belonging.remainTime;
             }
 
             @Override
             public void set(int pIndex, int pValue) {
                 if (pIndex == 0) {
-                    entity.thermalEfficiency = pValue;
+                    belonging.thermalEfficiency = pValue;
                 } else {
-                    entity.remainTime = pValue;
+                    belonging.remainTime = pValue;
                 }
             }
 
@@ -197,13 +225,8 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 //            s1.setTranslationY(group.dp(40));
 //            group.addView(s1, s1.defaultPara());
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-2, -2);
-            group.addView(new Inventory(((Menu)menu).invStartIndex,16), params);
+            group.addView(new Inventory(((Menu) menu).invStartIndex, 16), params);
             return group;
-        }
-
-        @Override
-        public void notify(int index) {
-
         }
     }
 }

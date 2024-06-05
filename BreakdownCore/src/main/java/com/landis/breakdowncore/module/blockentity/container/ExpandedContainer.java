@@ -62,8 +62,8 @@ public class ExpandedContainer extends SimpleContainer implements ISlotTypeExpan
     }
 
     @Override
-    public List<SlotType> getSlotTypeReflect() {
-        return typeList;
+    public SlotType getSlotType(int index) {
+        return typeList.get(index);
     }
 
     @Override
@@ -80,5 +80,11 @@ public class ExpandedContainer extends SimpleContainer implements ISlotTypeExpan
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         setItem(slot,stack);
+    }
+
+    @Override
+    public void onContentsChanged(int slot) {
+        ISlotTypeExpansion.super.onContentsChanged(slot);
+        setChanged();
     }
 }
