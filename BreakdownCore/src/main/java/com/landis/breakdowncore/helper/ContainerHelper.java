@@ -98,7 +98,7 @@ public class ContainerHelper {
 
                 } else if ((actionIndex & 0b1) == 1) {//左键提取
                     newCarried = slot.safeTake(count, slot.getItem().getMaxStackSize(), player);
-                } else if ((actionIndex & 0b10 >> 1) == 1) {//右键提取
+                } else if (((actionIndex & 0b10) >> 1) == 1) {//右键提取
                     newCarried = slot.safeTake(count, (count + 1) / 2, player);
                 }
             } else {//有悬浮物品
@@ -106,7 +106,7 @@ public class ContainerHelper {
                     if (slot.mayPlace(carried)) {//如果允许放入
                         if ((actionIndex & 0b1) == 1) {//左键全部放入
                             newCarried = slot.safeInsert(carried);
-                        } else if ((actionIndex & 0b10 >> 1) == 1) {//右键放入一个
+                        } else if (((actionIndex & 0b10) >> 1) == 1) {//右键放入一个
                             newCarried = slot.safeInsert(carried, 1);
                         }
                     } else if (ItemStack.isSameItemSameTags(carried, item) && slot.mayPickup(player) && (actionIndex & 0b1) == 1) {//在不允许放入时，尝试取出
