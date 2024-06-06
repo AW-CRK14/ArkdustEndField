@@ -2,7 +2,6 @@ package com.landis.arkdust.mui.widget.viewgroup;
 
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.mui.abs.ItemWidget;
-import com.landis.arkdust.mui.mouse.BaseMouseInfo;
 import com.landis.arkdust.mui.widget.item.ArkdustContainerItemSlot;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
@@ -11,10 +10,6 @@ import icyllis.modernui.view.MotionEvent;
 import icyllis.modernui.widget.RelativeLayout;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
