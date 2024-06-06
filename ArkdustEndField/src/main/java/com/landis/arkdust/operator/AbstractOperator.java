@@ -3,6 +3,7 @@ package com.landis.arkdust.operator;
 import com.landis.arkdust.operator.value.StatsPanel;
 import com.landis.arkdust.operator.model.BaseOperatorModel;
 import com.landis.arkdust.operator.skill.AbstractOperatorSkill;
+import com.landis.arkdust.operator.value.base.StatsValueGroup;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,4 +70,7 @@ public abstract class AbstractOperator {
     }
 
 
+    public double getNaturalRegenRate() {
+        return this.stats.getBaseValueFromType(StatsValueGroup.ValueType.NATURAL_REGEN_RATE).getValue();
+    }
 }

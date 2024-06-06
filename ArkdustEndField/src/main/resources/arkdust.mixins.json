@@ -9,7 +9,6 @@
 		"defaultRequire": 1
 	},
 	"client": [
-		"client.LoadingClientMixin",
 		"mui.ItemRenderMixin"
 	]
 }

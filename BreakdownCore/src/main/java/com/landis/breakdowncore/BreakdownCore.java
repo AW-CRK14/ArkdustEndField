@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 @Mod(BreakdownCore.MODID)
 public class BreakdownCore {
     public static final String MODID = "brea";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public BreakdownCore(IEventBus modEventBus) {
 

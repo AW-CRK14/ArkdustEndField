@@ -34,6 +34,8 @@ versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
+[[modproperties]]
+priority = "HIGH"
 #[features."${mod_id}"]
 #openGLVersion="[3.2,)"
 [[accessTransformers]]
