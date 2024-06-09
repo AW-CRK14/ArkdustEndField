@@ -10,6 +10,8 @@
 * “金属”的`MaterialFeature`，设置依赖为无，类型物品为\[锭,块\]
 * “铁”的`Material`，我们为其添加“金属”的MaterialFeature的特性。
 
+您可以从[这里](MaterialItemType.java)开始通过javadoc阅读整个模块流程与实例。
+
 # 运行流程
 1. 数据收集阶段，这一阶段与mod信息收集阶段平行。在`RegisterEvent`事件，优先级为High的时候，所有被添加的[`Handle$Material`](Handler$Material.java)将被统一调用收集信息，同时dataGather标志将被设置为false。这意味着您可以在mod主类的构造或`RegisterEvent`的Highest优先级注册新的处理器。
 2. 基本注册阶段，这一阶段将注册所有使用`DeferredRegistry`注册的材料，材料物品种类，材料特征。在这一阶段，材料与材料特征被调用时将会拉取 阶段1 提供的，对于本对象的额外附加内容。在这之后，这两个表将会被清空。

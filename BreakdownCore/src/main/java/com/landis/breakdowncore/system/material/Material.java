@@ -13,17 +13,30 @@ import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**Material材料<br><p>
+ * 材料是材料系统的最前端对象，也是MF、MIT与ItemStack交互的中枢层级。<br>
+ * 创建一个材料时，您可以为其添加材料特征实例，它们将被统一存储且内容不可变。<br><p>
+ * 在创建实例后的初始化方法调用后，将自动生成一系列对应的表，包括材料包含的物品类型，特征类型对特征实例的映射等。您可以在适当的时机调用它们以获取信息<br><p>
+ * 材质方面，物品模型的组装中，除了来自MIT的物品形状与叠加层外，就是来自材料的材质。其路径也与id绑定，对应为<br>
+ *      [NameSpace]/textures/brea/material/material/[Path].png<br>
+ * 的材质。另外，材料系统可以将该种材料指定为中间产物(isIntermediateProduct)，这样它将不会尝试拉取材料材质，而是仅使用MIT的材质，并使用设定的颜色(x16color)进行着色。<br>
+ * 注意：我们建议您在使用后一种方法时<font color="yellow">尽量使用少种类的颜色</font>，因为同种颜色动态生成的材质会被统一编入并调用，更多的颜色意味着更多的材质，更多的内存负担。
+ * @see com.landis.breakdowncore.Registries.MaterialReg 在Registries中查看系统的注册方法
+ * @see System$Material 查看Material系统的核心中控
+ *
+ * */
 public class Material {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Material/M");
     public final ResourceLocation id;
     public final int x16color;
     public final boolean intermediateProduct;
-    public final ImmutableList<IMaterialFeature<?>> fIns;
-    public final ImmutableSet<ResourceLocation> featureIDs;
-    private ImmutableMap<MaterialFeatureType<? extends IMaterialFeature<?>>,IMaterialFeature<?>> toFeature;
-    private ImmutableSet<MaterialItemType> toTypes;
+    public final ImmutableList<IMaterialFeature<?>> fIns;//材料特征数组。材料的所有MF都被存储在这里
+    public final ImmutableSet<ResourceLocation> featureIDs;//材料特征的id列表
+    private ImmutableMap<MaterialFeatureType<? extends IMaterialFeature<?>>,IMaterialFeature<?>> toFeature;//由特征类型向特征实例的映射表
+    private ImmutableSet<MaterialItemType> toTypes;//材料具有的所有物品类型
 
     public Material(ResourceLocation id, int x16color, boolean isIntermediateProduct, IMaterialFeature<?>... fIns){
         this.id = id;
