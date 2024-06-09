@@ -9,7 +9,6 @@ import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
 import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.graphics.RectF;
-import icyllis.modernui.graphics.drawable.ImageDrawable;
 import icyllis.modernui.mc.ContainerDrawHelper;
 import icyllis.modernui.util.FloatProperty;
 import icyllis.modernui.view.Gravity;
@@ -21,7 +20,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class ArkdustContainerItemSlot extends ItemWidget {
+public abstract class ContainerItemView extends ItemWidget {
     public static final Image FOREGROUND = Image.create(Arkdust.MODID, "gui/slot_c.png");
 
     public final Paint EDGE_PAINT = new Paint();
@@ -51,13 +50,10 @@ public abstract class ArkdustContainerItemSlot extends ItemWidget {
             setFocusable(true);
             hlaAnimator.setDuration(100);
             setOnHoverListener((view, event) -> {
-                boolean flag = true;
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_HOVER_ENTER -> hlaAnimator.start();
                     case MotionEvent.ACTION_HOVER_EXIT -> hlaAnimator.reverse();
-                    default -> flag = false;
                 }
-                if (flag) invalidate();
                 return false;
             });
         }
@@ -74,11 +70,11 @@ public abstract class ArkdustContainerItemSlot extends ItemWidget {
 
     public final Paint FILL_PAINT = new Paint();
 
-    public ArkdustContainerItemSlot(Context context, Slot slot, AbstractContainerMenu menu) {
+    public ContainerItemView(Context context, Slot slot, AbstractContainerMenu menu) {
         super(context, slot, menu);
     }
 
-    public ArkdustContainerItemSlot(Context context, Slot slot, float width, AbstractContainerMenu menu) {
+    public ContainerItemView(Context context, Slot slot, float width, AbstractContainerMenu menu) {
         super(context, slot, width, menu);
     }
 
@@ -113,8 +109,8 @@ public abstract class ArkdustContainerItemSlot extends ItemWidget {
     public void drawContext(int actuallyLos, float xAmend, float yAmend, Canvas canvas) {
         ItemStack stack = slot.getItem();
         float itemLos = actuallyLos * 0.9F;
-        float y0 = getTop() + yAmend;
-        float x0 = getLeft() + xAmend;
+        float y0 = getPaddingTop() + yAmend;
+        float x0 = getPaddingLeft() + xAmend;
         float y1 = y0 + actuallyLos;
         float x1 = x0 + actuallyLos;
 

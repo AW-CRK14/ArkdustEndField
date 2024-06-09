@@ -21,7 +21,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 
 public class IndsGroup extends RelativeLayout {
-    private static final int TOP_H = 40;
+    public static final int TOP_H = 40;
 
     public final ResourceLocation id;
     public final int lv;
@@ -29,8 +29,8 @@ public class IndsGroup extends RelativeLayout {
     public final RelativeLayout child;
 
 
-    private final float renderNodeA;
-    private final float renderNodeB;
+    public float renderNodeA;
+    public float renderNodeB;
 
 
     private boolean leftDecEnable = true;
@@ -60,6 +60,7 @@ public class IndsGroup extends RelativeLayout {
 
         RelativeLayout topBar = new RelativeLayout(context);
         topBar.setGravity(RelativeLayout.CENTER_VERTICAL);
+        topBar.setId(200001);
 //        topBar.setBackground(MUIHelper.withBorder());//test
         LayoutParams paraTopBar = new LayoutParams(-2, dp(TOP_H));
         paraTopBar.setMarginsRelative(dp(TOP_H), 0, 0, dp(getHeight() - TOP_H));
@@ -67,6 +68,7 @@ public class IndsGroup extends RelativeLayout {
             LinearLayout titles = new LinearLayout(context);
             titles.setOrientation(LinearLayout.VERTICAL);
             titles.setGravity(Gravity.LEFT);
+            titles.setId(200011);
 //            titles.setBackground(MUIHelper.withBorder());//test
             LayoutParams paraTitles = new LayoutParams(-2, -2);
             paraTitles.setMarginsRelative(dp(TOP_H * 0.1F), 0, 0, 0);
@@ -116,9 +118,10 @@ public class IndsGroup extends RelativeLayout {
 //            buttons.setBackground(MUIHelper.withBorder());//test
             LayoutParams paraButtons = new LayoutParams(-2, -2);
             paraButtons.setMarginsRelative(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.15F), 0);
-            paraButtons.addRule(RelativeLayout.ALIGN_RIGHT);
+//            paraButtons.addRule(RelativeLayout.ALIGN_RIGHT);
             paraButtons.addRule(RelativeLayout.CENTER_VERTICAL);
-            paraButtons.addRule(RelativeLayout.RIGHT_OF);
+            paraButtons.addRule(RelativeLayout.ALIGN_RIGHT, topBar.getId());
+            paraButtons.addRule(RelativeLayout.RIGHT_OF, titles.getId());
 //            paraButtons.addRule(Gravity.CENTER);
             {
                 if (enableCloseButton) {
@@ -132,6 +135,7 @@ public class IndsGroup extends RelativeLayout {
 
         //TODO RecipeBar
         this.child = new RelativeLayout(getContext());
+        this.child.setId(210000);
         LayoutParams paraChild = new LayoutParams(-2, -2);
         paraChild.setMarginsRelative(0, dp(TOP_H), 0, 0);
         this.addView(child, paraChild);
@@ -150,6 +154,7 @@ public class IndsGroup extends RelativeLayout {
         public static final int CA = 0xFFE6E6E6;
         public static final int CB = 0x9F1E1E1E;
         private final Paint PAINT = new Paint();
+        private Image left;
 
         @Override
         public void draw(Canvas canvas) {
@@ -162,20 +167,21 @@ public class IndsGroup extends RelativeLayout {
             boolean flag = y2 < b.bottom;
             PAINT.setColor(CA);
             canvas.drawRoundRect(x0, y0, x1, y1, dp(4), Gravity.TOP, PAINT);
-            canvas.drawRectGradient(x0, y1, x1, y2, CA, CA, CB, CB, PAINT);
+            if (y1 < y2)
+                canvas.drawRectGradient(x0, y1, x1, y2, CA, CA, CB, CB, PAINT);
             if (flag) {
                 PAINT.setColor(CB);
                 canvas.drawRoundRect(x0, y2, x1, b.bottom, dp(TOP_H * 0.2F), Gravity.BOTTOM, PAINT);
             }
 
             PAINT.setColor(CTS);
-            canvas.drawLine(x0, y1, x1, y1, thickness, PAINT);
-            canvas.drawLine(x0 + dp(TOP_H), y0, x0 + dp(TOP_H), y1, thickness, PAINT);
+            canvas.drawLine(x0, y0 + dp(TOP_H), x1, y0 + dp(TOP_H), thickness, PAINT);
+            canvas.drawLine(x0 + dp(TOP_H), y0, x0 + dp(TOP_H), y0 + dp(TOP_H), thickness, PAINT);
 
             if (leftDecEnable) {
-
+                left = Image.create(Arkdust.MODID, "gui/element/ind/left_net.png");
                 //left_net左侧渲染
-                MUIHelper.repeatedGridImage(canvas, new Rect(0, dp(TOP_H), dp(TOP_H * 0.75F), b.bottom), new ResourceLocation(Arkdust.MODID, "gui/element/ind/left_net.png"), false, true, 1, PAINT);
+                MUIHelper.repeatedGridImage(canvas, new Rect(0, dp(TOP_H), dp(TOP_H * 0.75F), b.bottom), left, false, true, 1, PAINT);
             }
         }
     }

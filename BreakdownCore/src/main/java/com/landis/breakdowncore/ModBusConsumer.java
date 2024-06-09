@@ -2,6 +2,7 @@ package com.landis.breakdowncore;
 
 import com.landis.breakdowncore.event.render.SpriteBeforeStitchEvent;
 import com.landis.breakdowncore.helper.SpriteHelper;
+import com.landis.breakdowncore.system.macmodule.Registry$MacModule;
 import com.landis.breakdowncore.system.material.Material;
 import com.landis.breakdowncore.system.material.MaterialItemType;
 import com.landis.breakdowncore.system.material.Registry$Material;
@@ -39,6 +40,7 @@ public class ModBusConsumer {
         event.register(Registry$Material.MATERIAL_ITEM_TYPE);
         event.register(Registry$Material.MATERIAL_FEATURE);
         event.register(Registry$Material.MATERIAL);
+        event.register(Registry$MacModule.MODULE_TYPES);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

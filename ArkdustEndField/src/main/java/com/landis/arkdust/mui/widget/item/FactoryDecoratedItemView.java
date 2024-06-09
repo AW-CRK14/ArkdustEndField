@@ -15,7 +15,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class ArkdustFactoryItemSlot extends ItemWidget {
+public abstract class FactoryDecoratedItemView extends ItemWidget {
     public static final Image FOREGROUND = Image.create(Arkdust.MODID, "gui/slot.png");
 
     public final Paint PAINT = new Paint();
@@ -23,11 +23,11 @@ public abstract class ArkdustFactoryItemSlot extends ItemWidget {
         PAINT.setColor(0x707070);
     }
 
-    public ArkdustFactoryItemSlot(Context context, Slot slot, AbstractContainerMenu menu) {
+    public FactoryDecoratedItemView(Context context, Slot slot, AbstractContainerMenu menu) {
         super(context, slot,menu);
     }
 
-    public ArkdustFactoryItemSlot(Context context, Slot slot, float width, AbstractContainerMenu menu) {
+    public FactoryDecoratedItemView(Context context, Slot slot, float width, AbstractContainerMenu menu) {
         super(context, slot, width,menu);
     }
 
@@ -47,8 +47,8 @@ public abstract class ArkdustFactoryItemSlot extends ItemWidget {
     public void drawContext(int actuallyLos, float xAmend, float yAmend, Canvas canvas) {
         ItemStack stack = slot.getItem();
         float itemLos = actuallyLos * 0.8F;
-        float y0 = getTop() + yAmend;
-        float x0 = getLeft() + xAmend;
+        float y0 = getPaddingTop() + yAmend;
+        float x0 = getPaddingLeft() + xAmend;
         float y1 = y0 + actuallyLos;
         float x1 = x0 + actuallyLos;
         if(stack.isEmpty()){

@@ -11,13 +11,13 @@ public interface IThermoMatBackground extends IThermoBackground{
         return (int) (getMaterial().getFeature(Registries.MaterialReg.PHASE_TRANSIT.get()).getInstance().mp * 0.6F);
     }
 
-    default int getMC() {
-        return (int) (getMaterial().getFeature(Registries.MaterialReg.THERMO.get()).getInstance().c * getM());
+    default long getMC() {
+        return (long) (getMaterial().getFeature(Registries.MaterialReg.THERMO.get()).getInstance().c * getM());
     }
 
     default float getK(){
         return getMaterial().getFeature(Registries.MaterialReg.THERMO.get()).getInstance().k;
     }
 
-    int getM();
+    long getM();
 }

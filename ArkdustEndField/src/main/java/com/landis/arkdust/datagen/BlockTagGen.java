@@ -1,7 +1,7 @@
 package com.landis.arkdust.datagen;
 
 import com.landis.arkdust.Arkdust;
-import com.landis.arkdust.helper.ListAndMapHelper;
+import com.landis.breakdowncore.helper.ListAndMapHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;

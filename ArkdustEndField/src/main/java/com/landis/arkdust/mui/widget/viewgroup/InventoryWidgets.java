@@ -2,8 +2,7 @@ package com.landis.arkdust.mui.widget.viewgroup;
 
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.mui.abs.ItemWidget;
-import com.landis.arkdust.mui.mouse.BaseMouseInfo;
-import com.landis.arkdust.mui.widget.item.ArkdustContainerItemSlot;
+import com.landis.arkdust.mui.widget.item.ContainerItemView;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Paint;
@@ -11,9 +10,6 @@ import icyllis.modernui.view.MotionEvent;
 import icyllis.modernui.widget.RelativeLayout;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +91,7 @@ public abstract class InventoryWidgets extends IndsGroup {
 
     protected abstract void setItemWidget(ItemWidget widget, int index);
 
-    protected class SlotView extends ArkdustContainerItemSlot {
+    protected class SlotView extends ContainerItemView {
         public SlotView(int index, AbstractContainerMenu menu) {
             super(InventoryWidgets.this.getContext(), menu.getSlot(index), menu);
         }

@@ -1,12 +1,10 @@
-package com.landis.arkdust.helper;
+package com.landis.breakdowncore.helper;
 
-import com.landis.arkdust.Arkdust;
+import com.landis.breakdowncore.BreakdownCore;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ListAndMapHelper {
 
@@ -46,6 +44,14 @@ public class ListAndMapHelper {
 //        return Stream.generate(()->obj).limit(length).toList();
     }
 
+    public static <T> List<T> length(int size){
+        List<T> list = new ArrayList<>(size);
+        for(int i = 0; i < size; i++){
+            list.add(null);
+        }
+        return list;
+    }
+
 
 
     public static <S> int getIndexFromMap(Map<S,?> map,S key){
@@ -78,17 +84,27 @@ public class ListAndMapHelper {
     }
 
     public static List<ResourceLocation> string2RLList(String... ss){
+        return string2RLList(BreakdownCore.MODID,ss);
+    }
+
+    public static List<ResourceLocation> string2RLList(String nameSpace,String... ss){
         List<ResourceLocation> list = new ArrayList<>();
         for(String s:ss){
-            list.add(new ResourceLocation(Arkdust.MODID,s));
+            list.add(new ResourceLocation(nameSpace,s));
         }
         return list;
     }
 
+
+
     public static List<ResourceLocation> string2RLListWithPath(String path, String... ss){
+        return string2RLListWithPath(BreakdownCore.MODID,path,ss);
+    }
+
+    public static List<ResourceLocation> string2RLListWithPath(String nameSpace, String path, String... ss){
         List<ResourceLocation> list = new ArrayList<>();
         for(String s:ss){
-            list.add(new ResourceLocation(Arkdust.MODID,path + s));
+            list.add(new ResourceLocation(nameSpace,path + s));
         }
         return list;
     }

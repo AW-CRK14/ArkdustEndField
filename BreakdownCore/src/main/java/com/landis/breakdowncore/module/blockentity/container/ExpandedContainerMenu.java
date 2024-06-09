@@ -1,10 +1,8 @@
 package com.landis.breakdowncore.module.blockentity.container;
 
 import com.landis.breakdowncore.helper.ContainerHelper;
-import com.landis.breakdowncore.module.blockentity.gmui.ISlotChangeNotify;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.NonNullList;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
@@ -14,8 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public abstract class ExpandedContainerMenu<T extends BlockEntity> extends AbstractContainerMenu implements ISlotTypeExpansion, ContainerListener {
 
@@ -60,7 +56,6 @@ public abstract class ExpandedContainerMenu<T extends BlockEntity> extends Abstr
     //由Menu下发
     public void slotChanged(AbstractContainerMenu menu, int slotIndex, ItemStack stack){
         onContentsChanged(slotIndex);//IFIH已收到提醒
-
     };
 
     public void dataChanged(AbstractContainerMenu pContainerMenu, int pDataSlotIndex, int pValue){
@@ -109,4 +104,6 @@ public abstract class ExpandedContainerMenu<T extends BlockEntity> extends Abstr
     public @NotNull ItemStack getStackInSlot(int slot) {
         return slots.get(slot).getItem();
     }
+
+
 }

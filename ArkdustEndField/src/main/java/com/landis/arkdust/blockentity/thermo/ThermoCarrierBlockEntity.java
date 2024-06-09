@@ -12,7 +12,7 @@ public class ThermoCarrierBlockEntity extends ThermoBlockEntity {
     }
 
     @Override
-    public int getM() {
+    public long getM() {
         return 1000;
     }
 

@@ -29,6 +29,8 @@ public class AbstractArkdustIndustUI extends Fragment {
     }
 
     public final boolean addPlayerSlots;
+    protected IndsGroup defaultIndsGroup;
+    protected RelativeLayout.LayoutParams indsGroupLayoutParams;
 
     public AbstractArkdustIndustUI(boolean addPlayerSlots) {
         this.addPlayerSlots = addPlayerSlots;
@@ -38,7 +40,12 @@ public class AbstractArkdustIndustUI extends Fragment {
     @Nonnull
     public View onCreateView(LayoutInflater inflater, ViewGroup container, DataSet savedInstanceState) {
         ViewGroup base = new RelativeLayout(getContext());
-        base.addView(new IndsGroup(getContext(),new ResourceLocation(Arkdust.MODID,"test"),2,true),new ViewGroup.LayoutParams(base.dp(1000),base.dp(320)));
+        IndsGroup g = new IndsGroup(getContext(),new ResourceLocation(Arkdust.MODID,"test"),2,true);
+        g.setId(200000);
+        defaultIndsGroup = g;
+        indsGroupLayoutParams = new RelativeLayout.LayoutParams(-2,-2);
+        indsGroupLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        base.addView(g, indsGroupLayoutParams);
         return base;
     }
 }

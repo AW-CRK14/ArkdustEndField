@@ -80,8 +80,7 @@ public class MUIHelper {
         return shape;
     }
 
-    public static void repeatedGridImage(Canvas canvas, Rect rect, ResourceLocation texture, boolean useImageSize, boolean horizontalLock, float zoom, Paint paint) {
-        Image image = Image.create(texture.getNamespace(), texture.getPath());
+    public static void repeatedGridImage(Canvas canvas, Rect rect, Image image, boolean useImageSize, boolean horizontalLock, float zoom, Paint paint) {
         int x = rect.x();
         int y = rect.y();
         int width,height;

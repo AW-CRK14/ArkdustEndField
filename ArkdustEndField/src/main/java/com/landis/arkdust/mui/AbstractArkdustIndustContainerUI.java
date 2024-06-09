@@ -2,33 +2,25 @@ package com.landis.arkdust.mui;
 
 import com.landis.arkdust.mui.abs.IMenu2ScreenNotifiable;
 import com.landis.arkdust.mui.abs.ItemWidget;
-import com.landis.arkdust.mui.widget.item.ArkdustContainerItemSlot;
 import com.landis.arkdust.mui.widget.viewgroup.InventoryWidgets;
-import com.landis.breakdowncore.module.blockentity.container.ExpandedContainerMenu;
 import com.landis.breakdowncore.module.blockentity.container.ISlotTypeExpansion;
 import com.landis.breakdowncore.module.blockentity.container.SlotType;
-import com.landis.breakdowncore.module.blockentity.gmui.ISlotChangeNotify;
-import icyllis.modernui.core.Context;
-import icyllis.modernui.mc.neoforge.UIManagerForge;
+import com.landis.breakdowncore.module.blockentity.gmui.IMenuChangeNotify;
 import icyllis.modernui.util.DataSet;
 import icyllis.modernui.view.LayoutInflater;
 import icyllis.modernui.view.View;
 import icyllis.modernui.view.ViewGroup;
 import icyllis.modernui.widget.RelativeLayout;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIndustUI implements ISlotChangeNotify {
+public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIndustUI implements IMenuChangeNotify {
     public final AbstractContainerMenu menu;
     protected final List<ItemWidget> widgets;
     public final boolean autoAddSlots;

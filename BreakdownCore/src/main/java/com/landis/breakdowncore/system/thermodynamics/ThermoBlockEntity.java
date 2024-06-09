@@ -1,5 +1,6 @@
 package com.landis.breakdowncore.system.thermodynamics;
 
+import com.landis.breakdowncore.helper.MathHelper;
 import com.landis.breakdowncore.module.blockentity.ITickable;
 import com.landis.breakdowncore.system.material.Material;
 import com.landis.breakdowncore.system.material.Registry$Material;
@@ -15,7 +16,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMatBackground, ITickable {
     private Material material;
-    protected long q = 0;
+    protected double q = 0;
+    protected int[] lastOutput = new int[]{0,0};
+
 
     public ThermoBlockEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, Material material) {
         super(pType, pPos, pBlockState);
@@ -33,12 +36,12 @@ public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMa
     }
 
     @Override
-    public long getQ() {
+    public double getQ() {
         return q;
     }
 
     @Override
-    public void setQ(long heat) {
+    public void setQ(double heat) {
         this.q = Math.max(Math.min(heat, maxQ()), -273L * getMC());
     }
 
@@ -50,14 +53,14 @@ public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMa
     @Override
     public void load(CompoundTag pTag) {
         super.load(pTag);
-        q = pTag.getLong("thermo_q");
+        q = pTag.getDouble("thermo_q");
         material = Registry$Material.MATERIAL.get(new ResourceLocation(pTag.getString("material")));
     }
 
     @Override
     protected void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
-        pTag.putLong("thermo_q", q);
+        pTag.putDouble("thermo_q", q);
         pTag.putString("material", material.id.toString());
     }
 
@@ -70,13 +73,13 @@ public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMa
 
     public void thermoTick(Level pLevel, BlockPos pPos, BlockState pState) {
         BlockPos targetPos;
+        double output = 0;
         for (Direction direction : Direction.values()) {
             IThermoBackground itbg = null;
             targetPos = pPos.relative(direction);
             if (pLevel.getBlockEntity(targetPos) instanceof IThermoBackground bg) itbg = bg;
-            interactWith(itbg, false, pLevel.getBlockState(targetPos), direction, targetPos, pLevel);
+            output += interactWith(itbg, false, pLevel.getBlockState(targetPos), direction, targetPos, pLevel);
         }
+        this.lastOutput = MathHelper.doubleToInt(output);
     }
-
-    ;
 }

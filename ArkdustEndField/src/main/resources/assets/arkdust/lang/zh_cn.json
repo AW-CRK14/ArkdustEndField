@@ -20,12 +20,12 @@
   "climate.arkdust.windy": "Windy",
   "climate.arkdust.bioactivity": "Bioactivity",
   "climate.arkdust.orirock_activity": "Oriactivity",
-  "arkdust.industry.message.need_module": "[Need Machine Module Install]",
   "arkdust.industry.arkdust.test.name": "TestMac",
   "arkdust.industry.arkdust.backpack.name": "BackPack",
+  "arkdust.industry.message.need_module": "[需要机器模块安装]",
   "arkdust.industry.arkdust.mac.thermo.combustor.test": "TestingCombustor",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.title": "Thermo Infos",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.time": "Remand Time:",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.combust_effi": "Combustion Effi:",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.combust_output": "Output Effi:"
+  "arkdust.industry.arkdust.mac.thermo.combustor.info.title": "热力炉信息",
+  "arkdust.industry.arkdust.mac.thermo.combustor.info.time": "剩余时间:",
+  "arkdust.industry.arkdust.mac.thermo.combustor.info.combust_effi": "产热效率:",
+  "arkdust.industry.arkdust.mac.thermo.combustor.info.combust_output": "放热效率:"
 }
