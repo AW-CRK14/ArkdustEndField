@@ -9,21 +9,16 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import java.util.HashSet;
 
 public class CombustibleMF implements IMaterialFeature<CombustibleMF> {
-    public final double hoc; //Heat of Combustion燃烧热 单位kj/B <=> j/mB
-    public final int defaultBurningTime;//默认燃烧时间 单位tick/B
+    // cv                 | Calorific value    | 热值    | KJ/kg
+    // density            | Density            | 密度    | kg/m3
+    // Heat               | Heat               | 总热量  | KJ
+    // P = 2000           | Power              | 功率    | KJ/tick
+    // defaultBurningTime | defaultBurningTime | 燃烧时间 | tick/m3
+    public final int defaultBurningTime;
 
-    //密度density g/cm³ <=> kg/m³ <=> kg/B
-    //燃烧热hoc导入单位 kj/kg
-    public CombustibleMF(double hoc, float density, int defaultBurningTime) {
-        this.hoc = hoc * density;
-        this.defaultBurningTime = defaultBurningTime;
+    public CombustibleMF(int cv, int density) {
+        this.defaultBurningTime = cv * density / 2000;
     }
-
-    public CombustibleMF(double hoc, int defaultBurningTime) {
-        this.hoc = hoc;
-        this.defaultBurningTime = defaultBurningTime;
-    }
-
     @Override
     public DeferredHolder<MaterialFeatureType<?>, MaterialFeatureType<CombustibleMF>> getType() {
         return Registries.MaterialReg.COMBUSTIBLE;

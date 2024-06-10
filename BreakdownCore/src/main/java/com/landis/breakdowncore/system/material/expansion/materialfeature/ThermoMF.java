@@ -12,17 +12,23 @@ import java.util.HashSet;
 
 public class ThermoMF implements IMaterialFeature<ThermoMF> {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Material/MF:Thermo");
-    public final float c;//比热容(Specific Heat Capacity) 适应mc体系，单位为kJ/B·K或J/mB·K 在现实世界体系中，这应当是kJ/kg·C°
-    public final float k;//热导率(Heat Transfer Rate) 适应mc体系，单位变为J/K·m²，即距离，时间取1 在现实世界中，这应当是W/m·C°
+    // ic      | Input Specific Heat Capacity | 设定比热容 | J/(kg·℃)
+    // ik      | Input Heat Transfer Rate     | 设定热导率 | W/(m·℃)
+    // density | Density                      | 密度      | kg/m3
+    // V = 1   | Volume                       | 体积      | m3
+    // c       | Specific Heat Capacity       | 比热容    | KJ/℃
+    // k       | Heat Transfer Rate           | 热导率    | KJ/(℃·5tick)
+    public final float c;
+    public final float k;
 
-    public ThermoMF(float specificHeatCapacity, float heatTransferRate, float density) {  //density密度  单位g/cm3,数值等价t/m3
-        if(specificHeatCapacity <= 0 | heatTransferRate < 0){
-            LOGGER.error("The C must be over 0 and the K must not be lower than 0. Currently, they're {} and {}",specificHeatCapacity,heatTransferRate);
-            LOGGER.error("比热容必须高于0而热导率必须不低于0。而它们现在的数值为{}和{}",specificHeatCapacity,heatTransferRate);
+    public ThermoMF(float ic, float ik, float density) {
+        if(ic <= 0 | ik < 0){
+            LOGGER.error("The C must be over 0 and the K must not be lower than 0. Currently, they're {} and {}",ic,ik);
+            LOGGER.error("比热容必须高于0而热导率必须不低于0。而它们现在的数值为{}和{}",ic,ik);
             throw new IllegalArgumentException("The C or K value isn't correct.");
         }
-        this.c = specificHeatCapacity * density * 1000; //c' = ρVc 此处V取1m3，c放大一千倍
-        this.k = heatTransferRate;
+        this.c = ic / ( density * 1 * 1000 );
+        this.k = ik / 4000;
     }
 
     @Override
