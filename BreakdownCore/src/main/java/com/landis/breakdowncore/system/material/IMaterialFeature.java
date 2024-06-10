@@ -31,7 +31,7 @@ public interface IMaterialFeature<I extends IMaterialFeature<I>> {
     DeferredHolder<MaterialFeatureType<?>,MaterialFeatureType<I>> getType();
 
     /**获取该特征所包含的物品类型。原则上允许根据材料特性的不同内容返回不同的物品类型组。*/
-    HashSet<? extends MaterialItemType> forItemTypes();
+    HashSet<MaterialItemType> forItemTypes();
 
     /**依赖的其它材料特征的id。在不满足时，对应材料的注册将被阻止。*/
     default @Nullable List<ResourceLocation> dependencies(){

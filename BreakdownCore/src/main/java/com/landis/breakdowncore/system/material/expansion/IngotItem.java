@@ -31,4 +31,8 @@ public class IngotItem extends TypedMaterialItem {
         }
         return new ResourceLocation(BreakdownCore.MODID,"fallback");
     }
+
+    @Override
+    public void setMaterial(ItemStack stack, Material material) {
+    }
 }

@@ -21,7 +21,7 @@ public class MetalMF implements IMaterialFeature<MetalMF> {
     }
 
     @Override
-    public HashSet<? extends MaterialItemType> forItemTypes() {
+    public HashSet<MaterialItemType> forItemTypes() {
         if(types == null){
             types = new HashSet<>();
 //            types.addAll(List.of(Registries.MaterialReg.INGOT.get()));

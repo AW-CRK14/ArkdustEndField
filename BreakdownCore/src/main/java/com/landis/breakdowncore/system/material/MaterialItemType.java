@@ -66,7 +66,7 @@ public class MaterialItemType {
     public @NonNull ItemStack createItem(Material material) {
         ItemStack stack = getHolder();
         StringTag tag = StringTag.valueOf(material.id.toString());
-        stack.addTagElement("brea_material", tag);
+        stack.getOrCreateTagElement("brea_data").putString("material",material.id.toString());
         return stack;
     }
 
@@ -111,7 +111,9 @@ public class MaterialItemType {
 
     //将物品添加至创造模式物品栏
     public void attachToCreativeTab(BuildCreativeModeTabContentsEvent event) {
-        event.accept(BuiltInRegistries.ITEM.get(autoRegKey.location()));
+        ItemStack i = new ItemStack(BuiltInRegistries.ITEM.get(autoRegKey.location()));
+        ((ITypedMaterialObj)i.getItem()).setMaterial(i);
+        event.accept(i);
     }
 
 

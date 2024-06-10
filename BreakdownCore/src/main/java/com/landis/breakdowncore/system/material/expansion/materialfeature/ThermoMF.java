@@ -31,7 +31,7 @@ public class ThermoMF implements IMaterialFeature<ThermoMF> {
     }
 
     @Override
-    public HashSet<? extends MaterialItemType> forItemTypes() {
+    public HashSet<MaterialItemType> forItemTypes() {
         return new HashSet<>();
     }
 }

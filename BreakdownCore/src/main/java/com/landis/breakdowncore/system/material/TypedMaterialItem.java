@@ -25,17 +25,11 @@ public class TypedMaterialItem extends Item implements ITypedMaterialObj{
         this.type = type;
     }
 
-    public void setMaterial(ItemStack itemStack,Material material){
-        if(itemStack.is(this)){
-            itemStack.getOrCreateTag().putString("brea_mat",material.id.toString());
-        }
-    }
-
 
     @Override
     public ResourceLocation getMaterialId(ItemStack stack) {
         if(stack.is(this)){
-            return new ResourceLocation(stack.getOrCreateTag().getString("brea_mat"));
+            return new ResourceLocation(stack.getOrCreateTagElement("brea_data").getString("material"));
         }
         return null;
     }

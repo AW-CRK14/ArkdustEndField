@@ -3,17 +3,14 @@ package com.landis.breakdowncore.system.material;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**Material材料<br><p>
@@ -90,7 +87,7 @@ public class Material {
             }
             ImmutableMap.Builder<MaterialFeatureType<?>,IMaterialFeature<?>> builder = new ImmutableMap.Builder<>();
             for(IMaterialFeature<?> feature : fIns){
-                builder.put(System$Material.getMFH(feature.getClass()),feature);
+                builder.put(System$Material.getMFType(feature.getClass()),feature);
             }
             toFeature = builder.build();
         }

@@ -24,7 +24,7 @@ public class PhaseTransitMF implements IMaterialFeature<PhaseTransitMF> {
     }
 
     @Override
-    public HashSet<? extends MaterialItemType> forItemTypes() {
+    public HashSet<MaterialItemType> forItemTypes() {
         return new HashSet<>();//TODO 添加气态与液态支持
         //在mp大于或等于bp时，不提供液态
     }
