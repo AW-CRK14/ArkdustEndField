@@ -50,7 +50,7 @@ public class ModBusConsumer {
 
     @SubscribeEvent
     public static void attachMaterialData(MaterialReflectDataGatherEvent event) {
-//        event.handler.registryReflectItemMaterialInfo(new Holder.Direct<>(Items.COAL), );
+        event.handler.registryReflectItemMaterialInfo(new Holder.Direct<>(Items.COAL), Registries.MaterialReg.LIGNITE.getId(), Registries.MaterialReg.COMBUSTIBLE_TYPE.getId());
     }
 
 //    @Mod.EventBusSubscriber(modid = BreakdownCore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

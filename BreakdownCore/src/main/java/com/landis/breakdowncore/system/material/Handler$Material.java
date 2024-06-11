@@ -81,7 +81,7 @@ public class Handler$Material {
         if (avaliable) {
             System$Material.I2TMI_PRE.add(new Pair<>(itemHolder, () -> new TypedMaterialInfo(material, type)));
             if (addItemMark) {
-
+                markItemsMaterialInfo(material, type, () -> new ItemStack(itemHolder), overrideMark);
             }
         } else {
             LOGGER.warn("Can't attach material info for item(id={}) as the init stage is finished.", itemHolder.unwrapKey().map(ResourceKey::toString).orElse("[invalid key]"));
@@ -97,7 +97,7 @@ public class Handler$Material {
     public void markItemsMaterialInfo(ResourceLocation material, ResourceLocation type, Supplier<ItemStack> item, boolean override) {
         if (avaliable) {
             Pair<ResourceLocation, ResourceLocation> p = new Pair<>(material, type);
-            if(!override && System$Material.M_MIT2I_PRE.contains(p)) return;
+            if (!override && System$Material.M_MIT2I_PRE.contains(p)) return;
             System$Material.M_MIT2I_PRE.add(new Pair<>(p, item));
         } else {
             LOGGER.warn("Can't mark material({}) and type({}) for item stack as the init stage is finished.", material, type);

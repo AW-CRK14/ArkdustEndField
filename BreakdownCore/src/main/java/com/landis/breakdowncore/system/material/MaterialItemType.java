@@ -79,10 +79,12 @@ public class MaterialItemType {
      * 这一阶段，请求材料物品类型对该类型进行物品注册。在游戏中即为由nbt控制材料属性的对应id物品
      */
     public void primaryRegister(@Nullable RegisterEvent event) {
-        Registry<Item> registry = (Registry<Item>) ModBusConsumer.REGS_MAP.get(Registries.ITEM);
-        ResourceLocation reg = new ResourceLocation(BreakdownCore.MODID, id.getNamespace() + "_" + id.getPath());
-        autoRegKey = ResourceKey.create(Registries.ITEM, reg);
-        Registry.register(registry, reg, new TypedMaterialItem(() -> this));
+        if(!regFlag){
+            Registry<Item> registry = (Registry<Item>) ModBusConsumer.REGS_MAP.get(Registries.ITEM);
+            ResourceLocation reg = new ResourceLocation(BreakdownCore.MODID, id.getNamespace() + "_" + id.getPath());
+            autoRegKey = ResourceKey.create(Registries.ITEM, reg);
+            Registry.register(registry, reg, new TypedMaterialItem(() -> this));
+        }
         regFlag = true;
     }
 
@@ -101,6 +103,9 @@ public class MaterialItemType {
         ins.getBuilder(id.withPath(s -> "mit_basic/" + s) + "")
                 .parent(new ModelFile.UncheckedModelFile("item/generated"))
                 .texture("layer0", id.withPath(s -> "brea/material/mit/" + s));
+
+        ins.getBuilder(autoRegKey.location().toString())
+                .parent(new ModelFile.UncheckedModelFile("item/generated"));
     }
 
     //在模型事件中，将对应物品的模型重定向为material系统的材质动态生成模型。
@@ -119,6 +124,11 @@ public class MaterialItemType {
 
     @Override
     public String toString() {
-        return super.toString() + "{id=" + id + "}";
+        return "MaterialItemType{" +
+                "id=" + id +
+                ", content=" + content +
+                ", purity=" + purity +
+                ", autoRegKey=" + autoRegKey +
+                '}';
     }
 }

@@ -67,5 +67,6 @@ public class Registries {
 
         public static final DeferredHolder<Material, Material> MISSING = MATERIAL.register("missing", MissingMaterial::new);
         public static final DeferredHolder<Material, Material> IRON = material("iron", r -> new Material(r, true, new MetalMF(), new PhaseTransitMF(1539, 3000), new ThermoMF(0.46F, 80.9F, 7.87F)));
+        public static final DeferredHolder<Material, Material> LIGNITE = material("lignite", r -> new Material(r, false, new CombustibleMF(18000,1150)));
     }
 }

@@ -12,12 +12,54 @@ import java.util.HashSet;
 
 public class ThermoMF implements IMaterialFeature<ThermoMF> {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Material/MF:Thermo");
-    // ic      | Input Specific Heat Capacity | 设定比热容 | J/(kg·℃)
-    // ik      | Input Heat Transfer Rate     | 设定热导率 | W/(m·℃)
-    // density | Density                      | 密度      | kg/m3
-    // V = 1   | Volume                       | 体积      | m3
-    // c       | Specific Heat Capacity       | 比热容    | KJ/℃
-    // k       | Heat Transfer Rate           | 热导率    | KJ/(℃·5tick)
+
+    /**
+     * <table border="1">
+     *   <caption>热力学属性表</caption>
+     *   <tr>
+     *     <th style="padding-right: 10px;">变量名</th>
+     *     <th style="padding-left: 10px;">英文名称</th>
+     *     <th>中文名称</th>
+     *     <th>单位</th>
+     *   </tr>
+     *   <tr>
+     *     <td>ic</td>
+     *     <td>Input Specific Heat Capacity</td>
+     *     <td>设定比热容</td>
+     *     <td>J/(kg·°C)</td>
+     *   </tr>
+     *   <tr>
+     *     <td>ik</td>
+     *     <td>Input Heat Transfer Rate</td>
+     *     <td>设定热导率</td>
+     *     <td>W/(m·°C)</td>
+     *   </tr>
+     *   <tr>
+     *     <td>density</td>
+     *     <td>Density</td>
+     *     <td>密度</td>
+     *     <td>kg/m<sup>3</sup></td>
+     *   </tr>
+     *   <tr>
+     *     <td>V = 1</td>
+     *     <td>Volume</td>
+     *     <td>体积</td>
+     *     <td>m<sup>3</sup></td>
+     *   </tr>
+     *   <tr>
+     *     <td>c</td>
+     *     <td>Specific Heat Capacity</td>
+     *     <td>比热容</td>
+     *     <td>kJ/(°C·m<sup>3</sup>)</td>
+     *   </tr>
+     *   <tr>
+     *     <td>k</td>
+     *     <td>Heat Transfer Rate</td>
+     *     <td>热导率</td>
+     *     <td>kJ/(°C·5tick)</td>
+     *   </tr>
+     * </table>
+     */
     public final float c;
     public final float k;
 

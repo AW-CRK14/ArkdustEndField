@@ -17,12 +17,13 @@ import net.minecraft.world.level.block.state.BlockState;
 public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMatBackground, ITickable {
     private Material material;
     protected double q = 0;
-    protected int[] lastOutput = new int[]{0,0};
+    protected int[] lastOutput = new int[]{0, 0};
 
 
     public ThermoBlockEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, Material material) {
         super(pType, pPos, pBlockState);
         this.material = material;
+        this.setQ(getMC() * 27);
     }
 
     public ThermoBlockEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {

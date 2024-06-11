@@ -17,7 +17,7 @@ public class Registry$MacModule {
     public static final Registry<MacModuleType<? extends MacModule<?>>> MODULE_TYPES = new RegistryBuilder<>(Keys.MODULE_TYPE).sync(true).create();
 
     public static class Keys{
-        public static final ResourceKey<Registry<MacModuleType<? extends MacModule<?>>>> MODULE_TYPE = create("material_item_type");
+        public static final ResourceKey<Registry<MacModuleType<? extends MacModule<?>>>> MODULE_TYPE = create("module_type");
         public static <T> ResourceKey<Registry<T>> create(String name){
             return ResourceKey.createRegistryKey(new ResourceLocation(BreakdownCore.MODID,name));
         }

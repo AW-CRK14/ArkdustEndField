@@ -18,21 +18,21 @@ public interface IThermoBackground {
      * 对于温度不同的两个物件，存在以下热力流动：Q/t ∝ k*∆T<br>
      * 即每个热力刻(5tick)内，将会转移 k(m) * ΔT 的热量<br>
      * 同时对于每个方块，降低的温度∆T = ∆Q / {@link IThermoBackground#getMC()}<br>
-     * 环境温度与默认温度将被记作0
+     * 环境温度与默认温度将被记作27
      */
     int maxT();
 
     /**
      * SpecificHeatCapacity，比热容  与质量的乘积，即提高方块一度需要的热量
      */
-    long getMC();
+    long getMC();//kJ/°C
 
     /**
      * HeatTransferRate，热导率
      */
     float getK();
 
-    double getQ();
+    double getQ();//kJ
 
     void setQ(double heat);
 
@@ -80,7 +80,7 @@ public interface IThermoBackground {
     void onOverheating();
 
     /**提取热量，下方为存入热量
-     * @param count 热力点数，单位为焦耳(J)
+     * @param count 热力点数，单位为千焦(kJ)
      * @param simulate 模拟，若为true则不会造成实际的数据变动*/
     default double extractHeat(double count, boolean simulate) {
         double cost = Math.min(count, getQ() + 273L * getMC());
@@ -130,7 +130,4 @@ public interface IThermoBackground {
 
     int KAir = 8;//TODO
     int TEnvironment = 27;
-
-    int heatInteractionCycle = 50;
-
 }

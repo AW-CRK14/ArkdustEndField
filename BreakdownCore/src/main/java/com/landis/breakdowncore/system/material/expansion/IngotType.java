@@ -16,6 +16,8 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.ArrayList;
@@ -23,8 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class IngotType extends MaterialItemType {
+
+    public static final Logger LOGGER = LogManager.getLogger("BREA:Material:MaterialItemType/Ingot");
+
     public final HashMap<Material, IngotItem> WITH_MATERIAL = new HashMap<>();
     public final HashMap<ResourceLocation, IngotItem> WITH_RESOURCE = new HashMap<>();
+
     public IngotType(float purity, ResourceLocation id) {
         super(90, purity, id);
     }
@@ -38,7 +44,7 @@ public class IngotType extends MaterialItemType {
         }
         IngotItem ingot = new IngotItem(material);
         ResourceLocation location = material.id.withPath(id -> id + "_material_ingot");
-        Registry.register(registry,location,ingot);
+        Registry.register(registry, location, ingot);
         WITH_MATERIAL.put(material, ingot);
         WITH_RESOURCE.put(location, ingot);
     }
@@ -46,9 +52,9 @@ public class IngotType extends MaterialItemType {
     @Override
     public void gatherKeyForDatagen(MitModelGen ins) {
         super.gatherKeyForDatagen(ins);
-        for(ResourceLocation id : WITH_RESOURCE.keySet()){
-            ins.basicItem(id);
-        }
+//        for (ResourceLocation id : WITH_RESOURCE.keySet()) {
+//            ins.basicItem(id);
+//        }
     }
 
     @VisibleForTesting
@@ -56,15 +62,15 @@ public class IngotType extends MaterialItemType {
     public void consumeModelReg(ModelEvent.ModifyBakingResult event) {
         super.consumeModelReg(event);
         ModelBakery bakery = event.getModelBakery();
-        for(IngotItem item : WITH_RESOURCE.values()){
-            event.getModels().put(BuiltInRegistries.ITEM.getKey(item),new TMIModel(bakery,this));
+        for (IngotItem item : WITH_RESOURCE.values()) {
+            event.getModels().put(BuiltInRegistries.ITEM.getKey(item), new TMIModel(bakery, this));
         }
     }
 
     @Override
     public void attachToCreativeTab(BuildCreativeModeTabContentsEvent event) {
         super.attachToCreativeTab(event);
-        for(IngotItem item : WITH_RESOURCE.values()){
+        for (IngotItem item : WITH_RESOURCE.values()) {
             event.accept(item);
         }
     }

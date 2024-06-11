@@ -61,7 +61,4 @@ public class TypedMaterialItem extends Item implements ITypedMaterialObj{
     public static MutableComponent mitId2Component(ResourceLocation id){
         return Component.translatable("brea.mit." + id.getNamespace() + "." + id.getPath());
     }
-
-
-
 }

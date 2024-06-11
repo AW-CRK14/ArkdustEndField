@@ -12,12 +12,12 @@ public interface IThermoMatBackground extends IThermoBackground{
     }
 
     default long getMC() {
-        return (long) (getMaterial().getFeature(Registries.MaterialReg.THERMO.get()).getInstance().c * getM());
+        return (long) (getMaterial().getFeature(Registries.MaterialReg.THERMO.get()).getInstance().c * getM() / 1000);
     }
 
     default float getK(){
         return getMaterial().getFeature(Registries.MaterialReg.THERMO.get()).getInstance().k;
     }
 
-    long getM();
+    long getM();//单位mB
 }
