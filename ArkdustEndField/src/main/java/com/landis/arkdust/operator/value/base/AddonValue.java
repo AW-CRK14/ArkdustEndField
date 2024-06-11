@@ -1,20 +1,29 @@
 package com.landis.arkdust.operator.value.base;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 
 public class AddonValue {
-    private final String addonName;
+    private final ResourceLocation addonName;
     private final double addonValue;
-    private final BaseValue.ValueType TYPE;
+    private final StatsValueGroup.ValueType valueType;
     public final boolean isMultiply;
     public final boolean isFinalCalculate;
 
-    public AddonValue(BaseValue.ValueType type, String addonName, double addonValue , boolean isMultiply, boolean isFinalCalculate){
-        this.TYPE = type;
+    public AddonValue(StatsValueGroup.ValueType type, ResourceLocation addonName, double addonValue , boolean isMultiply, boolean isFinalCalculate){
+        this.valueType = type;
         this.addonName = addonName;
         this.addonValue = addonValue;
         this.isMultiply = isMultiply;
         this.isFinalCalculate = isFinalCalculate;
+    }
+
+    public AddonValue(CompoundTag tag, StatsValueGroup.ValueType type){
+        this.valueType = type;
+        this.addonName = new ResourceLocation(tag.getString("name"));
+        this.addonValue = tag.getDouble("value");
+        this.isMultiply = tag.getBoolean("is_multiply");
+        this.isFinalCalculate = tag.getBoolean("is_final_calculate");
     }
 
     public double addonToValue(double originValue){
@@ -27,11 +36,10 @@ public class AddonValue {
 
     public CompoundTag asNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putString("AddonName", addonName);
-        tag.putDouble("AddonValue", addonValue);
-        tag.putString("ValueType", TYPE.name());
-        tag.putBoolean("IsMultiply", isMultiply);
-        tag.putBoolean("IsFinalCalculate", isFinalCalculate);
+        tag.putString("name", addonName.toString());
+        tag.putDouble("value", addonValue);
+        tag.putBoolean("is_multiply", isMultiply);
+        tag.putBoolean("is_final_calculate", isFinalCalculate);
         return tag;
     }
 
@@ -47,15 +55,16 @@ public class AddonValue {
         return addonValue;
     }
 
-    public String getAddonName() {
+    public ResourceLocation getAddonName() {
         return addonName;
     }
 
-    public BaseValue.ValueType getTYPE() {
-        return TYPE;
+    public StatsValueGroup.ValueType getValueType() {
+        return valueType;
     }
 
-
-
+    public byte getStatsIndex(){
+        return (byte) ((isFinalCalculate ? 2 : 0) + (isMultiply ? 1 : 0));
+    }
 
 }

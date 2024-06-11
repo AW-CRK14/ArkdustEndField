@@ -3,6 +3,8 @@ package com.landis.arkdust.operator;
 import com.landis.arkdust.operator.value.StatsPanel;
 import com.landis.arkdust.operator.model.BaseOperatorModel;
 import com.landis.arkdust.operator.skill.AbstractOperatorSkill;
+import com.landis.arkdust.operator.value.base.StatsValueGroup;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,13 +12,13 @@ import java.util.List;
 
 public abstract class AbstractOperator {
     public static final Logger LOGGER = LogManager.getLogger("BREA:Operator:System");
-    public final String name;
+    public final ResourceLocation name;
     public final StatsPanel stats;
-    private final List<AbstractOperatorSkill> skills = this.initSkills();
+    private List<AbstractOperatorSkill> skills;
     private int currentSkillIndex = 0; // 当前激活的技能索引
     public final BaseOperatorModel baseOperatorModel = this.initModel();
 
-    public AbstractOperator(String name, StatsPanel stats){
+    public AbstractOperator(ResourceLocation name, StatsPanel stats){
         this.name = name;
         this.stats = stats;
     }
@@ -26,15 +28,22 @@ public abstract class AbstractOperator {
 
     abstract BaseOperatorModel initModel();
 
+    public List<AbstractOperatorSkill> getOrCreateSkills(){
+        if(skills == null){
+            skills = this.initSkills();
+        }
+        return skills;
+    }
+
     public void activateCurrentSkill() {
-        if (!skills.isEmpty() && currentSkillIndex < skills.size()) {
+        if (!getOrCreateSkills().isEmpty() && currentSkillIndex < skills.size()) {
             AbstractOperatorSkill skill = skills.get(currentSkillIndex);
             skill.activateSkill();
         }
     }
 
     public int getSkillCount(){
-        return this.skills.size();
+        return this.getOrCreateSkills().size();
     }
 
     // 切换到下一个技能
@@ -55,14 +64,13 @@ public abstract class AbstractOperator {
     }
 
     public AbstractOperatorSkill getCurrentSkill() {
-        if (!skills.isEmpty()) {
+        if (!getOrCreateSkills().isEmpty()) {
             return this.skills.get(this.currentSkillIndex);
         }else return null;
     }
 
 
-    public double getNaturalRegenRate(){
-        return this.stats.getNaturalRegenRate().getValue();
+    public double getNaturalRegenRate() {
+        return this.stats.getBaseValueFromType(StatsValueGroup.ValueType.NATURAL_REGEN_RATE).getValue();
     }
-
 }
