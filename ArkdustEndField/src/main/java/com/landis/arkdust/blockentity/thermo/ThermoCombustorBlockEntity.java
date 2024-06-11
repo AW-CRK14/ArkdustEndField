@@ -1,5 +1,6 @@
 package com.landis.arkdust.blockentity.thermo;
 
+import com.landis.arkdust.blocks.levelblocks.ThermoBlocks;
 import com.landis.arkdust.helper.MUIHelper;
 import com.landis.arkdust.mui.AbstractArkdustIndustContainerUI;
 import com.landis.arkdust.mui.MUIRelativeMenu;
@@ -41,13 +42,27 @@ import java.util.List;
 
 public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWrappedMenuProvider, MenuScreenFactory<ThermoCombustorBlockEntity.Menu> {
 
+    public final int basicOutputEffi;
+    public final float basicConversionRate;
 
     public ThermoCombustorBlockEntity(BlockPos pPos, BlockState pBlockState) {
+        this(pPos, pBlockState, ((ThermoBlocks.CombustorBlock) pBlockState.getBlock()).basicOutputEffi, ((ThermoBlocks.CombustorBlock) pBlockState.getBlock()).basicConversionRate);
+    }
+
+    public ThermoCombustorBlockEntity(BlockPos pPos, BlockState pBlockState, int basicOutputEffi, float basicConversionRate) {
         super(BlockEntityRegistry.THERMO_COMBUSTOR.get(), pPos, pBlockState, Registries.MaterialReg.IRON.get());
+        this.thermalEfficiency = basicOutputEffi;
+        this.conversionRate = basicConversionRate;
+        this.basicOutputEffi = basicOutputEffi;
+        this.basicConversionRate = basicConversionRate;
     }
 
     protected ExpandedContainer container = new ExpandedContainer(SlotType.INPUT);
-    protected ExpandedContainer burning = new ExpandedContainer(SlotType.INFO);
+
+    private ItemStack burning = ItemStack.EMPTY;
+    private int remainTime;//当前状态下 这一个燃料可以燃烧的时间 t = Q / P = Q * conversionRate / P0
+    private int thermalEfficiency;//根据计算获得的实际燃料消耗功率 P = P0 / conversionRate
+    private float conversionRate;//根据计算获得的实际转化率
 
     public int getRemainTime() {
         return remainTime;
@@ -57,12 +72,13 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         return thermalEfficiency;
     }
 
-    public ItemStack getBurningItem() {
-        return burning.getItem(0);
+    public float getConversionRate() {
+        return conversionRate;
     }
 
-    private int remainTime;
-    private int thermalEfficiency;
+    public ItemStack getBurningItem() {
+        return burning;
+    }
 
 
     //---[基础数据处理 basic data handle]--
@@ -71,18 +87,16 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
     protected void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
         pTag.put("container", container.serializeNBT());
-        pTag.put("burning", burning.serializeNBT());
+        pTag.put("burning", burning.save(new CompoundTag()));
         pTag.putInt("rt", remainTime);
-        pTag.putInt("te", thermalEfficiency);
     }
 
     @Override
     public void load(CompoundTag pTag) {
         super.load(pTag);
         container.deserializeNBT(pTag.getCompound("container"));
-        burning.deserializeNBT(pTag.getCompound("burning"));
+        burning = ItemStack.of(pTag.getCompound("burning"));
         remainTime = pTag.getInt("rt");
-        thermalEfficiency = pTag.getInt("te");
     }
 
     //---[热力处理 thermo handle]---
@@ -171,11 +185,10 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             @Override
             public int get(int pIndex) {
                 return switch (pIndex) {
-                    case 0 -> belonging.remainTime;
-                    case 1 -> belonging.thermalEfficiency;
-                    case 2 -> (int) belonging.getT();
-                    case 3 -> belonging.lastOutput[0];
-                    case 4 -> belonging.lastOutput[1];
+                    case 0 -> belonging.thermalEfficiency;
+                    case 1 -> (int) (belonging.conversionRate * 1000);
+                    case 2 -> belonging.remainTime;
+                    case 3 -> (int) belonging.getT();
                     default -> -1;
                 };
             }
@@ -183,17 +196,16 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             @Override
             public void set(int pIndex, int pValue) {
                 switch (pIndex) {
-                    case 0 -> belonging.remainTime = pValue;
-                    case 1 -> belonging.thermalEfficiency = pValue;
-                    case 2 -> belonging.setT(pValue);
-                    case 3 -> belonging.lastOutput[0] = pValue;
-                    case 4 -> belonging.lastOutput[1] = pValue;
+                    case 0 -> belonging.thermalEfficiency = pValue;
+                    case 1 -> belonging.conversionRate = pValue / 1000F;
+                    case 2 -> belonging.remainTime = pValue;
+                    case 3 -> belonging.setT(pValue);
                 }
             }
 
             @Override
             public int getCount() {
-                return 5;
+                return 4;
             }
 
         }
@@ -201,6 +213,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
     public static class UI extends AbstractArkdustIndustContainerUI {
         protected List<TextView> thermoInfoTexts;
+        protected TextView temperature;
 
 
         public UI(Menu menu) {
@@ -210,9 +223,15 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         @Override
         public void notifyData(int index, int content) {
             super.notifyData(index, content);
-            if(thermoInfoTexts == null) return;
+            if (thermoInfoTexts == null) return;
             switch (index) {
-                case 0 -> thermoInfoTexts.get(0).post(()-> thermoInfoTexts.get(0).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.time") + ":" + content));
+                case 0 ->
+                        thermoInfoTexts.get(0).post(() -> thermoInfoTexts.get(0).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.combust_effi") + ":" + content + "kJ/t"));
+                case 1 ->
+                        thermoInfoTexts.get(1).post(() -> thermoInfoTexts.get(1).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.conversion_rate") + ":" + (content / 10F) + "%"));
+                case 2 ->
+                        thermoInfoTexts.get(2).post(() -> thermoInfoTexts.get(2).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.time") + ":" + (content / 20) + "s"));
+//                case 3 -> ;
             }
         }
 
@@ -223,7 +242,6 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             defaultIndsGroup.renderNodeB = 0.8F;
 
             RelativeLayout topLayout = new RelativeLayout(getContext());
-            topLayout.setBackground(MUIHelper.withBorder());
             defaultIndsGroup.child.addView(topLayout);
             topLayout.setId(210010);
             {
@@ -234,54 +252,64 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                 params.setMarginsRelative(group.dp(20 + 0.75F * IndsGroup.TOP_H), 0, 0, 0);
                 params.addRule(RelativeLayout.CENTER_VERTICAL);
                 topLayout.addView(widget, params);
-            }
 
-            LinearLayout thermoInfo = new LinearLayout(getContext());
-            thermoInfo.setGravity(Gravity.CENTER_HORIZONTAL);
-            thermoInfo.setOrientation(LinearLayout.VERTICAL);
-            thermoInfo.setMinimumWidth(group.dp(80));
-            thermoInfo.setBackground(MUIHelper.withBorder());
-            {
-                TextView tt = new TextView(getContext());
-                tt.setTextSize(group.dp(6));
-                tt.setTextColor(0xFF3B3B3B);
-                tt.setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.title"));
-                tt.setBackground(MUIHelper.withBorder());
-                RelativeLayout.LayoutParams para = new RelativeLayout.LayoutParams(-2, -2);
-                para.setMarginsRelative(0, 0, 0, group.dp(4));
-                thermoInfo.addView(tt, para);
+                LinearLayout thermoInfo = new LinearLayout(getContext());
+                thermoInfo.setGravity(Gravity.CENTER_HORIZONTAL);
+                thermoInfo.setOrientation(LinearLayout.VERTICAL);
+                thermoInfo.setMinimumWidth(group.dp(80));
+                {
+                    TextView tt = new TextView(getContext());
+                    tt.setTextSize(group.dp(6));
+                    tt.setTextColor(0xFF3B3B3B);
+                    tt.setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.title"));
+                    RelativeLayout.LayoutParams para = new RelativeLayout.LayoutParams(-2, -2);
+                    para.setMarginsRelative(0, 0, 0, group.dp(4));
+                    thermoInfo.addView(tt, para);
 
-                List<TextView> thermoInfoTexts = new ArrayList<>(3);
-                for (int i = 0; i < 3; i++) {
-                    TextView v = new TextView(getContext());
-                    v.setTextColor(0xFFA8A8A8);
-                    v.setTextSize(group.dp(4));
-                    v.setBackground(MUIHelper.withBorder());
-                    RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(-2, -2);
-                    p.setMarginsRelative(0, 0, group.dp(1), 0);
-                    thermoInfoTexts.add(v);
-                    thermoInfo.addView(v, p);
+                    List<TextView> thermoInfoTexts = new ArrayList<>(3);
+                    for (int i = 0; i < 3; i++) {
+                        TextView v = new TextView(getContext());
+                        v.setTextColor(0xFF888888);
+                        v.setTextSize(group.dp(4));
+                        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(-2, -2);
+                        p.setMarginsRelative(0, 0, group.dp(1), 0);
+                        thermoInfoTexts.add(v);
+                        thermoInfo.addView(v, p);
+                    }
+                    thermoInfoTexts.get(0).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.combust_effi") + ":" + ((Menu) menu).belonging.thermalEfficiency + "kJ/t");
+                    thermoInfoTexts.get(1).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.conversion_rate") + ":" + (((Menu) menu).belonging.conversionRate * 100) + "%");
+                    thermoInfoTexts.get(2).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.time") + ":" + (((Menu) menu).belonging.remainTime / 20) + "s");
+                    this.thermoInfoTexts = thermoInfoTexts;
                 }
-
-                thermoInfoTexts.get(0).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.time") + ":" + ((Menu) menu).belonging.remainTime);
-                thermoInfoTexts.get(1).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.combust_effi") + ":" + I18n.get("arkdust.industry.message.need_module"));
-                thermoInfoTexts.get(2).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.combust_output") + ":" + I18n.get("arkdust.industry.message.need_module"));
-                this.thermoInfoTexts = thermoInfoTexts;
-
+                RelativeLayout.LayoutParams thermoInfoPara = new RelativeLayout.LayoutParams(-2, -2);
+                thermoInfoPara.setMarginsRelative(group.dp(16), group.dp(4), group.dp(4), group.dp(4));
+                thermoInfoPara.addRule(RelativeLayout.RIGHT_OF, 210011);
+                thermoInfoPara.addRule(RelativeLayout.ALIGN_RIGHT, 210010);
+                topLayout.addView(thermoInfo, thermoInfoPara);
             }
-            RelativeLayout.LayoutParams thermoInfoPara = new RelativeLayout.LayoutParams(-2, -2);
-            thermoInfoPara.setMarginsRelative(group.dp(16), group.dp(4), group.dp(4), group.dp(4));
-            thermoInfoPara.addRule(RelativeLayout.RIGHT_OF, 210011);
-            thermoInfoPara.addRule(RelativeLayout.ALIGN_RIGHT, 210010);
-            topLayout.addView(thermoInfo, thermoInfoPara);
 
+            LinearLayout temInfoLayout = new LinearLayout(getContext());
+            temInfoLayout.setOrientation(LinearLayout.VERTICAL);
+            temInfoLayout.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
+            temInfoLayout.setMinimumWidth(group.dp(300));
+            RelativeLayout.LayoutParams temInfoPara = new RelativeLayout.LayoutParams(-2,-2);
+            temInfoPara.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            temInfoPara.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            defaultIndsGroup.child.addView(temInfoLayout,temInfoPara);
+            {
+                LinearLayout texts = new LinearLayout(getContext());
+                temInfoLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+                temperature = new TextView(getContext());
+                temperature.setTextSize(group.dp(7));
+                temperature.setTextColor(0xFF393939);
+            }
 
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-2, -2);
             params.addRule(RelativeLayout.BELOW, 200000);
             params.addRule(RelativeLayout.CENTER_HORIZONTAL);
             params.setMarginsRelative(0, group.dp(20), 0, 0);
             group.addView(new Inventory(((Menu) menu).invStartIndex, 16), params);
-
 
             return group;
         }

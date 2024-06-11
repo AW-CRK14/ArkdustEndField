@@ -5,7 +5,9 @@ import com.landis.arkdust.blockentity.thermo.ThermoCombustorBlockEntity;
 import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.breakdowncore.module.blockentity.ITickable;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -23,16 +25,24 @@ import org.jetbrains.annotations.Nullable;
 
 public class ThermoBlocks {
     public static class CombustorBlock extends BaseEntityBlock {
-        public static final MapCodec<CombustorBlock> CODEC = simpleCodec(p -> new CombustorBlock());
+        public static final MapCodec<CombustorBlock> CODEC = RecordCodecBuilder.mapCodec(ins -> ins.group(
+                        Codec.INT.fieldOf("basicOutputEffi").forGetter(i -> i.basicOutputEffi),
+                        Codec.FLOAT.fieldOf("basicConversionRate").forGetter(i -> i.basicConversionRate))
+                .apply(ins, CombustorBlock::new)
+        );
+        public final int basicOutputEffi;
+        public final float basicConversionRate;
 
-        public CombustorBlock() {
+        public CombustorBlock(int basicOutputEffi, float basicConversionRate) {
             super(Properties.ofFullCopy(Blocks.IRON_BLOCK));
+            this.basicOutputEffi = basicOutputEffi;
+            this.basicConversionRate = basicConversionRate;
         }
 
         @Nullable
         @Override
         public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-            return new ThermoCombustorBlockEntity(pPos, pState);
+            return new ThermoCombustorBlockEntity(pPos, pState, basicOutputEffi, basicConversionRate);
         }
 
         @Nullable
@@ -55,7 +65,7 @@ public class ThermoBlocks {
 
         @Override
         public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-            pPlayer.openMenu((MenuProvider) pLevel.getBlockEntity(pPos),pPos);
+            pPlayer.openMenu((MenuProvider) pLevel.getBlockEntity(pPos), pPos);
             return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
         }
     }

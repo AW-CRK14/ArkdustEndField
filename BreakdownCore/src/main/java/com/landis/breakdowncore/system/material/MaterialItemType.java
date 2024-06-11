@@ -35,8 +35,9 @@ import java.util.List;
  * --- {@link MaterialItemType#id} 为该物品的id，也将会被用于获取材料的透明度图。<br>
  * 在默认提供的{@link TypedMaterialItem}中，最终材质的获取会先检查有无用json额外配置的材质，在不存在时再进行自动处理。<br><p>
  * 在材质方面，{@link MaterialItemType}的id指向该物品在使用material系统的模型时，其将会在:<br>
- *      [NameSpace]/textures/brea/material/mit/[Path].png<br>
+ * [NameSpace]/textures/brea/material/mit/[Path].png<br>
  * 下寻找形状层材质文件。mit_cover则是可选的，在与材料颜色组装完成后的叠加层文件。<br>
+ *
  * @see com.landis.breakdowncore.system.material.expansion.IngotType IngotType中有关于一些预备方法的特别使用方法
  * @see MaterialFeatureType 继续浏览。查看MaterialFeatureType的详细信息
  */
@@ -44,7 +45,6 @@ public class MaterialItemType {
     public final long content;
     public final float purity;
     public final ResourceLocation id;
-    private boolean regFlag = false;
 
     protected ResourceKey<Item> autoRegKey;
 
@@ -66,7 +66,7 @@ public class MaterialItemType {
     public @NonNull ItemStack createItem(Material material) {
         ItemStack stack = getHolder();
         StringTag tag = StringTag.valueOf(material.id.toString());
-        stack.getOrCreateTagElement("brea_data").putString("material",material.id.toString());
+        stack.getOrCreateTagElement("brea_data").putString("material", material.id.toString());
         return stack;
     }
 
@@ -79,13 +79,10 @@ public class MaterialItemType {
      * 这一阶段，请求材料物品类型对该类型进行物品注册。在游戏中即为由nbt控制材料属性的对应id物品
      */
     public void primaryRegister(@Nullable RegisterEvent event) {
-        if(!regFlag){
-            Registry<Item> registry = (Registry<Item>) ModBusConsumer.REGS_MAP.get(Registries.ITEM);
-            ResourceLocation reg = new ResourceLocation(BreakdownCore.MODID, id.getNamespace() + "_" + id.getPath());
-            autoRegKey = ResourceKey.create(Registries.ITEM, reg);
-            Registry.register(registry, reg, new TypedMaterialItem(() -> this));
-        }
-        regFlag = true;
+        Registry<Item> registry = (Registry<Item>) ModBusConsumer.REGS_MAP.get(Registries.ITEM);
+        ResourceLocation reg = new ResourceLocation(BreakdownCore.MODID, id.getNamespace() + "_" + id.getPath());
+        autoRegKey = ResourceKey.create(Registries.ITEM, reg);
+        Registry.register(registry, reg, new TypedMaterialItem(() -> this));
     }
 
     /**
@@ -117,7 +114,7 @@ public class MaterialItemType {
     //将物品添加至创造模式物品栏
     public void attachToCreativeTab(BuildCreativeModeTabContentsEvent event) {
         ItemStack i = new ItemStack(BuiltInRegistries.ITEM.get(autoRegKey.location()));
-        ((ITypedMaterialObj)i.getItem()).setMaterial(i);
+        ((ITypedMaterialObj) i.getItem()).setMaterial(i);
         event.accept(i);
     }
 

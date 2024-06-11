@@ -41,10 +41,14 @@ import static net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS;
 @Mod.EventBusSubscriber(modid = BreakdownCore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EventConsumer$Material {
     private static final boolean[] REG_FLAG = new boolean[]{false, false, false, false};
+    private static boolean preRegFlag = false;
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void preReg(RegisterEvent event) {
-        System$Material.gatherData();
+        if (!preRegFlag) {
+            System$Material.gatherData();
+            preRegFlag = true;
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
@@ -129,7 +133,7 @@ public class EventConsumer$Material {
                 //虽然不是这么用的，但是比较方便
                 Map<MaterialItemType, SpriteContents> alphaCache = new HashMap<>();
                 Map<MaterialItemType, SpriteContents> coverCache = new HashMap<>();
-                Multimap<Integer,MaterialItemType> idpCache = HashMultimap.create();
+                Multimap<Integer, MaterialItemType> idpCache = HashMultimap.create();
 
                 for (MaterialItemType type : Registry$Material.MATERIAL_ITEM_TYPE) {
                     //创建物品类型alpha通道缓存
@@ -146,16 +150,16 @@ public class EventConsumer$Material {
 
                 for (Material material : Registry$Material.MATERIAL) {
                     if (material.intermediateProduct) {
-                        if(!idpCache.containsKey(material.x16color)) {
+                        if (!idpCache.containsKey(material.x16color)) {
                             for (MaterialItemType type : material.getOrCreateTypes()) {
-                                handleSprite(event, alphaCache.get(type), SpriteHelper.pack(SpriteHelper.withColor(16, 16, SpriteHelper.Color.invert(material.x16color))), coverCache.get(type), System$Material.idpForAtlasID(material.x16color,type));
+                                handleSprite(event, alphaCache.get(type), SpriteHelper.pack(SpriteHelper.withColor(16, 16, SpriteHelper.Color.invert(material.x16color))), coverCache.get(type), System$Material.idpForAtlasID(material.x16color, type));
                             }
                             idpCache.putAll(material.x16color, material.getOrCreateTypes());
-                        }else {
+                        } else {
                             for (MaterialItemType type : material.getOrCreateTypes()) {
-                                if(!idpCache.containsEntry(material.x16color,type)){
-                                    handleSprite(event, alphaCache.get(type), SpriteHelper.pack(SpriteHelper.withColor(16, 16, SpriteHelper.Color.invert(material.x16color))), coverCache.get(type), System$Material.idpForAtlasID(material.x16color,type));
-                                    idpCache.put(material.x16color,type);
+                                if (!idpCache.containsEntry(material.x16color, type)) {
+                                    handleSprite(event, alphaCache.get(type), SpriteHelper.pack(SpriteHelper.withColor(16, 16, SpriteHelper.Color.invert(material.x16color))), coverCache.get(type), System$Material.idpForAtlasID(material.x16color, type));
+                                    idpCache.put(material.x16color, type);
                                 }
                             }
                         }
