@@ -31,7 +31,7 @@ public abstract class InventoryWidgets extends IndsGroup {
     protected final RelativeLayout itemsTable;
 
     public InventoryWidgets(Context context, AbstractContainerMenu menu, int itemsHeadIndex, int signLosOri) {//TODO 更多兼容
-        super(context, new ResourceLocation(Arkdust.MODID, "backpack"), -1, false, 0, 0.2F);
+        super(context, new ResourceLocation(Arkdust.MODID, "backpack"), -1, false, 0, 0.2F,300000);
         disableLeftDec();
         int signLos = dp(signLosOri);
         this.menu = menu;

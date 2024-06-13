@@ -16,11 +16,17 @@ import net.minecraft.world.item.ItemStack;
 
 public class FactoryLightInputItemView extends ItemWidget {
 
+    public final Paint I_PAINTER = new Paint();
     public final Paint BG_PAINTER = new Paint();
 
     {
+        I_PAINTER.setColor(0xFF7C7C7C);
+        I_PAINTER.setStrokeWidth(dp(2));
+
         BG_PAINTER.setColor(0xFF7C7C7C);
         BG_PAINTER.setStrokeWidth(dp(2));
+        BG_PAINTER.setAlphaF(0.4F);
+        BG_PAINTER.setStroke(true);
     }
 
     public final Paint D_PAINTER = new Paint();
@@ -50,7 +56,7 @@ public class FactoryLightInputItemView extends ItemWidget {
 
     protected float v = 0F;
 
-    protected ObjectAnimator animator = ObjectAnimator.ofFloat(this,animProperty,0,1);
+    protected ObjectAnimator animator = ObjectAnimator.ofFloat(this, animProperty, 0, 1);
 
     {
         setAlpha(0.8F);
@@ -64,26 +70,22 @@ public class FactoryLightInputItemView extends ItemWidget {
     }
 
     @Override
-    public void drawContext(int actuallyLos, float xAmend, float yAmend, Canvas canvas) {
+    public void drawContext(int actuallyLos, float x0, float y0, Canvas canvas) {
         ItemStack stack = slot.getItem();
         float itemLos = actuallyLos * 0.9F;
-        float y0 = getPaddingTop() + yAmend;
-        float x0 = getPaddingLeft() + xAmend;
         float y1 = y0 + actuallyLos;
         float x1 = x0 + actuallyLos;
 
         float grid = actuallyLos / 5F;
-        if (v == 0) {
-            canvas.drawPoint(x0 + grid, y0 + grid, BG_PAINTER);
-            canvas.drawPoint(x0 + grid, y1 - grid, BG_PAINTER);
-            canvas.drawPoint(x1 - grid, y1 - grid, BG_PAINTER);
-            canvas.drawPoint(x1 - grid, y0 + grid, BG_PAINTER);
-        } else {
+
+        canvas.drawRect(x0 + grid, y0 + grid, x1 - grid, y1 - grid, BG_PAINTER);
+
+        if (v != 0) {
             float width = grid * 3 * v;
-            canvas.drawLine(x0 + grid, y0 + grid, x0 + grid, y0 + grid + width, BG_PAINTER);
-            canvas.drawLine(x0 + grid, y1 - grid, x0 + grid + width, y1 - grid, BG_PAINTER);
-            canvas.drawLine(x1 - grid, y1 - grid, x1 - grid, y1 - grid - width, BG_PAINTER);
-            canvas.drawLine(x1 - grid, y0 + grid, x1 - grid - width, y0 + grid, BG_PAINTER);
+            canvas.drawLine(x0 + grid, y0 + grid, x0 + grid, y0 + grid + width, I_PAINTER);
+            canvas.drawLine(x0 + grid, y1 - grid, x0 + grid + width, y1 - grid, I_PAINTER);
+            canvas.drawLine(x1 - grid, y1 - grid, x1 - grid, y1 - grid - width, I_PAINTER);
+            canvas.drawLine(x1 - grid, y0 + grid, x1 - grid - width, y0 + grid, I_PAINTER);
         }
 
         if (!stack.isEmpty()) {

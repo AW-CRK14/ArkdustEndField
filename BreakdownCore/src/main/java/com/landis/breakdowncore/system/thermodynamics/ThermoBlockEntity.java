@@ -28,6 +28,7 @@ public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMa
 
     public ThermoBlockEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
         super(pType, pPos, pBlockState);
+        this.setQ(getMC() * 27);
     }
 
     public void setMaterial(Material material) {
@@ -54,14 +55,14 @@ public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMa
     @Override
     public void load(CompoundTag pTag) {
         super.load(pTag);
-        q = pTag.getDouble("thermo_q");
+        q = pTag.getFloat("thermo_temperature") * getMC();
         material = Registry$Material.MATERIAL.get(new ResourceLocation(pTag.getString("material")));
     }
 
     @Override
     protected void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
-        pTag.putDouble("thermo_q", q);
+        pTag.putFloat("thermo_temperature", getT());
         pTag.putString("material", material.id.toString());
     }
 

@@ -26,7 +26,7 @@ public class ThermoMF implements IMaterialFeature<ThermoMF> {
      *     <td>ic</td>
      *     <td>Input Specific Heat Capacity</td>
      *     <td>设定比热容</td>
-     *     <td>J/(kg·°C)</td>
+     *     <td>J/(g·°C)</td>
      *   </tr>
      *   <tr>
      *     <td>ik</td>
@@ -38,19 +38,19 @@ public class ThermoMF implements IMaterialFeature<ThermoMF> {
      *     <td>density</td>
      *     <td>Density</td>
      *     <td>密度</td>
-     *     <td>kg/m<sup>3</sup></td>
+     *     <td>g/cm³</td>
      *   </tr>
      *   <tr>
      *     <td>V = 1</td>
      *     <td>Volume</td>
      *     <td>体积</td>
-     *     <td>m<sup>3</sup></td>
+     *     <td>m³</td>
      *   </tr>
      *   <tr>
      *     <td>c</td>
      *     <td>Specific Heat Capacity</td>
      *     <td>比热容</td>
-     *     <td>kJ/(°C·m<sup>3</sup>)</td>
+     *     <td>kJ/(°C·m³)</td>
      *   </tr>
      *   <tr>
      *     <td>k</td>
@@ -69,7 +69,7 @@ public class ThermoMF implements IMaterialFeature<ThermoMF> {
             LOGGER.error("比热容必须高于0而热导率必须不低于0。而它们现在的数值为{}和{}",ic,ik);
             throw new IllegalArgumentException("The C or K value isn't correct.");
         }
-        this.c = ic / ( density * 1 * 1000 );
+        this.c = ic * density * 1000;
         this.k = ik / 4000;
     }
 

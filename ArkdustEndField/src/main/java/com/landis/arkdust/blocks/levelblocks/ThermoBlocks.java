@@ -24,6 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class ThermoBlocks {
+
     public static class CombustorBlock extends BaseEntityBlock {
         public static final MapCodec<CombustorBlock> CODEC = RecordCodecBuilder.mapCodec(ins -> ins.group(
                         Codec.INT.fieldOf("basicOutputEffi").forGetter(i -> i.basicOutputEffi),

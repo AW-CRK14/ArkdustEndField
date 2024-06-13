@@ -40,12 +40,14 @@ public class AbstractArkdustIndustUI extends Fragment {
     @Nonnull
     public View onCreateView(LayoutInflater inflater, ViewGroup container, DataSet savedInstanceState) {
         ViewGroup base = new RelativeLayout(getContext());
-        IndsGroup g = new IndsGroup(getContext(),new ResourceLocation(Arkdust.MODID,"test"),2,true);
-        g.setId(200000);
-        defaultIndsGroup = g;
+        defaultIndsGroup = createIndsGroup();
         indsGroupLayoutParams = new RelativeLayout.LayoutParams(-2,-2);
         indsGroupLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        base.addView(g, indsGroupLayoutParams);
+        base.addView(defaultIndsGroup, indsGroupLayoutParams);
         return base;
+    }
+
+    public IndsGroup createIndsGroup(){
+        return new IndsGroup(getContext(),new ResourceLocation(Arkdust.MODID,"test"),2,true,200000);
     }
 }

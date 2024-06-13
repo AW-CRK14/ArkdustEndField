@@ -15,18 +15,23 @@ import icyllis.modernui.util.FloatProperty;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.MotionEvent;
 import icyllis.modernui.view.View;
+import icyllis.modernui.view.ViewGroup;
 import icyllis.modernui.widget.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.function.Supplier;
+
 public class IndsGroup extends RelativeLayout {
     public static final int TOP_H = 40;
+    public static final Image left = Image.create(Arkdust.MODID, "gui/element/ind/left_net.png");
+
 
     public final ResourceLocation id;
     public final int lv;
     public final int thickness = dp(0.5F);
-    public final RelativeLayout child;
+    public final ViewGroup child;
 
 
     public float renderNodeA;
@@ -35,107 +40,97 @@ public class IndsGroup extends RelativeLayout {
 
     private boolean leftDecEnable = true;
 
-    private boolean closeButtonEnable = true;
-
-    public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton) {
-        this(context, id, lv, enableCloseButton, 0, 0.4F);
+    public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton, int subject) {
+        this(context, id, lv, enableCloseButton, 0, 0.4F, subject);
     }
 
-    public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton, float renderNodeA, float renderNodeB) {
+    public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton, int subject, Supplier<? extends ViewGroup> supplier) {
+        this(context, id, lv, enableCloseButton, 0, 0.4F, subject, supplier);
+    }
+
+    public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton, float renderNodeA, float renderNodeB, int subject) {
+        this(context, id, lv, enableCloseButton, renderNodeA, renderNodeB, subject, () -> new RelativeLayout(context));
+    }
+
+    public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton, float renderNodeA, float renderNodeB, int subject, Supplier<? extends ViewGroup> supplier) {
         super(context);
         this.id = id;
         this.lv = lv;
         this.setBackground(new Background());
-//        this.setBackground(MUIHelper.withBorder());//test
+        this.setId(subject);
 
         this.renderNodeA = renderNodeA;
         this.renderNodeB = renderNodeB;
 
         ImageView logo = new ImageView(context);
+        logo.setId(subject + 1);
         logo.setImage(Image.create(id.getNamespace(), "ind_mac/" + id.getPath() + ".png"));
-//        logo.setBackground(MUIHelper.withBorder());//test
         LayoutParams paraLogo = new LayoutParams(dp(TOP_H * 0.8F), dp(TOP_H * 0.8F));
         paraLogo.setMargins(dp(TOP_H * 0.1F), dp(TOP_H * 0.1F), dp(TOP_H * 0.1F), dp(TOP_H * 0.1F));
         this.addView(logo, paraLogo);
 
-        RelativeLayout topBar = new RelativeLayout(context);
-        topBar.setGravity(RelativeLayout.CENTER_VERTICAL);
-        topBar.setId(200001);
-//        topBar.setBackground(MUIHelper.withBorder());//test
-        LayoutParams paraTopBar = new LayoutParams(-2, dp(TOP_H));
-        paraTopBar.setMarginsRelative(dp(TOP_H), 0, 0, dp(getHeight() - TOP_H));
+        LinearLayout titles = new LinearLayout(context);
+        titles.setOrientation(LinearLayout.VERTICAL);
+        titles.setGravity(Gravity.LEFT);
+        titles.setId(subject + 2);
+        LayoutParams paraTitles = new LayoutParams(-2, dp(TOP_H));
+        paraTitles.setMarginsRelative(dp(TOP_H * 0.1F), 0, 0, 0);
+        paraTitles.addRule(RelativeLayout.RIGHT_OF, logo.getId());
         {
-            LinearLayout titles = new LinearLayout(context);
-            titles.setOrientation(LinearLayout.VERTICAL);
-            titles.setGravity(Gravity.LEFT);
-            titles.setId(200011);
-//            titles.setBackground(MUIHelper.withBorder());//test
-            LayoutParams paraTitles = new LayoutParams(-2, -2);
-            paraTitles.setMarginsRelative(dp(TOP_H * 0.1F), 0, 0, 0);
-            paraTitles.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            ImageView nameDec = new ImageView(context);
+            nameDec.setImage(Image.create(Arkdust.MODID, "gui/element/ind/name_dec.png"));
+            LayoutParams paraNameDec = new LayoutParams(dp(TOP_H * 1.25F), dp(TOP_H * 0.25F));
+            paraNameDec.setMargins(dp(TOP_H * 0.15F), dp(TOP_H / 8F), 0, 0);
+            titles.addView(nameDec, paraNameDec);
+
+            LinearLayout nameGroup = new LinearLayout(context);
+            nameGroup.setGravity(Gravity.BOTTOM);
+            nameGroup.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+            nameGroup.setOrientation(LinearLayout.HORIZONTAL);
+            nameGroup.setDividerDrawable(new Divider());
             {
-                ImageView nameDec = new ImageView(context);
-                nameDec.setImage(Image.create(Arkdust.MODID, "gui/element/ind/name_dec.png"));
-                LayoutParams paraNameDec = new LayoutParams(dp(TOP_H * 1.25F), dp(TOP_H * 0.25F));
-                paraNameDec.setMargins(dp(TOP_H * 0.15F), dp(TOP_H / 8F), 0, 0);
-                titles.addView(nameDec, paraNameDec);
+                TextView name = new TextView(context);
+                name.setText(I18n.get(nameKey()));
+                name.setTextSize(dp(TOP_H * 0.135F));//TODO
+                name.setTextColor(CTM);
+                LayoutParams paraName = new LayoutParams(-2, -2);
+                paraName.setMargins(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.15F), 0);
+                nameGroup.addView(name, paraName);
 
-                LinearLayout nameGroup = new LinearLayout(context);
-                nameGroup.setGravity(Gravity.BOTTOM);
-                nameGroup.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-                nameGroup.setOrientation(LinearLayout.HORIZONTAL);
-//                nameGroup.setBackground(MUIHelper.withBorder());//test
-                nameGroup.setDividerDrawable(new Divider());
-                {
-                    TextView name = new TextView(context);
-                    name.setText(I18n.get(nameKey()));
-                    name.setTextSize(dp(TOP_H * 0.135F));//TODO
-                    name.setTextColor(CTM);
-                    LayoutParams paraName = new LayoutParams(-2, -2);
-                    paraName.setMargins(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.15F), 0);
-                    nameGroup.addView(name, paraName);
-
-                    if (lv >= 0) {
-                        TextView lvText = new TextView(context);
-                        lvText.setText("Lv." + lv);
-                        lvText.setTextSize(dp(TOP_H * 0.09F));
-                        lvText.setTextColor(CTS);
-                        LayoutParams paraLv = new LayoutParams(-2, -2);
-                        paraLv.setMargins(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.2F), 0);
-                        nameGroup.addView(lvText, paraLv);
-                    }
-                }
-                titles.addView(nameGroup, new LayoutParams(-2, -1));
-
-            }
-            topBar.addView(titles, paraTitles);
-
-            LinearLayout buttons = new LinearLayout(context);
-            buttons.setOrientation(LinearLayout.HORIZONTAL);
-            buttons.setGravity(Gravity.RIGHT);
-            buttons.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-            buttons.setDividerDrawable(new Divider());
-//            buttons.setBackground(MUIHelper.withBorder());//test
-            LayoutParams paraButtons = new LayoutParams(-2, -2);
-            paraButtons.setMarginsRelative(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.15F), 0);
-//            paraButtons.addRule(RelativeLayout.ALIGN_RIGHT);
-            paraButtons.addRule(RelativeLayout.CENTER_VERTICAL);
-            paraButtons.addRule(RelativeLayout.ALIGN_RIGHT, topBar.getId());
-            paraButtons.addRule(RelativeLayout.RIGHT_OF, titles.getId());
-//            paraButtons.addRule(Gravity.CENTER);
-            {
-                if (enableCloseButton) {
-                    buttons.addView(new TopBarButton(context, 1001, new ResourceLocation(Arkdust.MODID, "gui/element/ind/close.png"), v -> Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(null))), new LayoutParams(dp(TOP_H * 0.6F), dp(TOP_H * 0.6F)));
+                if (lv >= 0) {
+                    TextView lvText = new TextView(context);
+                    lvText.setText("Lv." + lv);
+                    lvText.setTextSize(dp(TOP_H * 0.09F));
+                    lvText.setTextColor(CTS);
+                    LayoutParams paraLv = new LayoutParams(-2, -2);
+                    paraLv.setMargins(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.2F), 0);
+                    nameGroup.addView(lvText, paraLv);
                 }
             }
-            topBar.addView(buttons, paraButtons);
+            titles.addView(nameGroup, new LayoutParams(-2, -2));
 
         }
-        this.addView(topBar, paraTopBar);
+        this.addView(titles, paraTitles);
 
-        //TODO RecipeBar
-        this.child = new RelativeLayout(getContext());
-        this.child.setId(210000);
+        LinearLayout buttons = new LinearLayout(context);
+        buttons.setOrientation(LinearLayout.HORIZONTAL);
+        buttons.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+        buttons.setDividerDrawable(new Divider());
+        buttons.setId(subject + 3);
+        buttons.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+        LayoutParams paraButtons = new LayoutParams(-2, dp(TOP_H));
+        paraButtons.setMarginsRelative(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.15F), 0);
+        paraButtons.addRule(RelativeLayout.ALIGN_RIGHT, subject + 10000);
+        paraButtons.addRule(RelativeLayout.RIGHT_OF, titles.getId());
+        {
+            if (enableCloseButton) {
+                buttons.addView(new TopBarButton(context, subject + 9901, new ResourceLocation(Arkdust.MODID, "gui/element/ind/close.png"), v -> Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(null))), new LayoutParams(dp(TOP_H * 0.6F), dp(TOP_H * 0.6F)));
+            }
+        }
+        this.addView(buttons, paraButtons);
+
+        this.child = supplier.get();
+        this.child.setId(subject + 10000);
         LayoutParams paraChild = new LayoutParams(-2, -2);
         paraChild.setMarginsRelative(0, dp(TOP_H), 0, 0);
         this.addView(child, paraChild);
@@ -152,10 +147,8 @@ public class IndsGroup extends RelativeLayout {
 
     public class Background extends Drawable {
         public static final int CA = 0xFFE6E6E6;
-        public static final int CB = 0x9F1E1E1E;
+        public static final int CB = 0x8A1E1E1E;
         private final Paint PAINT = new Paint();
-        private Image left;
-
         @Override
         public void draw(Canvas canvas) {
             Rect b = getBounds();
@@ -163,7 +156,7 @@ public class IndsGroup extends RelativeLayout {
             int x1 = b.right;
             int y0 = b.top;
             float y1 = y0 + dp(TOP_H) + b.height() * renderNodeA;
-            float y2 = Math.min(b.bottom, y1 + b.height() * renderNodeB);
+            float y2 = Math.min(b.bottom, Math.max(y0 + dp(TOP_H) + b.height() * renderNodeB, y1));
             boolean flag = y2 < b.bottom;
             PAINT.setColor(CA);
             canvas.drawRoundRect(x0, y0, x1, y1, dp(4), Gravity.TOP, PAINT);
@@ -179,7 +172,6 @@ public class IndsGroup extends RelativeLayout {
             canvas.drawLine(x0 + dp(TOP_H), y0, x0 + dp(TOP_H), y0 + dp(TOP_H), thickness, PAINT);
 
             if (leftDecEnable) {
-                left = Image.create(Arkdust.MODID, "gui/element/ind/left_net.png");
                 //left_net左侧渲染
                 MUIHelper.repeatedGridImage(canvas, new Rect(0, dp(TOP_H), dp(TOP_H * 0.75F), b.bottom), left, false, true, 1, PAINT);
             }

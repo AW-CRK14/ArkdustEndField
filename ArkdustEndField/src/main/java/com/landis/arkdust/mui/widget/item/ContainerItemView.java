@@ -106,11 +106,9 @@ public abstract class ContainerItemView extends ItemWidget {
     }
 
     @Override
-    public void drawContext(int actuallyLos, float xAmend, float yAmend, Canvas canvas) {
+    public void drawContext(int actuallyLos, float x0, float y0, Canvas canvas) {
         ItemStack stack = slot.getItem();
         float itemLos = actuallyLos * 0.9F;
-        float y0 = getPaddingTop() + yAmend;
-        float x0 = getPaddingLeft() + xAmend;
         float y1 = y0 + actuallyLos;
         float x1 = x0 + actuallyLos;
 

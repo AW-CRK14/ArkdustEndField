@@ -1,5 +1,6 @@
 package com.landis.arkdust.blockentity.thermo;
 
+import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.blocks.levelblocks.ThermoBlocks;
 import com.landis.arkdust.helper.MUIHelper;
 import com.landis.arkdust.mui.AbstractArkdustIndustContainerUI;
@@ -12,7 +13,11 @@ import com.landis.arkdust.registry.MenuTypeRegistry;
 import com.landis.breakdowncore.Registries;
 import com.landis.breakdowncore.module.blockentity.container.*;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
+import icyllis.modernui.core.Context;
 import icyllis.modernui.fragment.Fragment;
+import icyllis.modernui.graphics.Canvas;
+import icyllis.modernui.graphics.Paint;
+import icyllis.modernui.graphics.Rect;
 import icyllis.modernui.mc.neoforge.MenuScreenFactory;
 import icyllis.modernui.util.DataSet;
 import icyllis.modernui.view.Gravity;
@@ -27,6 +32,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -188,7 +194,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                     case 0 -> belonging.thermalEfficiency;
                     case 1 -> (int) (belonging.conversionRate * 1000);
                     case 2 -> belonging.remainTime;
-                    case 3 -> (int) belonging.getT();
+                    case 3 -> (int) belonging.getT() * 10;
                     default -> -1;
                 };
             }
@@ -199,7 +205,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                     case 0 -> belonging.thermalEfficiency = pValue;
                     case 1 -> belonging.conversionRate = pValue / 1000F;
                     case 2 -> belonging.remainTime = pValue;
-                    case 3 -> belonging.setT(pValue);
+                    case 3 -> belonging.setT(pValue / 10);
                 }
             }
 
@@ -236,20 +242,37 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         }
 
         @Override
+        public IndsGroup createIndsGroup() {
+            return new IndsGroup(getContext(), new ResourceLocation(Arkdust.MODID, "test"), 2, true, 200000, () -> {
+                LinearLayout l = new LinearLayout(getContext());
+                l.setOrientation(LinearLayout.VERTICAL);
+                l.setGravity(Gravity.CENTER_HORIZONTAL);
+                return l;
+            });
+        }
+
+        @Override
         public @NotNull View onCreateView(LayoutInflater inflater, ViewGroup container, DataSet savedInstanceState) {
             ViewGroup group = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
-            defaultIndsGroup.renderNodeA = 0.6F;
-            defaultIndsGroup.renderNodeB = 0.8F;
+            defaultIndsGroup.renderNodeA = 0.45F;
+            defaultIndsGroup.renderNodeB = 0.6F;
+
+            {
+                RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) defaultIndsGroup.child.getLayoutParams();
+                p.leftMargin += group.dp(IndsGroup.TOP_H * 0.75F);
+            }
 
             RelativeLayout topLayout = new RelativeLayout(getContext());
-            defaultIndsGroup.child.addView(topLayout);
+            RelativeLayout.LayoutParams paraTopLayout = new RelativeLayout.LayoutParams(-2, -2);
+            paraTopLayout.setMarginsRelative(group.dp(30), group.dp(10), group.dp(30), group.dp(10));
+            paraTopLayout.addRule(RelativeLayout.CENTER_IN_PARENT);
+            defaultIndsGroup.child.addView(topLayout, paraTopLayout);
             topLayout.setId(210010);
             {
                 ItemWidget widget = new FactoryLightInputItemView(getContext(), menu.getSlot(0), 16, menu);
                 widget.setId(210011);
                 widgets.set(0, widget);
                 RelativeLayout.LayoutParams params = widget.defaultPara();
-                params.setMarginsRelative(group.dp(20 + 0.75F * IndsGroup.TOP_H), 0, 0, 0);
                 params.addRule(RelativeLayout.CENTER_VERTICAL);
                 topLayout.addView(widget, params);
 
@@ -289,29 +312,76 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             }
 
             LinearLayout temInfoLayout = new LinearLayout(getContext());
+            temInfoLayout.setId(210020);
             temInfoLayout.setOrientation(LinearLayout.VERTICAL);
             temInfoLayout.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
-            temInfoLayout.setMinimumWidth(group.dp(300));
-            RelativeLayout.LayoutParams temInfoPara = new RelativeLayout.LayoutParams(-2,-2);
-            temInfoPara.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            temInfoPara.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            defaultIndsGroup.child.addView(temInfoLayout,temInfoPara);
+            temInfoLayout.setMinimumWidth(group.dp(20));
+            RelativeLayout.LayoutParams temInfoPara = new RelativeLayout.LayoutParams(-2, -2);
+            temInfoPara.setMargins(group.dp(20), 0, group.dp(20), group.dp(20));
+            temInfoPara.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            temInfoPara.addRule(RelativeLayout.BELOW, 210010);
+            defaultIndsGroup.child.addView(temInfoLayout, temInfoPara);
             {
                 LinearLayout texts = new LinearLayout(getContext());
-                temInfoLayout.setOrientation(LinearLayout.HORIZONTAL);
+                texts.setId(210021);
+                texts.setOrientation(LinearLayout.HORIZONTAL);
+                texts.setGravity(Gravity.CENTER_HORIZONTAL);
 
                 temperature = new TextView(getContext());
                 temperature.setTextSize(group.dp(7));
-                temperature.setTextColor(0xFF393939);
+                temperature.setTextColor(0xFFD5D5D5);
+                temperature.setText(((Menu) menu).belonging.getT() + "");
+                texts.addView(temperature);
+
+                TextView maxT = new TextView(getContext());
+                maxT.setTextSize(group.dp(5F));
+                maxT.setTextColor(0xFF9A9A9A);
+                maxT.setText("/" + ((Menu) menu).belonging.maxT() + " °C");
+                texts.addView(maxT);
+
+                temInfoLayout.addView(texts);
+
+                RelativeLayout.LayoutParams paraTemBar = new RelativeLayout.LayoutParams(group.dp(200), group.dp(16));
+//                paraTemBar.addRule(RelativeLayout.ALIGN_LEFT,210000);
+//                paraTemBar.addRule(RelativeLayout.ALIGN_RIGHT,210000);
+                temInfoLayout.addView(new TemBarInfo(), paraTemBar);
             }
 
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-2, -2);
             params.addRule(RelativeLayout.BELOW, 200000);
             params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-            params.setMarginsRelative(0, group.dp(20), 0, 0);
+            params.setMarginsRelative(0, group.dp(50), 0, 0);
             group.addView(new Inventory(((Menu) menu).invStartIndex, 16), params);
 
             return group;
+        }
+
+        public class TemBarInfo extends View {
+            public final Paint PAINT = new Paint();
+
+            {
+                PAINT.setColor(0xFF9C9C9C);
+                PAINT.setStrokeWidth(dp(2F));
+                PAINT.setStroke(true);
+            }
+
+            public TemBarInfo() {
+                super(UI.this.getContext());
+            }
+
+            @Override
+            public void draw(Canvas canvas) {
+                super.draw(canvas);
+
+                ThermoCombustorBlockEntity entity = ((Menu) menu).belonging;
+
+                canvas.save();
+                canvas.clipRect(0, 0, getWidth() * ((entity.getT() + 273F) / (entity.maxT() + 273F)), getHeight());
+                float r = getHeight() / 2F;
+                canvas.drawImage(ResourceQuote$Thermo.TEM_BAR, null, new Rect(0, 0, getWidth(), getHeight()), null);
+                canvas.restore();
+                canvas.drawRoundRect(dp(1), dp(1), getWidth() - dp(1), getHeight() - dp(1), r, PAINT);
+            }
         }
     }
 }
