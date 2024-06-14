@@ -37,6 +37,7 @@ repositories {
 
 mixin {
     config("${core_mod_id}.mixins.json")
+    config("${main_mod_id}.mixins.json")
 }
 
 runs {

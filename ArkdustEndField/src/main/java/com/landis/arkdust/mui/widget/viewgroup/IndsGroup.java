@@ -38,14 +38,15 @@ public class IndsGroup extends RelativeLayout {
     public float renderNodeB;
 
 
-    private boolean leftDecEnable = true;
+    public boolean leftDecEnable = true;
+    public float bottomBarHeight = 0;
 
     public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton, int subject) {
-        this(context, id, lv, enableCloseButton, 0, 0.4F, subject);
+        this(context, id, lv, enableCloseButton, 0, 0.25F, subject);
     }
 
     public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton, int subject, Supplier<? extends ViewGroup> supplier) {
-        this(context, id, lv, enableCloseButton, 0, 0.4F, subject, supplier);
+        this(context, id, lv, enableCloseButton, 0, 0.25F, subject, supplier);
     }
 
     public IndsGroup(Context context, ResourceLocation id, int lv, boolean enableCloseButton, float renderNodeA, float renderNodeB, int subject) {
@@ -122,12 +123,16 @@ public class IndsGroup extends RelativeLayout {
         paraButtons.setMarginsRelative(dp(TOP_H * 0.15F), 0, dp(TOP_H * 0.15F), 0);
         paraButtons.addRule(RelativeLayout.ALIGN_RIGHT, subject + 10000);
         paraButtons.addRule(RelativeLayout.RIGHT_OF, titles.getId());
+        int buttonCount = 0;
         {
             if (enableCloseButton) {
                 buttons.addView(new TopBarButton(context, subject + 9901, new ResourceLocation(Arkdust.MODID, "gui/element/ind/close.png"), v -> Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(null))), new LayoutParams(dp(TOP_H * 0.6F), dp(TOP_H * 0.6F)));
+                buttonCount++;
             }
         }
-        this.addView(buttons, paraButtons);
+        buttons.setMinimumWidth(dp(buttonCount * 16));
+        if (buttonCount > 0)
+            this.addView(buttons, paraButtons);
 
         this.child = supplier.get();
         this.child.setId(subject + 10000);
@@ -147,33 +152,57 @@ public class IndsGroup extends RelativeLayout {
 
     public class Background extends Drawable {
         public static final int CA = 0xFFE6E6E6;
-        public static final int CB = 0x8A1E1E1E;
-        private final Paint PAINT = new Paint();
+        public static final int CB = 0x9A33333D;
+        private final Paint PAINT_CA = new Paint();
+        private final Paint PAINT_CB = new Paint();
+        private final Paint PAINT_CTS = new Paint();
+        private final Paint PAINT_BOTTOM = new Paint();
+
+        {
+            PAINT_CA.setColor(CA);
+            PAINT_CB.setColor(CB);
+            PAINT_BOTTOM.setColor(0xFF1C1C1C);
+            PAINT_CTS.setColor(CTS);
+        }
+
         @Override
         public void draw(Canvas canvas) {
             Rect b = getBounds();
             int x0 = b.left;
             int x1 = b.right;
             int y0 = b.top;
-            float y1 = y0 + dp(TOP_H) + b.height() * renderNodeA;
-            float y2 = Math.min(b.bottom, Math.max(y0 + dp(TOP_H) + b.height() * renderNodeB, y1));
-            boolean flag = y2 < b.bottom;
-            PAINT.setColor(CA);
-            canvas.drawRoundRect(x0, y0, x1, y1, dp(4), Gravity.TOP, PAINT);
-            if (y1 < y2)
-                canvas.drawRectGradient(x0, y1, x1, y2, CA, CA, CB, CB, PAINT);
-            if (flag) {
-                PAINT.setColor(CB);
-                canvas.drawRoundRect(x0, y2, x1, b.bottom, dp(TOP_H * 0.2F), Gravity.BOTTOM, PAINT);
+
+            //渲染底部按钮预备区
+            int bottomHAmend = 0;
+            if (bottomBarHeight > 0) {
+                bottomBarHeight = Math.max(TOP_H * 0.2F, bottomBarHeight);
+                bottomHAmend = dp(bottomBarHeight);
             }
 
-            PAINT.setColor(CTS);
-            canvas.drawLine(x0, y0 + dp(TOP_H), x1, y0 + dp(TOP_H), thickness, PAINT);
-            canvas.drawLine(x0 + dp(TOP_H), y0, x0 + dp(TOP_H), y0 + dp(TOP_H), thickness, PAINT);
+            float y1 = y0 + dp(TOP_H) + b.height() * renderNodeA;
+            float y2 = Math.min(b.bottom - bottomHAmend, Math.max(y0 + dp(TOP_H) + b.height() * renderNodeB, y1));
+            boolean flag = y2 < b.bottom - bottomHAmend;
+            canvas.drawRoundRect(x0, y0, x1, y1, dp(4), Gravity.TOP, PAINT_CA);
+            if (y1 < y2)
+                canvas.drawRectGradient(x0, y1, x1, y2, CA, CA, CB, CB, PAINT_CB);
+            if (flag) {
+                if (bottomHAmend == 0)
+                    canvas.drawRoundRect(x0, y2, x1, b.bottom - bottomHAmend, dp(TOP_H * 0.2F), Gravity.BOTTOM, PAINT_CB);
+                else
+                    canvas.drawRect(x0, y2, x1, b.bottom - bottomHAmend, PAINT_CB);
+            }
+
+            if (bottomHAmend > 0) {
+                canvas.drawRoundRect(x0, b.bottom - bottomHAmend, x1, b.bottom, dp(0.2F * TOP_H), Gravity.BOTTOM, PAINT_BOTTOM);
+            }
+
+            canvas.drawLine(x0, y0 + dp(TOP_H), x1, y0 + dp(TOP_H), thickness, PAINT_CTS);
+            canvas.drawLine(x0 + dp(TOP_H), y0, x0 + dp(TOP_H), y0 + dp(TOP_H), thickness, PAINT_CTS);
+
 
             if (leftDecEnable) {
                 //left_net左侧渲染
-                MUIHelper.repeatedGridImage(canvas, new Rect(0, dp(TOP_H), dp(TOP_H * 0.75F), b.bottom), left, false, true, 1, PAINT);
+                MUIHelper.repeatedGridImage(canvas, new Rect(0, dp(TOP_H), dp(TOP_H * 0.75F), b.bottom - bottomHAmend), left, false, true, 1, PAINT_CA);
             }
         }
     }
@@ -238,10 +267,6 @@ public class IndsGroup extends RelativeLayout {
         };
     }
 
-
-    public void setLeftDecEnable(boolean leftDecEnable) {
-        this.leftDecEnable = leftDecEnable;
-    }
 
     public void disableLeftDec() {
         this.leftDecEnable = false;

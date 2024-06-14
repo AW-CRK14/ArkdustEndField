@@ -1,9 +1,5 @@
 {
   "arkdust.industry.arkdust.backpack.name": "BackPack",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.combust_effi": "产热效率",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.conversion_rate": "热转化率",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.time": "剩余时间",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.title": "热力炉信息",
   "arkdust.industry.arkdust.mac.thermo.combustor.test": "TestingCombustor",
   "arkdust.industry.arkdust.test.name": "TestMac",
   "arkdust.industry.message.need_module": "[需要机器模块安装]",
@@ -27,5 +23,6 @@
   "gui.arkdust.info.title.level_state": "Level State",
   "gui.arkdust.info.title.level_state.climate": "Climate State:",
   "gui.arkdust.warn.level_without_state": "[LLMD]Can't connect to the level state server.",
-  "tab.arkdust.default": "Arkdust: Default"
+  "tab.arkdust.default": "Arkdust: Default",
+  "arkdust.industry.arkdust.mac.thermo.combustor.info.temp": "机器温度"
 }

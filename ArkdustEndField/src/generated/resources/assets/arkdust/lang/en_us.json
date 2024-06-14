@@ -24,8 +24,5 @@
   "arkdust.industry.arkdust.test.name": "TestMac",
   "arkdust.industry.arkdust.backpack.name": "BackPack",
   "arkdust.industry.arkdust.mac.thermo.combustor.test": "TestingCombustor",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.title": "Thermo Infos",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.time": "Remand Time",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.combust_effi": "Combustion Effi",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.conversion_rate": "Conversion Rate"
+  "arkdust.industry.arkdust.mac.thermo.combustor.info.temp": "Mac Tempera"
 }

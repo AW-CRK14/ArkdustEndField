@@ -5,5 +5,6 @@ import icyllis.modernui.graphics.Image;
 import icyllis.modernui.widget.ImageView;
 
 public class ResourceQuote$Thermo {
-    public static final Image TEM_BAR = Image.create(Arkdust.MODID, "gui/element/ind/tem_color_bar.png");
+//    public static final Image TEM_BAR = Image.create(Arkdust.MODID, "gui/element/ind/tem_color_bar.png");
+    public static final Image THERMOS_DEC = Image.create(Arkdust.MODID, "gui/element/thermo/thermos_dec.png");
 }

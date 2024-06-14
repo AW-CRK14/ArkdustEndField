@@ -7,8 +7,11 @@ import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
 import icyllis.modernui.graphics.Rect;
 import icyllis.modernui.graphics.drawable.ShapeDrawable;
+import icyllis.modernui.text.PrecomputedText;
+import icyllis.modernui.text.Spannable;
 import icyllis.modernui.text.SpannableString;
 import icyllis.modernui.text.Spanned;
+import icyllis.modernui.text.style.BackgroundColorSpan;
 import icyllis.modernui.text.style.ForegroundColorSpan;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.ViewGroup;
@@ -19,10 +22,14 @@ import icyllis.modernui.graphics.Paint;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.List;
+import java.util.function.Supplier;
 
 
 public class MUIHelper {
+    @Deprecated
     public static Pair<TextView, ViewGroup.LayoutParams> drawStringAt(Context context, ViewGroup group, String text, int color, int size, int x, int y) {
         TextView title = new TextView(context);
         title.setText(text);
@@ -37,25 +44,7 @@ public class MUIHelper {
         return Pair.of(title, titlePara);
     }
 
-    /**
-     * @param left 组件的左侧位置相对于父组件左边框的位置
-     * @param top  组件的顶部位置相对于父组件的顶部位置
-     */
-    public static Pair<TextView, RelativeLayout.LayoutParams> drawStringAt(Context context, ViewGroup group, String text, int color, int size, int gravity, int left, int top, int right, int bottom) {
-        TextView title = new TextView(context);
-        title.setText(text);
-        title.setTextColor(color);
-        title.setTextSize(size);
-        title.setGravity(gravity);
-
-        RelativeLayout.LayoutParams titlePara = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        titlePara.setMargins(group.dp(left), group.dp(top), group.dp(right), group.dp(bottom));
-
-        group.addView(title, titlePara);
-
-        return Pair.of(title, titlePara);
-    }
-
+    @Deprecated
     public static Pair<ImageView, ViewGroup.LayoutParams> drawImage(Context context, ViewGroup group, ResourceLocation resource, int x, int y, int width, int height) {
         ImageView imageView = new ImageView(context);
         Image image = Image.create(resource.getNamespace(), resource.getPath());
@@ -72,7 +61,7 @@ public class MUIHelper {
         return Pair.of(imageView, titlePara);
     }
 
-    public static ShapeDrawable withBorder(){
+    public static ShapeDrawable withBorder() {
         ShapeDrawable shape = new ShapeDrawable();
         shape.setShape(ShapeDrawable.RECTANGLE);//形状为矩形
         shape.setCornerRadius(10);//圆角半径
@@ -83,7 +72,7 @@ public class MUIHelper {
     public static void repeatedGridImage(Canvas canvas, Rect rect, Image image, boolean useImageSize, boolean horizontalLock, float zoom, Paint paint) {
         int x = rect.x();
         int y = rect.y();
-        int width,height;
+        int width, height;
         if (useImageSize) {
             width = (int) (image.getWidth() * zoom);
             height = (int) (image.getHeight() * zoom);
@@ -107,6 +96,43 @@ public class MUIHelper {
             }
         }
         canvas.restore();
+    }
+
+    public static Spannable digitComplement(int length, String source, char defaultChar, List<Object> complementSpan, List<Object> subjectSpan, @Nullable List<Object> reprocessSpan) {
+        if (length < 0) return new SpannableString("");
+
+        int markPoint = Math.max(0, length - source.length());
+        Spannable spannable = new SpannableString(source.length() >= length ? source : String.valueOf(defaultChar).repeat(markPoint) + source);
+        if (markPoint > 0) {
+            complementSpan.forEach(i -> spannable.setSpan(i, 0, markPoint, Spanned.SPAN_INCLUSIVE_EXCLUSIVE));
+        }
+        if (!source.isEmpty()) {
+            subjectSpan.forEach(i -> spannable.setSpan(i, markPoint, source.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE));
+        }
+        if (reprocessSpan != null && !reprocessSpan.isEmpty()) {
+            reprocessSpan.forEach(i -> spannable.setSpan(i, 0, source.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE));
+        }
+        return spannable;
+    }
+
+    public static Spannable digitComplement(int length, String source, char defaultChar, Object complementSpan, Object subjectSpan) {
+        return digitComplement(length, source, defaultChar, List.of(complementSpan), List.of(subjectSpan), null);
+    }
+
+    public static Spannable digitComplement(int length, String source, char defaultChar, Object complementSpan, Object subjectSpan, Object reprocessSpan) {
+        return digitComplement(length, source, defaultChar, List.of(complementSpan), List.of(subjectSpan), List.of(reprocessSpan));
+    }
+
+    public static void digitComplementAndSet(TextView textView, int length, String source, char defaultChar, Object complementSpan, Object subjectSpan, Object reprocessSpan) {
+        textView.post(() -> textView.setText(PrecomputedText.create(MUIHelper.digitComplement(length, source, defaultChar, complementSpan, subjectSpan, reprocessSpan), textView.getTextMetricsParams()), TextView.BufferType.SPANNABLE));
+    }
+
+    public static void digitComplementAndSet(TextView textView, int length, String source, char defaultChar, Object complementSpan, Object subjectSpan) {
+        textView.post(() -> textView.setText(PrecomputedText.create(MUIHelper.digitComplement(length, source, defaultChar, complementSpan, subjectSpan), textView.getTextMetricsParams()), TextView.BufferType.SPANNABLE));
+    }
+
+    public static Spannable digitComplement(int length, String source, char defaultChar, int complementColor, int subjectColor) {
+        return digitComplement(length, source, defaultChar, new ForegroundColorSpan(complementColor), new ForegroundColorSpan(subjectColor));
     }
 
 
