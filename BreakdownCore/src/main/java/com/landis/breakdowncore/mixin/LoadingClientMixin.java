@@ -134,7 +134,7 @@ public class LoadingClientMixin {
 		int k = FastColor.ARGB32.color(j, 254, 230, 60);
 		double smoothProgress = (Math.round(this.currentProgress * 1000) / 10.0);
 		if(smoothProgress > 99.5){
-			fillWidth = width;
+			fillWidth = width+5;
 		}
 		// 绘制进度条的填充部分
 		drawContext.fill(barX, height / 2 - 2, barX + fillWidth / 2, height / 2, k);
