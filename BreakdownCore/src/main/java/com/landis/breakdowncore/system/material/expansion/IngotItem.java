@@ -1,7 +1,7 @@
 package com.landis.breakdowncore.system.material.expansion;
 
 import com.landis.breakdowncore.BreakdownCore;
-import com.landis.breakdowncore.Registries;
+import com.landis.breakdowncore.BREARegistries;
 import com.landis.breakdowncore.system.material.Material;
 import com.landis.breakdowncore.system.material.TypedMaterialItem;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +12,7 @@ import java.util.Optional;
 public class IngotItem extends TypedMaterialItem {
     public final Material material;
     public IngotItem(Material material) {
-        super(Registries.MaterialReg.INGOT);
+        super(BREARegistries.MaterialReg.INGOT);
         this.material = material;
     }
 

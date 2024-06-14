@@ -1,6 +1,6 @@
 package com.landis.breakdowncore.system.material.expansion.materialfeature;
 
-import com.landis.breakdowncore.Registries;
+import com.landis.breakdowncore.BREARegistries;
 import com.landis.breakdowncore.system.material.IMaterialFeature;
 import com.landis.breakdowncore.system.material.MaterialFeatureType;
 import com.landis.breakdowncore.system.material.MaterialItemType;
@@ -75,7 +75,7 @@ public class ThermoMF implements IMaterialFeature<ThermoMF> {
 
     @Override
     public DeferredHolder<MaterialFeatureType<?>, MaterialFeatureType<ThermoMF>> getType() {
-        return Registries.MaterialReg.THERMO;
+        return BREARegistries.MaterialReg.THERMO;
     }
 
     @Override

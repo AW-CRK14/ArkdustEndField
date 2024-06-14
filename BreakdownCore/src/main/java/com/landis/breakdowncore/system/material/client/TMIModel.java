@@ -1,7 +1,7 @@
 package com.landis.breakdowncore.system.material.client;
 
 import com.landis.breakdowncore.BreakdownCore;
-import com.landis.breakdowncore.Registries;
+import com.landis.breakdowncore.BREARegistries;
 import com.landis.breakdowncore.module.render.model.ItemORResolveOnly;
 import com.landis.breakdowncore.system.material.ITypedMaterialObj;
 import com.landis.breakdowncore.system.material.Material;
@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -55,7 +54,7 @@ public class TMIModel implements BakedModel {
     private boolean cached = false;
     private boolean inited = false;
     @Nonnull
-    private Material materialType = Registries.MaterialReg.MISSING.get();
+    private Material materialType = BREARegistries.MaterialReg.MISSING.get();
 
     public TMIModel(ModelBakery bakery, MaterialItemType type) {
         this.type = type;
@@ -65,7 +64,7 @@ public class TMIModel implements BakedModel {
     public void setMaterialType(Material materialType) {
         if(materialType != this.materialType) {
             this.cached = false;
-            this.materialType = Objects.requireNonNullElse(materialType, Registries.MaterialReg.MISSING.get());
+            this.materialType = Objects.requireNonNullElse(materialType, BREARegistries.MaterialReg.MISSING.get());
         }
     }
     @Nonnull

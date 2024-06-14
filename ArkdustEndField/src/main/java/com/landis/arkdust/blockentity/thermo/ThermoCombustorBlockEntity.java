@@ -7,15 +7,13 @@ import com.landis.arkdust.mui.MUIRelativeMenu;
 import com.landis.arkdust.mui.widget.viewgroup.IndsGroup;
 import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.arkdust.registry.MenuTypeRegistry;
-import com.landis.breakdowncore.Registries;
+import com.landis.breakdowncore.BREARegistries;
 import com.landis.breakdowncore.module.blockentity.container.*;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.mc.neoforge.MenuScreenFactory;
-import icyllis.modernui.text.PrecomputedText;
-import icyllis.modernui.text.Spannable;
 import icyllis.modernui.text.Typeface;
 import icyllis.modernui.text.style.ForegroundColorSpan;
 import icyllis.modernui.text.style.StyleSpan;
@@ -56,7 +54,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
     }
 
     public ThermoCombustorBlockEntity(BlockPos pPos, BlockState pBlockState, int basicOutputEffi, float basicConversionRate) {
-        super(BlockEntityRegistry.THERMO_COMBUSTOR.get(), pPos, pBlockState, Registries.MaterialReg.IRON.get());
+        super(BlockEntityRegistry.THERMO_COMBUSTOR.get(), pPos, pBlockState, BREARegistries.MaterialReg.IRON.get());
         this.thermalEfficiency = (int) (basicOutputEffi / basicConversionRate);
         this.conversionRate = basicConversionRate;
         this.outputEffi = basicOutputEffi;

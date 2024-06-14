@@ -1,8 +1,8 @@
-package com.landis.arkdust.system.world.weather;
+package com.landis.breakdowncore.system.weather;
 
-import com.landis.arkdust.registry.regtype.ArkdustRegistry;
-import com.landis.arkdust.render.environment.ISkyAndFogRenderer;
-import com.landis.arkdust.render.environment.SkyAndFogRenderSub;
+import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.render.ISkyAndFogRenderer;
+import com.landis.breakdowncore.render.SkyAndFogRenderSub;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
@@ -144,7 +144,7 @@ public abstract class Weather implements ISkyAndFogRenderer {
         @Override
         public CompoundTag serializeNBT() {
             CompoundTag tag = new CompoundTag();
-            tag.putString("weather", ArkdustRegistry.WEATHER.getKey(weather).toString());
+            tag.putString("weather", BREARegistries.WEATHER.getKey(weather).toString());
             tag.putInt("strength", strength);
             tag.putInt("time", time);
             tag.putInt("ticker", ticker);
@@ -154,7 +154,7 @@ public abstract class Weather implements ISkyAndFogRenderer {
 
         @Override
         public void deserializeNBT(CompoundTag nbt) {
-            this.weather = ArkdustRegistry.WEATHER.get(new ResourceLocation(nbt.getString("weather")));
+            this.weather = BREARegistries.WEATHER.get(new ResourceLocation(nbt.getString("weather")));
             this.strength = nbt.getInt("strength");
             this.time = nbt.getInt("time");
             this.ticker = nbt.getInt("ticker");
@@ -164,7 +164,7 @@ public abstract class Weather implements ISkyAndFogRenderer {
 
         @Override
         public @Nullable ResourceLocation getId() {
-            return ArkdustRegistry.WEATHER.getKey(weather);
+            return BREARegistries.WEATHER.getKey(weather);
         }
     }
 

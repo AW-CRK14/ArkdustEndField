@@ -1,14 +1,14 @@
 package com.landis.arkdust.blockentity.thermo;
 
 import com.landis.arkdust.registry.BlockEntityRegistry;
-import com.landis.breakdowncore.Registries;
+import com.landis.breakdowncore.BREARegistries;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ThermoCarrierBlockEntity extends ThermoBlockEntity {
     public ThermoCarrierBlockEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntityRegistry.THERMO_CARRIER.get(), pPos, pBlockState, Registries.MaterialReg.IRON.get());
+        super(BlockEntityRegistry.THERMO_CARRIER.get(), pPos, pBlockState, BREARegistries.MaterialReg.IRON.get());
     }
 
     @Override
