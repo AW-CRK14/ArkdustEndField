@@ -1,11 +1,9 @@
 package com.landis.breakdowncore.mixin;
 
-
-
-import com.landis.breakdowncore.BreakdownCore;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.renderer.RenderType;
@@ -16,10 +14,10 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
+
 @Mixin(net.minecraft.client.gui.screens.LoadingOverlay.class)
 public class LoadingClientMixin {
 	@Mutable
@@ -54,9 +52,10 @@ public class LoadingClientMixin {
 	@Shadow
 	@Final
 	private Consumer<Optional<Throwable>> onFinish;
-
 	@Unique
 	private static final IntSupplier BRAND_BACKGROUND = () -> (Boolean)Minecraft.getInstance().options.darkMojangStudiosBackground().get() ? LOGO_BACKGROUND_COLOR_DARK : LOGO_BACKGROUND_COLOR;
+
+
 
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick, CallbackInfo ci) {
@@ -95,7 +94,9 @@ public class LoadingClientMixin {
 		float f6 = this.reload.getActualProgress();
 		this.currentProgress = Mth.clamp(this.currentProgress * 0.95F + f6 * 0.050000012F, 0.0F, 1.0F);
 		if (f < 1.0F) {
-			onDrawProgressBar(pGuiGraphics, 1.0F - Mth.clamp(f, 0.0F, 1.0F));
+			float opacity = 1.0F - Mth.clamp(f, 0.0F, 1.0F);
+			onDrawProgressBar(pGuiGraphics, opacity);
+			onDrawProgressText(pGuiGraphics,opacity);
 		}
 
 		if (f >= 2.0F) {
@@ -131,12 +132,38 @@ public class LoadingClientMixin {
 		// 设置进度条的颜色
 		int j = Math.round(opacity * 255.0f);
 		int k = FastColor.ARGB32.color(j, 254, 230, 60);
-
+		double smoothProgress = (Math.round(this.currentProgress * 1000) / 10.0);
+		if(smoothProgress > 99.5){
+			fillWidth = width+5;
+		}
 		// 绘制进度条的填充部分
 		drawContext.fill(barX, height / 2 - 2, barX + fillWidth / 2, height / 2, k);
 		drawContext.fill(barX + width - fillWidth / 2, height / 2 - 2, barX + width, height / 2, k);
 	}
 
+	private void onDrawProgressText(GuiGraphics drawContext, float opacity) {
+		int width = drawContext.guiWidth();
+		int height = drawContext.guiHeight();
+		int j = Math.round(opacity * 255.0f);
+		int color = FastColor.ARGB32.color(j, 254, 230, 60);
+		int fillWidth = Mth.ceil((float)(width * this.currentProgress));
+		Font font = Minecraft.getInstance().font;
+		double smoothProgress = (Math.round(this.currentProgress * 1000) / 10.0);
+		String text;
+
+		if(smoothProgress > 99.5){
+			text = "100%";
+			int f_w = font.width(text);
+			drawContext.drawString(font,text,width / 2 - f_w / 2  , height / 2 - 10, color);
+		}else{
+			text = (int)smoothProgress + "%";
+			int f_w = font.width(text);
+			drawContext.drawString(font,text,fillWidth/2 - f_w, height / 2 - 10, color);
+			drawContext.drawString(font,text,width - fillWidth / 2 , height / 2 - 10, color);
+		}
+	}
+
+	@Unique
 	private static int replaceAlpha(int pColor, int pAlpha) {
 		return pColor & 16777215 | pAlpha << 24;
 	}

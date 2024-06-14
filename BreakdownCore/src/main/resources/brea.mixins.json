@@ -11,6 +11,6 @@
   "client": [
     "LoadingClientMixin",
     "NeoLoadingClientMixin",
-    "SpriteLoaderMixin"
+    "SpriteLoaderMixin",
   ]
 }

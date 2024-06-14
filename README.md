@@ -1,28 +1,33 @@
 
-Installation information
-=======
+---
+# 舟尘终末地：全面瓦解
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions at [github](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+## 简介
+* 本模组是一个长远更新的超大型模组，本模组对原版内容进行了全面的修改，颠覆了原版的游戏流程，由于本模组处于早期开发阶段，将会出现不可避免的BUG、内容不完善、体系不成熟等问题。
+## 特点
+- **游戏剧情**：更加明确的主线与支线，剧情演出，动画播片，使游戏流程更加流畅。
+- **工业体系**：参考其他科技模组的流程，在此基础上进行创新，提供一个美观的机器UI，舒适地游玩过程。
+- **养成体系**：养成干员，招募干员，培养出自己的作战小队，应对各样的突发危机与任务！
+- **游戏流程**：玩家将不在能够进入主世界、地狱、末地。本模组将会以泰拉大陆为舞台重新构筑游戏流程。
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+## 兼容性
+- 尽量不破坏原版，开放更多API。
 
-> **Note**: For IDEs other than Intellij IDEA, you must run the `ideBeforeRun` task first from the terminal (such as `./gradlew ideBeforeRun`) for the run configs to work.
+## 安装
+1. 下载模组文件。
+2. 将模组文件放入Minecraft的`mods`文件夹。
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+## 截图
+none
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license, if you do not agree with it you can change your mapping names to other crowdsourced names in your 
-build.gradle. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+## 贡献
+如果你想为模组贡献代码或提出改进建议：
+- 加入项目Q群：`940915758`
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+## 许可
+Copyright (c) 2024 All rights reserved.
+
+## 感谢
+我们感谢所有支持和帮助开发这个模组的人。
+
+---
