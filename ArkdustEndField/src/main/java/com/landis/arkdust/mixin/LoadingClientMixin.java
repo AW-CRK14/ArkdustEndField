@@ -1,4 +1,4 @@
-package com.landis.breakdowncore.mixin;
+package com.landis.arkdust.mixin;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.Util;
@@ -134,7 +134,7 @@ public class LoadingClientMixin {
 		int k = FastColor.ARGB32.color(j, 254, 230, 60);
 		double smoothProgress = (Math.round(this.currentProgress * 1000) / 10.0);
 		if(smoothProgress > 99.5){
-			fillWidth = width+5;
+			fillWidth = width+1;
 		}
 		// 绘制进度条的填充部分
 		drawContext.fill(barX, height / 2 - 2, barX + fillWidth / 2, height / 2, k);

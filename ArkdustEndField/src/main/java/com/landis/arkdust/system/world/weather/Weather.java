@@ -28,7 +28,7 @@ import java.util.OptionalInt;
  * 天气发生时在客户端会被推送至{@link SkyAndFogRenderSub}。这里推送的迷雾与天空颜色等数据由Weather提供，因此无法被具体的环境参数影响。
  * */
 public abstract class Weather implements ISkyAndFogRenderer {
-    //aog表示天气是否为天灾类型。如果是，它将拥有更高的渲染优先级。也可以用于其它用途。
+    //aog表示天气是否为天灾类型。如果是，它将拥有更高地渲染优先级。也可以用于其它用途。
     public final boolean isAog;
     public final OptionalInt skyColor;
     public final OptionalInt fogColor;

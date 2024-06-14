@@ -1,4 +1,4 @@
-package com.landis.breakdowncore.mixin;
+package com.landis.arkdust.mixin;
 
 
 
@@ -19,10 +19,6 @@ import java.util.function.Consumer;
 
 @Mixin(NeoForgeLoadingOverlay.class)
 public class NeoLoadingClientMixin extends LoadingOverlay {
-
-	@Final
-	@Shadow
-	private ProgressMeter progressMeter;
 
 	public NeoLoadingClientMixin(Minecraft pMinecraft, ReloadInstance pReload, Consumer<Optional<Throwable>> pOnFinish, boolean pFadeIn) {
 		super(pMinecraft, pReload, pOnFinish, pFadeIn);

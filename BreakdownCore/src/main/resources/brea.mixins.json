@@ -9,8 +9,6 @@
     "defaultRequire": 1
   },
   "client": [
-    "LoadingClientMixin",
-    "NeoLoadingClientMixin",
-    "SpriteLoaderMixin",
+    "SpriteLoaderMixin"
   ]
 }
