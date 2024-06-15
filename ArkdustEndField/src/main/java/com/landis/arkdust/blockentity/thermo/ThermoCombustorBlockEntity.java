@@ -11,10 +11,10 @@ import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.arkdust.registry.MenuTypeRegistry;
 import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.module.blockentity.container.*;
-import com.landis.breakdowncore.system.material.IMaterialFeature;
 import com.landis.breakdowncore.system.material.ITypedMaterialObj;
 import com.landis.breakdowncore.system.material.System$Material;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
+import icyllis.modernui.animation.*;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Paint;
@@ -286,12 +286,42 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                 backgroundThermoCircle.setAlpha(0.6F);
                 rightPart.addView(backgroundThermoCircle, new RelativeLayout.LayoutParams(-1, -1));
 
+                ImageView backgroundThermoTestA = new ImageView(getContext());
+                backgroundThermoTestA.setImage(ResourceQuote$Thermo.THERMO_TES);
+                rightPart.addView(backgroundThermoTestA, new RelativeLayout.LayoutParams(-1, -1));
+
                 FactoryDecoratedItemViewBeta item = new FactoryDecoratedItemViewBeta(getContext(), menu.getSlot(0), 24, menu);
                 inventoryItemWidgets.set(0, item);
                 RelativeLayout.LayoutParams itemPara = new RelativeLayout.LayoutParams(item.defaultPara());
                 itemPara.addRule(RelativeLayout.CENTER_IN_PARENT);
                 rightPart.addView(item,itemPara);
 
+                ValueAnimator rotationAnimator = ValueAnimator.ofFloat(0f,360f);
+                rotationAnimator.setDuration(3000); // 设置动画持续时间
+                rotationAnimator.setRepeatCount(ValueAnimator.INFINITE); // 设置无限重复
+                rotationAnimator.setInterpolator(v -> v);
+                rotationAnimator.addUpdateListener(animation -> {
+                    float animatedValue = (float) animation.getAnimatedValue();
+                    backgroundThermoTestA.setRotation(animatedValue);
+                });
+
+                ValueAnimator breathEffectAnimator = ValueAnimator.ofFloat(0.75f,0.65f,0.75f);
+                breathEffectAnimator.setDuration(3000);
+                breathEffectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+                breathEffectAnimator.setInterpolator(TimeInterpolator.SINE);
+                breathEffectAnimator.addUpdateListener(animation -> {
+                    float animatedValue = (float) animation.getAnimatedValue();
+                    backgroundThermoTestA.setScaleX(animatedValue);
+                    backgroundThermoTestA.setScaleY(animatedValue);
+                    backgroundThermoTestA.setAlpha(1f - ((animatedValue - 1f) * 0.75f));
+                });
+
+                AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.playTogether(
+                        breathEffectAnimator,
+                        rotationAnimator
+                );
+                animatorSet.start();
             }
 
 
