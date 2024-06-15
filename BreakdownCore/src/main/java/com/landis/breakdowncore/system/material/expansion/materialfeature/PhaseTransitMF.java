@@ -1,6 +1,6 @@
 package com.landis.breakdowncore.system.material.expansion.materialfeature;
 
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.system.material.IMaterialFeature;
 import com.landis.breakdowncore.system.material.MaterialFeatureType;
 import com.landis.breakdowncore.system.material.MaterialItemType;
@@ -21,7 +21,7 @@ public class PhaseTransitMF implements IMaterialFeature<PhaseTransitMF> {
 
     @Override
     public DeferredHolder<MaterialFeatureType<?>, MaterialFeatureType<PhaseTransitMF>> getType() {
-        return BREARegistries.MaterialReg.PHASE_TRANSIT;
+        return BreaRegistries.MaterialReg.PHASE_TRANSIT;
     }
 
     @Override

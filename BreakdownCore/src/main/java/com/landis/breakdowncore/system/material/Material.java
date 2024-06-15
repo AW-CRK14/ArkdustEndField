@@ -3,7 +3,7 @@ package com.landis.breakdowncore.system.material;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  *      [NameSpace]/textures/brea/material/material/[Path].png<br>
  * 的材质。另外，材料系统可以将该种材料指定为中间产物(isIntermediateProduct)，这样它将不会尝试拉取材料材质，而是仅使用MIT的材质，并使用设定的颜色(x16color)进行着色。<br>
  * 注意：我们建议您在使用后一种方法时<font color="yellow">尽量使用少种类的颜色</font>，因为同种颜色动态生成的材质会被统一编入并调用，更多的颜色意味着更多的材质，更多的内存负担。
- * @see BREARegistries.MaterialReg 在Registries中查看系统的注册方法
+ * @see BreaRegistries.MaterialReg 在Registries中查看系统的注册方法
  * @see System$Material 查看Material系统的核心中控
  *
  * */

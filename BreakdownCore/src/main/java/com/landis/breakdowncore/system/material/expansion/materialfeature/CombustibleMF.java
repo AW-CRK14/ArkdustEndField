@@ -1,6 +1,6 @@
 package com.landis.breakdowncore.system.material.expansion.materialfeature;
 
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.system.material.IMaterialFeature;
 import com.landis.breakdowncore.system.material.MaterialFeatureType;
 import com.landis.breakdowncore.system.material.MaterialItemType;
@@ -58,14 +58,14 @@ public class CombustibleMF implements IMaterialFeature<CombustibleMF> {
 
     @Override
     public DeferredHolder<MaterialFeatureType<?>, MaterialFeatureType<CombustibleMF>> getType() {
-        return BREARegistries.MaterialReg.COMBUSTIBLE;
+        return BreaRegistries.MaterialReg.COMBUSTIBLE;
     }
 
     @Override
     public HashSet<MaterialItemType> forItemTypes() {
         if (types == null) {
             types = new HashSet<>();
-            types.add(BREARegistries.MaterialReg.COMBUSTIBLE_TYPE.get());
+            types.add(BreaRegistries.MaterialReg.COMBUSTIBLE_TYPE.get());
         }
         return types;
     }

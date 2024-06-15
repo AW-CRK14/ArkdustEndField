@@ -3,8 +3,9 @@ package com.landis.arkdust.mui.info;
 import com.landis.arkdust.mui.AbstractArkdustInfoUI;
 import com.landis.arkdust.mui.widget.button.EndFieldStyleWidgets;
 import com.landis.arkdust.helper.MUIHelper;
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.system.weather.ClimateParameter;
+import com.landis.breakdowncore.system.weather.Registry$Weather;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.fragment.FragmentContainerView;
 import icyllis.modernui.fragment.FragmentTransaction;
@@ -133,7 +134,7 @@ public class LevelStateFragment extends AbstractArkdustInfoUI {
                 for (Tag tag : climates) {
                     //获取天气信息
                     ResourceLocation id = new ResourceLocation(((CompoundTag) tag).getString("key"));
-                    ClimateParameter parameter = BREARegistries.CLIMATE_PARAMETER.get(id);
+                    ClimateParameter parameter = Registry$Weather.CLIMATE_PARAMETER.get(id);
 
                     //构造本条信息的内容
                     float value = ((CompoundTag) tag).getFloat("value");

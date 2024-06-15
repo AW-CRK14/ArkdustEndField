@@ -2,6 +2,7 @@ package com.landis.breakdowncore;
 
 import com.landis.breakdowncore.system.macmodule.Registry$MacModule;
 import com.landis.breakdowncore.system.material.*;
+import com.landis.breakdowncore.system.weather.Registry$Weather;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -25,7 +26,12 @@ public class ModBusConsumer {
         event.register(Registry$Material.MATERIAL_ITEM_TYPE);
         event.register(Registry$Material.MATERIAL_FEATURE);
         event.register(Registry$Material.MATERIAL);
+
         event.register(Registry$MacModule.MODULE_TYPES);
+
+        event.register(Registry$Weather.CLIMATE_PARAMETER);
+        event.register(Registry$Weather.WEATHER);
+        event.register(Registry$Weather.WEATHER_PROVIDER);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -35,7 +41,7 @@ public class ModBusConsumer {
 
     @SubscribeEvent
     public static void attachMaterialData(MaterialReflectDataGatherEvent event) {
-        event.handler.registryReflectItemMaterialInfo(new Holder.Direct<>(Items.COAL), BREARegistries.MaterialReg.LIGNITE.getId(), BREARegistries.MaterialReg.COMBUSTIBLE_TYPE.getId());
+        event.handler.registryReflectItemMaterialInfo(new Holder.Direct<>(Items.COAL), BreaRegistries.MaterialReg.LIGNITE.getId(), BreaRegistries.MaterialReg.COMBUSTIBLE_TYPE.getId());
     }
 
 //    @Mod.EventBusSubscriber(modid = BreakdownCore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

@@ -1,7 +1,7 @@
 package com.landis.breakdowncore.system.weather;
 
 import com.landis.breakdowncore.BreakdownCore;
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -83,7 +83,7 @@ public class WeatherSavedData {
         ListTag tag = new ListTag();
         for (ClimateParameter.ActivatedState state : climateParaHandle.states){
             CompoundTag c = new CompoundTag();
-            c.putString("key", BREARegistries.CLIMATE_PARAMETER.getKey(state.getClimate()).toString());
+            c.putString("key", Registry$Weather.CLIMATE_PARAMETER.getKey(state.getClimate()).toString());
             c.putFloat("value", state.value);
             c.putFloat("offset", state.offset);
             tag.add(c);

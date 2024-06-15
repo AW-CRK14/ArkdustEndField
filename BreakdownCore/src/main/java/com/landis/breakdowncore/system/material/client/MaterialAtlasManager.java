@@ -1,7 +1,7 @@
 package com.landis.breakdowncore.system.material.client;
 
 import com.landis.breakdowncore.BreakdownCore;
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.helper.SpriteHelper;
 import com.landis.breakdowncore.system.material.Material;
 import com.landis.breakdowncore.system.material.MaterialItemType;
@@ -102,7 +102,7 @@ public class MaterialAtlasManager extends TextureAtlasHolder {
 
 //                        contents.add(mat);
 
-                        for (MaterialItemType type : (material.equals(BREARegistries.MaterialReg.MISSING.get())) ? Registry$Material.MATERIAL_ITEM_TYPE : material.getOrCreateTypes()) {
+                        for (MaterialItemType type : (material.equals(BreaRegistries.MaterialReg.MISSING.get())) ? Registry$Material.MATERIAL_ITEM_TYPE : material.getOrCreateTypes()) {
                             //创建物品类型alpha通道缓存
                             if (!alphaCache.containsKey(type)) {
                                 ResourceLocation location = type.id.withPath(s -> "textures/brea/material/mit/" + s + ".png");
@@ -176,7 +176,7 @@ public class MaterialAtlasManager extends TextureAtlasHolder {
     }
 
     public TextureAtlasSprite getSprite(Material material,MaterialItemType type){
-        if(material.equals(BREARegistries.MaterialReg.MISSING.get()) || material.getOrCreateTypes().contains(type)){
+        if(material.equals(BreaRegistries.MaterialReg.MISSING.get()) || material.getOrCreateTypes().contains(type)){
             return getSprite(combine(material,type));
         }
         LOGGER.warn("Material({}) doesn't has MIT({}).",material,type);

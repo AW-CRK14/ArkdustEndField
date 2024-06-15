@@ -9,7 +9,7 @@ import com.landis.arkdust.mui.widget.item.FactoryDecoratedItemViewBeta;
 import com.landis.arkdust.mui.widget.viewgroup.IndsGroup;
 import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.arkdust.registry.MenuTypeRegistry;
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.module.blockentity.container.*;
 import com.landis.breakdowncore.system.material.IMaterialFeature;
 import com.landis.breakdowncore.system.material.ITypedMaterialObj;
@@ -59,7 +59,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
     }
 
     public ThermoCombustorBlockEntity(BlockPos pPos, BlockState pBlockState, int basicOutputEffi, float basicConversionRate) {
-        super(BlockEntityRegistry.THERMO_COMBUSTOR.get(), pPos, pBlockState, BREARegistries.MaterialReg.IRON.get());
+        super(BlockEntityRegistry.THERMO_COMBUSTOR.get(), pPos, pBlockState, BreaRegistries.MaterialReg.IRON.get());
         this.thermalEfficiency = (int) (basicOutputEffi / basicConversionRate);
         this.conversionRate = basicConversionRate;
         this.outputEffi = basicOutputEffi;
@@ -175,7 +175,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                     @Override
                     public boolean mayPlace(ItemStack pStack) {
                         ITypedMaterialObj materialObj = System$Material.getMaterialInfo(pStack.getItem());
-                        return materialObj != null && materialObj.getMaterialOrMissing(pStack).getFeature(Registries.MaterialReg.COMBUSTIBLE.get()) != null;
+                        return materialObj != null && materialObj.getMaterialOrMissing(pStack).getFeature(BreaRegistries.MaterialReg.COMBUSTIBLE.get()) != null;
                     }
                 }, SlotType.INPUT);
             }

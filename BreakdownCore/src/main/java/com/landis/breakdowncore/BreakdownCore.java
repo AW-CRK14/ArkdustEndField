@@ -18,11 +18,11 @@ public class BreakdownCore {
 
     public BreakdownCore(IEventBus modEventBus) throws IOException {
 
-        BREARegistries.ITEM.register(modEventBus);
-        BREARegistries.TAB.register(modEventBus);
-        BREARegistries.MaterialReg.MATERIAL.register(modEventBus);
-        BREARegistries.MaterialReg.FEATURE.register(modEventBus);
-        BREARegistries.MaterialReg.TYPE.register(modEventBus);
+        BreaRegistries.ITEM.register(modEventBus);
+        BreaRegistries.TAB.register(modEventBus);
+        BreaRegistries.MaterialReg.MATERIAL.register(modEventBus);
+        BreaRegistries.MaterialReg.FEATURE.register(modEventBus);
+        BreaRegistries.MaterialReg.TYPE.register(modEventBus);
     }
 
     private static ItemModelGenerator ITEM_MODELGEN;

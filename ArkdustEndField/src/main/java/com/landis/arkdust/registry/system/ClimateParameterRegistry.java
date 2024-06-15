@@ -1,14 +1,14 @@
 package com.landis.arkdust.registry.system;
 
 import com.landis.arkdust.Arkdust;
-import com.landis.arkdust.registry.regtype.ArkdustRegistry;
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.system.weather.ClimateParameter;
+import com.landis.breakdowncore.system.weather.Registry$Weather;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ClimateParameterRegistry {
-    public static final DeferredRegister<ClimateParameter> REGISTER = DeferredRegister.create(BREARegistries.CLIMATE_PARAMETER, Arkdust.MODID);
+    public static final DeferredRegister<ClimateParameter> REGISTER = DeferredRegister.create(Registry$Weather.CLIMATE_PARAMETER, Arkdust.MODID);
 
     public static final DeferredHolder<ClimateParameter,ClimateParameter> HUMIDITY = REGISTER.register("humidity",()->new ClimateParameter(40,5,0.5F,0.8F,0.2F));
     public static final DeferredHolder<ClimateParameter,ClimateParameter> WINDY = REGISTER.register("windy",()->new ClimateParameter(40,0,5F,0.8F,0.6F));

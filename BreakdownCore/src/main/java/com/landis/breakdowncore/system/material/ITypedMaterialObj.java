@@ -1,6 +1,6 @@
 package com.landis.breakdowncore.system.material;
 
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,12 +29,12 @@ public interface ITypedMaterialObj {
     }
 
     default void setMaterial(ItemStack stack) {
-        setMaterial(stack, BREARegistries.MaterialReg.MISSING.get());
+        setMaterial(stack, BreaRegistries.MaterialReg.MISSING.get());
     }
 
     default Material getMaterialOrMissing(ItemStack stack) {
         Material m = Registry$Material.MATERIAL.get(getMaterialId(stack));
-        return m == null ? BREARegistries.MaterialReg.MISSING.get() : m;
+        return m == null ? BreaRegistries.MaterialReg.MISSING.get() : m;
     }
 
     /**

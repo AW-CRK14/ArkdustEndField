@@ -1,6 +1,6 @@
 package com.landis.breakdowncore.system.weather;
 
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -32,14 +32,14 @@ public class WeatherScheduler implements INBTSerializable<CompoundTag> {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putInt("aog",lastAog);
-        tag.putString("provider", BREARegistries.WEATHER_PROVIDER.getKey(provider).toString());
+        tag.putString("provider", Registry$Weather.WEATHER_PROVIDER.getKey(provider).toString());
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         this.lastAog = nbt.getInt("aog");
-        this.provider = BREARegistries.WEATHER_PROVIDER.get(new ResourceLocation(nbt.getString("provider")));
+        this.provider = Registry$Weather.WEATHER_PROVIDER.get(new ResourceLocation(nbt.getString("provider")));
     }
 
     public interface WeatherStateProvider{

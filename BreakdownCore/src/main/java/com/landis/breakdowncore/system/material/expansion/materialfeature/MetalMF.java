@@ -1,6 +1,6 @@
 package com.landis.breakdowncore.system.material.expansion.materialfeature;
 
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.system.material.IMaterialFeature;
 import com.landis.breakdowncore.system.material.MaterialFeatureType;
 import com.landis.breakdowncore.system.material.MaterialItemType;
@@ -17,7 +17,7 @@ public class MetalMF implements IMaterialFeature<MetalMF> {
     @Override
     public DeferredHolder<MaterialFeatureType<?>, MaterialFeatureType<MetalMF>> getType() {
 //        return Registries.MaterialReg.METAL;
-        return BREARegistries.MaterialReg.METAL;
+        return BreaRegistries.MaterialReg.METAL;
     }
 
     @Override
@@ -25,14 +25,14 @@ public class MetalMF implements IMaterialFeature<MetalMF> {
         if(types == null){
             types = new HashSet<>();
 //            types.addAll(List.of(Registries.MaterialReg.INGOT.get()));
-            types.add(BREARegistries.MaterialReg.INGOT.get());
+            types.add(BreaRegistries.MaterialReg.INGOT.get());
         }
         return types;
     }
 
     @Override
     public @Nullable List<ResourceLocation> dependencies() {
-        return List.of(BREARegistries.MaterialReg.PHASE_TRANSIT.getId(), BREARegistries.MaterialReg.THERMO.getId());
+        return List.of(BreaRegistries.MaterialReg.PHASE_TRANSIT.getId(), BreaRegistries.MaterialReg.THERMO.getId());
     }
 
     private HashSet<MaterialItemType> types;

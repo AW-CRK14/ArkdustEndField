@@ -3,7 +3,7 @@ package com.landis.breakdowncore.system.material;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.landis.breakdowncore.BreakdownCore;
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.event.render.SpriteBeforeStitchEvent;
 import com.landis.breakdowncore.helper.SpriteHelper;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -92,7 +92,7 @@ public class EventConsumer$Material {
 
     @SubscribeEvent
     public static void attachToCreativeModeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTab().equals(BREARegistries.BREA_TAB.get())) {
+        if (event.getTab().equals(BreaRegistries.BREA_TAB.get())) {
             for (MaterialItemType mit : Registry$Material.MATERIAL_ITEM_TYPE) {
                 mit.attachToCreativeTab(event);
             }

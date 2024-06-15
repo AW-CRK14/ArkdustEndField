@@ -1,6 +1,6 @@
 package com.landis.breakdowncore.system.weather;
 
-import com.landis.breakdowncore.BREARegistries;
+import com.landis.breakdowncore.BreaRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -33,7 +33,7 @@ public record ClimateParameter(float range, float defaultValue, float defaultRat
     }
 
     public Component trans(){
-        return trans(BREARegistries.CLIMATE_PARAMETER.getKey(this));
+        return trans(Registry$Weather.CLIMATE_PARAMETER.getKey(this));
     }
 
     public static class ActivatedState implements INBTSerializable<CompoundTag> {
@@ -83,7 +83,7 @@ public record ClimateParameter(float range, float defaultValue, float defaultRat
         @Override
         public CompoundTag serializeNBT() {
             CompoundTag tag = new CompoundTag();
-            tag.putString("climate", BREARegistries.CLIMATE_PARAMETER.getKey(climate).toString());
+            tag.putString("climate", Registry$Weather.CLIMATE_PARAMETER.getKey(climate).toString());
             tag.putFloat("value",value);
             tag.putFloat("rate",rate);
             tag.putFloat("offset",offset);
@@ -95,7 +95,7 @@ public record ClimateParameter(float range, float defaultValue, float defaultRat
         @Override
         public String toString() {
             return "ActivatedState{" +
-                    "climate=" + BREARegistries.CLIMATE_PARAMETER.getKey(climate).toString() +
+                    "climate=" + Registry$Weather.CLIMATE_PARAMETER.getKey(climate).toString() +
                     ", value=" + value +
                     ", rate=" + rate +
                     ", rate_fac=" + rateFactor +
@@ -110,7 +110,7 @@ public record ClimateParameter(float range, float defaultValue, float defaultRat
 
         @Override
         public void deserializeNBT(CompoundTag tag) {
-            this.climate = BREARegistries.CLIMATE_PARAMETER.get(new ResourceLocation(tag.getString("climate")));
+            this.climate = Registry$Weather.CLIMATE_PARAMETER.get(new ResourceLocation(tag.getString("climate")));
             this.value = tag.getFloat("value");
             this.rate = tag.getFloat("rate");
             this.offset = tag.getFloat("offset");
