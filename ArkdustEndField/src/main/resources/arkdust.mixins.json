@@ -1,13 +1,15 @@
 {
-	"required": true,
-	"package": "com.landis.arkdust.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"minVersion": "0.8",
-	"mixins": [
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"client": [
-	]
+  "required": true,
+  "package": "com.landis.arkdust.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "LoadingClientMixin",
+    "NeoLoadingClientMixin"
+  ]
 }

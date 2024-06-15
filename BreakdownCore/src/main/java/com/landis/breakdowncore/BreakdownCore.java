@@ -18,11 +18,11 @@ public class BreakdownCore {
 
     public BreakdownCore(IEventBus modEventBus) throws IOException {
 
-        Registries.ITEM.register(modEventBus);
-        Registries.TAB.register(modEventBus);
-        Registries.MaterialReg.MATERIAL.register(modEventBus);
-        Registries.MaterialReg.FEATURE.register(modEventBus);
-        Registries.MaterialReg.TYPE.register(modEventBus);
+        BREARegistries.ITEM.register(modEventBus);
+        BREARegistries.TAB.register(modEventBus);
+        BREARegistries.MaterialReg.MATERIAL.register(modEventBus);
+        BREARegistries.MaterialReg.FEATURE.register(modEventBus);
+        BREARegistries.MaterialReg.TYPE.register(modEventBus);
     }
 
     private static ItemModelGenerator ITEM_MODELGEN;
@@ -40,4 +40,9 @@ public class BreakdownCore {
     public static ResourceLocation covertToModelID(ResourceLocation location){
         return location.withPath(s -> "models/" + s + ".json");
     }
+
+    public static String getLogName(String type){
+        return MODID + "/" + type;
+    }
+
 }

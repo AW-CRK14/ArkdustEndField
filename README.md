@@ -28,6 +28,6 @@ none
 Copyright (c) 2024 All rights reserved.
 
 ## 感谢
-我们感谢所有支持和帮助开发这个模组的人。
+感谢所有支持和帮助开发这个模组的人。
 
 ---

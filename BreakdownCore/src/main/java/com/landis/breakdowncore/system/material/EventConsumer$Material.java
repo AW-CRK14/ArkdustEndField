@@ -3,14 +3,13 @@ package com.landis.breakdowncore.system.material;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.landis.breakdowncore.BreakdownCore;
-import com.landis.breakdowncore.Registries;
+import com.landis.breakdowncore.BREARegistries;
 import com.landis.breakdowncore.event.render.SpriteBeforeStitchEvent;
 import com.landis.breakdowncore.helper.SpriteHelper;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -93,7 +92,7 @@ public class EventConsumer$Material {
 
     @SubscribeEvent
     public static void attachToCreativeModeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTab().equals(Registries.BREA_TAB.get())) {
+        if (event.getTab().equals(BREARegistries.BREA_TAB.get())) {
             for (MaterialItemType mit : Registry$Material.MATERIAL_ITEM_TYPE) {
                 mit.attachToCreativeTab(event);
             }

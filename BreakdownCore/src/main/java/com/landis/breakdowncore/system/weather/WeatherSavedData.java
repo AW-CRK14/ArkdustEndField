@@ -1,7 +1,7 @@
-package com.landis.arkdust.system.world.weather;
+package com.landis.breakdowncore.system.weather;
 
-import com.landis.arkdust.Arkdust;
-import com.landis.arkdust.registry.regtype.ArkdustRegistry;
+import com.landis.breakdowncore.BreakdownCore;
+import com.landis.breakdowncore.BREARegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -23,7 +23,7 @@ import java.util.*;
  * 天气数据不直接作为世界信息使用，而使用更高级别的世界信息中枢代管。
  * */
 public class WeatherSavedData {
-    public static final Logger LOGGER = LogManager.getLogger(Arkdust.getLogName("world_saved_data.weather"));
+    public static final Logger LOGGER = LogManager.getLogger(BreakdownCore.getLogName("world_saved_data.weather"));
 
 
     public final ClimateParaHandle climateParaHandle;
@@ -83,7 +83,7 @@ public class WeatherSavedData {
         ListTag tag = new ListTag();
         for (ClimateParameter.ActivatedState state : climateParaHandle.states){
             CompoundTag c = new CompoundTag();
-            c.putString("key", ArkdustRegistry.CLIMATE_PARAMETER.getKey(state.getClimate()).toString());
+            c.putString("key", BREARegistries.CLIMATE_PARAMETER.getKey(state.getClimate()).toString());
             c.putFloat("value", state.value);
             c.putFloat("offset", state.offset);
             tag.add(c);

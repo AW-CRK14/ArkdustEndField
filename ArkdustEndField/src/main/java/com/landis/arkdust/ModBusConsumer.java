@@ -91,11 +91,6 @@ public class ModBusConsumer {
     public static void newRegistry(NewRegistryEvent event){
         event.register(ArkdustRegistry.OPERATOR_SKILL);
         event.register(ArkdustRegistry.OPERATOR_TYPE);
-
-
-        event.register(ArkdustRegistry.CLIMATE_PARAMETER);
-        event.register(ArkdustRegistry.WEATHER);
-        event.register(ArkdustRegistry.WEATHER_PROVIDER);
     }
 
     @SubscribeEvent

@@ -8,7 +8,12 @@ import com.landis.breakdowncore.system.material.expansion.materialfeature.Combus
 import com.landis.breakdowncore.system.material.expansion.materialfeature.MetalMF;
 import com.landis.breakdowncore.system.material.expansion.materialfeature.PhaseTransitMF;
 import com.landis.breakdowncore.system.material.expansion.materialfeature.ThermoMF;
+import com.landis.breakdowncore.system.weather.ClimateParameter;
+import com.landis.breakdowncore.system.weather.Weather;
+import com.landis.breakdowncore.system.weather.WeatherScheduler;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -17,11 +22,26 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.function.Function;
 
-public class Registries {
+public class BREARegistries {
 
+    public static final Registry<ClimateParameter> CLIMATE_PARAMETER = new RegistryBuilder<>(WeatherReg.CLIMATE_PARAMETER).sync(true).create();
+    public static final Registry<Weather> WEATHER = new RegistryBuilder<>(WeatherReg.WEATHER).sync(true).create();
+    public static final Registry<WeatherScheduler.WeatherStateProvider> WEATHER_PROVIDER = new RegistryBuilder<>(WeatherReg.WEATHER_PROVIDER).sync(true).create();
+
+    public static class WeatherReg{
+        public static final ResourceKey<Registry<ClimateParameter>> CLIMATE_PARAMETER = create("climate_parameter");
+        public static final ResourceKey<Registry<Weather>> WEATHER = create("weather");
+        public static final ResourceKey<Registry<WeatherScheduler.WeatherStateProvider>> WEATHER_PROVIDER = create("weather_provider");
+
+
+        public static <T> ResourceKey<Registry<T>> create(String name){
+            return ResourceKey.createRegistryKey(new ResourceLocation(BreakdownCore.MODID,name));
+        }
+    }
 
     public static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, BreakdownCore.MODID);
     public static final DeferredRegister<Item> ITEM = DeferredRegister.createItems(BreakdownCore.MODID);
