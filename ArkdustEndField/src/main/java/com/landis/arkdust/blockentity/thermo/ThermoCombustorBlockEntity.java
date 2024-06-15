@@ -4,18 +4,21 @@ import com.landis.arkdust.blocks.levelblocks.ThermoBlocks;
 import com.landis.arkdust.helper.MUIHelper;
 import com.landis.arkdust.mui.AbstractArkdustIndustContainerUI;
 import com.landis.arkdust.mui.MUIRelativeMenu;
+import com.landis.arkdust.mui.MUIResourceQuote;
+import com.landis.arkdust.mui.widget.item.FactoryDecoratedItemViewBeta;
 import com.landis.arkdust.mui.widget.viewgroup.IndsGroup;
 import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.arkdust.registry.MenuTypeRegistry;
 import com.landis.breakdowncore.Registries;
 import com.landis.breakdowncore.module.blockentity.container.*;
+import com.landis.breakdowncore.system.material.IMaterialFeature;
+import com.landis.breakdowncore.system.material.ITypedMaterialObj;
+import com.landis.breakdowncore.system.material.System$Material;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.mc.neoforge.MenuScreenFactory;
-import icyllis.modernui.text.PrecomputedText;
-import icyllis.modernui.text.Spannable;
 import icyllis.modernui.text.Typeface;
 import icyllis.modernui.text.style.ForegroundColorSpan;
 import icyllis.modernui.text.style.StyleSpan;
@@ -168,7 +171,13 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
         private void addSlots(Inventory inventory, Container container, ThermoCombustorBlockEntity entity) {
             for (int i = 0; i < container.getContainerSize(); i++) {
-                addSlot(new FixedSlot(container, i, 0, 0), SlotType.INPUT);
+                addSlot(new FixedSlot(container, i, 0, 0){
+                    @Override
+                    public boolean mayPlace(ItemStack pStack) {
+                        ITypedMaterialObj materialObj = System$Material.getMaterialInfo(pStack.getItem());
+                        return materialObj != null && materialObj.getMaterialOrMissing(pStack).getFeature(Registries.MaterialReg.COMBUSTIBLE.get()) != null;
+                    }
+                }, SlotType.INPUT);
             }
 
             for (int i = 0; i < inventory.getContainerSize(); i++) {
@@ -197,10 +206,11 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             @Override
             public int get(int pIndex) {
                 return switch (pIndex) {
-                    case 0 -> belonging.outputEffi;
-                    case 1 -> (int) belonging.getT() * 10;
-                    case 2 -> (int) (belonging.conversionRate * 1000);
-                    case 3 -> belonging.remainTime;
+                    case 0 -> (int) (belonging.conversionRate * 1000);
+                    case 1 -> (int) belonging.getT();
+                    case 2 -> belonging.maxT();
+                    case 3 -> belonging.outputEffi;
+                    case 4 -> belonging.remainTime;
                     default -> -1;
                 };
             }
@@ -208,10 +218,11 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             @Override
             public void set(int pIndex, int pValue) {
                 switch (pIndex) {
-                    case 0 -> belonging.outputEffi = pValue;
-                    case 1 -> belonging.setT(pValue / 10);
-                    case 2 -> belonging.conversionRate = pValue / 1000F;
-                    case 3 -> belonging.remainTime = pValue;
+                    case 0 -> belonging.conversionRate = pValue / 1000F;
+                    case 1 -> belonging.clientCachedT = pValue;
+                    case 2 -> belonging.clientCachedTMax = pValue;
+                    case 3 -> belonging.outputEffi = pValue;
+                    case 4 -> belonging.remainTime = pValue;
                 }
             }
 
@@ -225,9 +236,10 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
     public static class UI extends AbstractArkdustIndustContainerUI {
         public static final int SECONDARY_COLOR = 0x99FFFFFF;
+        public static final int SECONDARY_COLOR_B = 0x74F3F3FF;
         protected List<TextView> thermoInfoTexts;
 
-        public static final ForegroundColorSpan temComColor = new ForegroundColorSpan(0x2ADFDFDF);
+        public static final ForegroundColorSpan temComColor = new ForegroundColorSpan(0x2ADFDFE7);
         public static final ForegroundColorSpan temSubColor = new ForegroundColorSpan(0xFFFFFFFF);
         public static final StyleSpan overbold = new StyleSpan(Typeface.BOLD);
 
@@ -239,13 +251,13 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         public void notifyData(int index, int content) {
             super.notifyData(index, content);
             if (thermoInfoTexts == null) return;
+            TextView obj = index == 4 ? null : thermoInfoTexts.get(index);
             switch (index) {
-                case 0 -> thermoInfoTexts.get(0).post(() -> thermoInfoTexts.get(0).setText(content + "kJ/t"));
+                case 0 -> obj.post(() -> obj.setText(content / 100F + "%"));
                 case 1 ->
-                        MUIHelper.digitComplementAndSet(thermoInfoTexts.get(1), 4, "" + content, '0', temComColor, temComColor, overbold);
-//                case 2 ->
-//                        thermoInfoTexts.get(2).post(() -> thermoInfoTexts.get(2).setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.time") + ":" + (content / 20) + "s"));
-////                case 3 -> ;
+                        MUIHelper.digitComplementAndSet(obj, 4, "" + content, '0', temComColor, temComColor, overbold);
+                case 2 -> obj.post(() -> obj.setText("/" + content));
+                case 3 -> obj.post(() -> obj.setText(content + " kJ/t"));
             }
         }
 
@@ -262,41 +274,76 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             ThermoCombustorBlockEntity entity = ((Menu) menu).belonging;
             List<TextView> infoTexts = new ArrayList<>();
 
+            //右侧发热器内容
+            RelativeLayout rightPart = new RelativeLayout(getContext());
+            RelativeLayout.LayoutParams rightPartPara = new RelativeLayout.LayoutParams(group.dp(150), group.dp(150));
+            rightPartPara.setMargins(group.dp(150), group.dp(30), group.dp(30), group.dp(30));
+            defaultIndsGroup.child.addView(rightPart, rightPartPara);
+            {
+                //背景图片显示
+                ImageView backgroundThermoCircle = new ImageView(getContext());
+                backgroundThermoCircle.setImage(ResourceQuote$Thermo.THERMO_CIR);
+                backgroundThermoCircle.setAlpha(0.6F);
+                rightPart.addView(backgroundThermoCircle, new RelativeLayout.LayoutParams(-1, -1));
+
+                FactoryDecoratedItemViewBeta item = new FactoryDecoratedItemViewBeta(getContext(), menu.getSlot(0), 24, menu);
+                inventoryItemWidgets.set(0, item);
+                RelativeLayout.LayoutParams itemPara = new RelativeLayout.LayoutParams(item.defaultPara());
+                itemPara.addRule(RelativeLayout.CENTER_IN_PARENT);
+                rightPart.addView(item,itemPara);
+
+            }
+
+
             //左侧数值部分内容
             LinearLayout leftInfoBoard = new LinearLayout(getContext());
             leftInfoBoard.setOrientation(LinearLayout.VERTICAL);
             leftInfoBoard.setGravity(Gravity.RIGHT);
-            leftInfoBoard.setBackground(MUIHelper.withBorder());
             RelativeLayout.LayoutParams leftInfoBoardPara = new RelativeLayout.LayoutParams(-2, -2);
             leftInfoBoardPara.setMargins(group.dp(30), group.dp(15), 0, group.dp(15));
             leftInfoBoardPara.addRule(RelativeLayout.CENTER_VERTICAL);
             defaultIndsGroup.child.addView(leftInfoBoard, leftInfoBoardPara);
             {
-                //效率显示组件
-                TextView efficiencyTextView = new TextView(getContext());
-                efficiencyTextView.setText("Effi = " + entity.outputEffi);
-                efficiencyTextView.setTextColor(0x66FFFFFF);
-                efficiencyTextView.setTextSize(12);
-                efficiencyTextView.setBackground(MUIHelper.withBorder());
-                infoTexts.add(efficiencyTextView);
-                LinearLayout.LayoutParams efficiencyTextViewPara = new LinearLayout.LayoutParams(-2, -2);
-                efficiencyTextViewPara.setMargins(0, 0, 0, group.dp(30));
-                leftInfoBoard.addView(efficiencyTextView, efficiencyTextViewPara);
+                //转化率显示组件
+                LinearLayout conversionRateGroup = new LinearLayout(getContext());
+                conversionRateGroup.setOrientation(LinearLayout.VERTICAL);
+                conversionRateGroup.setHorizontalGravity(Gravity.RIGHT);
+                leftInfoBoard.addView(conversionRateGroup, new LinearLayout.LayoutParams(-2, -2));
+                {
+                    TextView titleTextView = new TextView(getContext());
+                    titleTextView.setText("Conversion Rate");
+                    titleTextView.setTextColor(SECONDARY_COLOR_B);
+                    titleTextView.setTextSize(5);
+                    LinearLayout.LayoutParams titleTextViewPara = new LinearLayout.LayoutParams(-2, -2);
+                    titleTextViewPara.gravity = Gravity.RIGHT;
+                    conversionRateGroup.addView(titleTextView, titleTextViewPara);
+
+                    TextView valueTextView = new TextView(getContext());
+                    valueTextView.setText(entity.conversionRate * 100 + "%");
+                    valueTextView.setTextColor(SECONDARY_COLOR);
+                    valueTextView.setTextSize(12);
+                    valueTextView.setTypeface(MUIResourceQuote.RAJDHANI);
+                    infoTexts.add(valueTextView);
+                    LinearLayout.LayoutParams valueTextViewPara = new LinearLayout.LayoutParams(-2, -2);
+                    valueTextViewPara.gravity = Gravity.RIGHT;
+                    conversionRateGroup.addView(valueTextView, valueTextViewPara);
+                }
 
                 //温度显示组件
                 LinearLayout temperatureInfoGroup = new LinearLayout(getContext());
                 temperatureInfoGroup.setGravity(Gravity.LEFT);
                 temperatureInfoGroup.setOrientation(LinearLayout.VERTICAL);
-                temperatureInfoGroup.setBackground(MUIHelper.withBorder());
                 LinearLayout.LayoutParams temperatureInfoGroupPara = new LinearLayout.LayoutParams(-2, -2);
                 temperatureInfoGroupPara.gravity = Gravity.LEFT;
-                temperatureInfoGroupPara.setMargins(0, 0, group.dp(20), group.dp(30));
+                temperatureInfoGroupPara.setMargins(0, 0, group.dp(30), group.dp(15));
                 leftInfoBoard.addView(temperatureInfoGroup, temperatureInfoGroupPara);
                 {
                     ImageView thermoDec = new ImageView(getContext());
-                    thermoDec.setImage(ResourceQuote$Thermo.THERMOS_DEC);
+                    thermoDec.setId(210101);
+                    thermoDec.setImage(ResourceQuote$Thermo.THERMO_DEC);
                     thermoDec.setAlpha(0.6F);
                     temperatureInfoGroup.addView(thermoDec, new LinearLayout.LayoutParams(group.dp(58), group.dp(10)));
+
                     TextView titleText = new TextView(getContext());
                     titleText.setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.temp"));
                     titleText.setTextSize(12);
@@ -305,15 +352,15 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
                     RelativeLayout currentTempera = new RelativeLayout(getContext());
                     currentTempera.setId(210110);
-                    currentTempera.setBackground(MUIHelper.withBorder());
-                    temperatureInfoGroup.addView(currentTempera, new LinearLayout.LayoutParams(group.dp(108), -2));
+                    LinearLayout.LayoutParams currentTemperaPara = new LinearLayout.LayoutParams(group.dp(93), -2);
+                    temperatureInfoGroup.addView(currentTempera, currentTemperaPara);
                     {
                         View decorator = new View(getContext()) {
                             private final Paint RETAIN = new Paint();
 
                             {
                                 RETAIN.setStroke(true);
-                                RETAIN.setColor(SECONDARY_COLOR);
+                                RETAIN.setColor(SECONDARY_COLOR_B);
                                 RETAIN.setStrokeWidth(dp(1.5F));
                             }
 
@@ -322,17 +369,17 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                             }
                         };
                         RelativeLayout.LayoutParams decoratorPara = new RelativeLayout.LayoutParams(group.dp(8), group.dp(8));
-                        decoratorPara.setMargins(group.dp(4), group.dp(8), group.dp(4), group.dp(8));
+                        decoratorPara.setMargins(group.dp(4), 0, group.dp(4), group.dp(10));
                         decoratorPara.addRule(RelativeLayout.ALIGN_BOTTOM, 210112);
                         currentTempera.addView(decorator, decoratorPara);
 
                         TextView unit = new TextView(getContext());
                         unit.setId(210111);
-                        unit.setTextColor(SECONDARY_COLOR);
-                        unit.setTextSize(15);
+                        unit.setTextColor(SECONDARY_COLOR_B);
+                        unit.setTextSize(12);
                         unit.setText("°C");
                         RelativeLayout.LayoutParams unitPara = new RelativeLayout.LayoutParams(-2, -2);
-                        unitPara.setMargins(group.dp(2),0,0,group.dp(4));
+                        unitPara.setMargins(group.dp(2), 0, 0, group.dp(4));
                         unitPara.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                         unitPara.addRule(RelativeLayout.ALIGN_BOTTOM, 210112);
                         currentTempera.addView(unit, unitPara);
@@ -341,15 +388,49 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                         temperature.setId(210112);
                         temperature.setTextSize(30);
                         temperature.setTextColor(0xFFFFFFFF);
-                        MUIHelper.digitComplementAndSet(temperature, 4, "" + (int) entity.getT(), '0', temComColor, temSubColor, overbold);
+                        MUIHelper.digitComplementAndSet(temperature, 4, "" + entity.clientCachedT, '0', temComColor, temSubColor, overbold);
+                        temperature.setTypeface(MUIResourceQuote.RAJDHANI);
                         infoTexts.add(temperature);
                         RelativeLayout.LayoutParams temperaturePara = new RelativeLayout.LayoutParams(-2, -2);
                         temperaturePara.addRule(RelativeLayout.LEFT_OF, 210111);
-                        temperaturePara.addRule(RelativeLayout.CENTER_VERTICAL);
-//                        temperaturePara.setMarginsRelative(0,0,0,group.dp(8));
                         currentTempera.addView(temperature, temperaturePara);
                     }
+                    TextView maxTemperatureText = new TextView(getContext());
+                    maxTemperatureText.setTextSize(20);
+                    maxTemperatureText.setTextColor(SECONDARY_COLOR);
+                    maxTemperatureText.setText("/" + entity.clientCachedTMax);
+                    maxTemperatureText.setTypeface(MUIResourceQuote.RAJDHANI);
+                    infoTexts.add(maxTemperatureText);
+                    LinearLayout.LayoutParams maxTemperatureTextPara = new LinearLayout.LayoutParams(-2, -2);
+                    maxTemperatureTextPara.gravity = Gravity.RIGHT;
+                    temperatureInfoGroup.addView(maxTemperatureText, maxTemperatureTextPara);
+                }
 
+                //效率显示组件
+                LinearLayout efficiencyGroup = new LinearLayout(getContext());
+                efficiencyGroup.setOrientation(LinearLayout.VERTICAL);
+                efficiencyGroup.setHorizontalGravity(Gravity.RIGHT);
+                LinearLayout.LayoutParams efficiencyGroupPara = new LinearLayout.LayoutParams(-2, -2);
+                efficiencyGroupPara.setMargins(0, 0, 0, group.dp(5));
+                leftInfoBoard.addView(efficiencyGroup, efficiencyGroupPara);
+                {
+                    TextView titleTextView = new TextView(getContext());
+                    titleTextView.setText("Output Effi");
+                    titleTextView.setTextColor(SECONDARY_COLOR_B);
+                    titleTextView.setTextSize(5);
+                    LinearLayout.LayoutParams titleTextViewPara = new LinearLayout.LayoutParams(-2, -2);
+                    titleTextViewPara.gravity = Gravity.RIGHT;
+                    efficiencyGroup.addView(titleTextView, titleTextViewPara);
+
+                    TextView valueTextView = new TextView(getContext());
+                    valueTextView.setText(entity.outputEffi + " kJ/t");
+                    valueTextView.setTextColor(SECONDARY_COLOR);
+                    valueTextView.setTextSize(12);
+                    valueTextView.setTypeface(MUIResourceQuote.RAJDHANI);
+                    infoTexts.add(valueTextView);
+                    LinearLayout.LayoutParams valueTextViewPara = new LinearLayout.LayoutParams(-2, -2);
+                    valueTextViewPara.gravity = Gravity.RIGHT;
+                    efficiencyGroup.addView(valueTextView, valueTextViewPara);
                 }
             }
 

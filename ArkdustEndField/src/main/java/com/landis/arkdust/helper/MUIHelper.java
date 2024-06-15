@@ -107,10 +107,10 @@ public class MUIHelper {
             complementSpan.forEach(i -> spannable.setSpan(i, 0, markPoint, Spanned.SPAN_INCLUSIVE_EXCLUSIVE));
         }
         if (!source.isEmpty()) {
-            subjectSpan.forEach(i -> spannable.setSpan(i, markPoint, source.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE));
+            subjectSpan.forEach(i -> spannable.setSpan(i, markPoint, length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE));
         }
         if (reprocessSpan != null && !reprocessSpan.isEmpty()) {
-            reprocessSpan.forEach(i -> spannable.setSpan(i, 0, source.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE));
+            reprocessSpan.forEach(i -> spannable.setSpan(i, 0, length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE));
         }
         return spannable;
     }

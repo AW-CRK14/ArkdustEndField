@@ -1,6 +1,5 @@
 package com.landis.arkdust.mui;
 
-import com.landis.arkdust.helper.MUIHelper;
 import com.landis.arkdust.mui.abs.IMenu2ScreenNotifiable;
 import com.landis.arkdust.mui.abs.ItemWidget;
 import com.landis.arkdust.mui.widget.viewgroup.InventoryWidgets;
@@ -23,7 +22,7 @@ import java.util.List;
 
 public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIndustUI implements IMenuChangeNotify {
     public final AbstractContainerMenu menu;
-    protected final List<ItemWidget> widgets;
+    protected final List<ItemWidget> inventoryItemWidgets;
     public final boolean autoAddSlots;
 
     protected ViewGroup itemsGroup;
@@ -39,9 +38,9 @@ public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIn
         }
         this.autoAddSlots = autoAddSlots;
         this.menu = menu;
-        widgets = new ArrayList<>(menu.slots.size());
+        inventoryItemWidgets = new ArrayList<>(menu.slots.size());
         for (int i = 0; i < menu.slots.size(); i++) {
-            widgets.add(null);
+            inventoryItemWidgets.add(null);
         }
     }
 
@@ -58,7 +57,7 @@ public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIn
             for (int i = 0; i < menu.slots.size(); i++) {
                 Pair<ItemWidget, RelativeLayout.LayoutParams> pair = createWidget(i, menu.getSlot(i), menu instanceof ISlotTypeExpansion e ? e.getSlotType(i) : null);
                 if (pair == null) continue;
-                widgets.set(i, pair.getKey());
+                inventoryItemWidgets.set(i, pair.getKey());
                 if (pair.getRight() != null) {
                     items.addView(pair.getLeft(), pair.getRight());
                 } else {
@@ -72,8 +71,8 @@ public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIn
 
     @Override
     public void notify(int index) {
-        if (widgets.get(index) != null) {
-            widgets.get(index).refresh();
+        if (inventoryItemWidgets.get(index) != null) {
+            inventoryItemWidgets.get(index).refresh();
         }
     }
 
@@ -89,7 +88,7 @@ public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIn
 
         @Override
         protected void setItemWidget(ItemWidget widget, int index) {
-            widgets.set(index, widget);
+            inventoryItemWidgets.set(index, widget);
         }
     }
 }

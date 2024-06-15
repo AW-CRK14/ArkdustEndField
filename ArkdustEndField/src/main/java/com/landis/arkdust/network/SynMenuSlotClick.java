@@ -49,7 +49,7 @@ public class SynMenuSlotClick {
         context.workHandler().execute(() -> context.player().ifPresent(player -> {
             AbstractContainerMenu menu = ((ServerPlayer) player).containerMenu;
             if (BuiltInRegistries.MENU.getKey(menu.getType()).equals(pack.menuType)) {
-                ContainerHelper.handleSlotClick(pack.mouseButtonIndex, pack.slotIndex, player, menu, false);
+                ContainerHelper.handleSlotClick(pack.mouseButtonIndex, pack.slotIndex, player, menu);
             }
         }));
     }

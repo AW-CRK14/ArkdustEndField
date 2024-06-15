@@ -8,6 +8,7 @@ import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
 import icyllis.modernui.view.MotionEvent;
+import icyllis.modernui.view.ViewGroup;
 import icyllis.modernui.widget.ImageView;
 import icyllis.modernui.widget.RelativeLayout;
 import icyllis.modernui.widget.TextView;
@@ -23,8 +24,8 @@ import javax.annotation.Nonnull;
 
 
 public abstract class ItemWidget extends RelativeLayout {
-    public static final Image SLOT_BACKGROUND = Image.create(Arkdust.MODID, "gui/slot_bg.png");
-    public static final Image SLOT_HOVER = Image.create(Arkdust.MODID, "gui/slot_hover.png");
+    public static final Image SLOT_BACKGROUND = Image.create(Arkdust.MODID, "gui/slots/background.png");
+    public static final Image SLOT_HOVER = Image.create(Arkdust.MODID, "gui/slots/hovering.png");
     public final Slot slot;
     public final float width;
     public final AbstractContainerMenu menu;
@@ -62,8 +63,8 @@ public abstract class ItemWidget extends RelativeLayout {
     public @Nullable
     abstract LayoutParams configureText(TextView text);
 
-    public RelativeLayout.LayoutParams defaultPara() {
-        return new RelativeLayout.LayoutParams(dp(2 * width), dp(2 * width));
+    public ViewGroup.LayoutParams defaultPara() {
+        return new ViewGroup.LayoutParams(dp(2 * width), dp(2 * width));
     }
 
     public void refresh() {
@@ -95,7 +96,7 @@ public abstract class ItemWidget extends RelativeLayout {
     }
 
 
-    public abstract void drawContext(int actuallyLos, float xAmend, float yAmend, Canvas canvas);
+    public abstract void drawContext(int actuallyLos, float x0, float y0, Canvas canvas);
 
 
     //---[Interaction Part 交互部分]---

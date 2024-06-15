@@ -20,8 +20,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class ContainerItemView extends ItemWidget {
-    public static final Image FOREGROUND = Image.create(Arkdust.MODID, "gui/slot_c.png");
+public abstract class ContainerItemViewAlpha extends ItemWidget {
+    public static final Image FOREGROUND = Image.create(Arkdust.MODID, "gui/slots/container_alpha.png");
 
     public final Paint EDGE_PAINT = new Paint();
 
@@ -70,11 +70,11 @@ public abstract class ContainerItemView extends ItemWidget {
 
     public final Paint FILL_PAINT = new Paint();
 
-    public ContainerItemView(Context context, Slot slot, AbstractContainerMenu menu) {
+    public ContainerItemViewAlpha(Context context, Slot slot, AbstractContainerMenu menu) {
         super(context, slot, menu);
     }
 
-    public ContainerItemView(Context context, Slot slot, float width, AbstractContainerMenu menu) {
+    public ContainerItemViewAlpha(Context context, Slot slot, float width, AbstractContainerMenu menu) {
         super(context, slot, width, menu);
     }
 

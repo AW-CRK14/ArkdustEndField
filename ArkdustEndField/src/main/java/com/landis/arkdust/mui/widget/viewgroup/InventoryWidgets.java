@@ -2,7 +2,7 @@ package com.landis.arkdust.mui.widget.viewgroup;
 
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.mui.abs.ItemWidget;
-import com.landis.arkdust.mui.widget.item.ContainerItemView;
+import com.landis.arkdust.mui.widget.item.FactoryDecoratedItemViewAlpha;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Paint;
@@ -30,7 +30,7 @@ public abstract class InventoryWidgets extends IndsGroup {
     protected List<ItemWidget> items = new ArrayList<>(36);
     protected final RelativeLayout itemsTable;
 
-    public InventoryWidgets(Context context, AbstractContainerMenu menu, int itemsHeadIndex, int signLosOri) {//TODO 更多兼容
+    public InventoryWidgets(Context context, AbstractContainerMenu menu, int itemsHeadIndex, int signLosOri) {
         super(context, new ResourceLocation(Arkdust.MODID, "backpack"), -1, false, 0, 0.2F,300000);
         disableLeftDec();
         int signLos = dp(signLosOri);
@@ -60,7 +60,7 @@ public abstract class InventoryWidgets extends IndsGroup {
                 int xPos = x * (signLos + interval);
                 int index = y == 3 ? itemsHeadIndex + x : itemsHeadIndex + y * 9 + x + 9;
                 ItemWidget item = createItemWidget(index, signLosOri);
-                RelativeLayout.LayoutParams params = item.defaultPara();
+                RelativeLayout.LayoutParams params = new LayoutParams(item.defaultPara());
                 item.setTranslationX(xPos);
                 item.setTranslationY(yPos);
                 itemsTable.addView(item, params);
@@ -91,7 +91,7 @@ public abstract class InventoryWidgets extends IndsGroup {
 
     protected abstract void setItemWidget(ItemWidget widget, int index);
 
-    protected class SlotView extends ContainerItemView {
+    protected class SlotView extends FactoryDecoratedItemViewAlpha {
         public SlotView(int index, AbstractContainerMenu menu) {
             super(InventoryWidgets.this.getContext(), menu.getSlot(index), menu);
         }

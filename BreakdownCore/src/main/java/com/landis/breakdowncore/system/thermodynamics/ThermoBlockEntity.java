@@ -19,6 +19,10 @@ public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMa
     protected double q = 0;
     protected int[] lastOutput = new int[]{0, 0};
 
+    /**仅用于在客户端暂存部分参考数据。不应被作为精确而实时的有效数据使用。*/
+    public int clientCachedT = 0;
+    public int clientCachedTMax = 0;
+
 
     public ThermoBlockEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, Material material) {
         super(pType, pPos, pBlockState);
