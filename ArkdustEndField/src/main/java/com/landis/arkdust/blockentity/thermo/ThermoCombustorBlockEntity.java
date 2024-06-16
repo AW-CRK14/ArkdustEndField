@@ -318,7 +318,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                     float animatedValue = (float) animation.getAnimatedValue();
                     backgroundThermoTestA.setScaleX(animatedValue*1.25f);
                     backgroundThermoTestA.setScaleY(animatedValue*1.25f);
-                    backgroundThermoTestA.setAlpha(animatedValue * 0.75f);
+                    backgroundThermoTestA.setAlpha(animatedValue);
                     backgroundThermoTestB.setScaleX(animatedValue*0.75f);
                     backgroundThermoTestB.setScaleY(animatedValue*0.75f);
                     backgroundThermoTestA.setAlpha(animatedValue * 0.55f);
