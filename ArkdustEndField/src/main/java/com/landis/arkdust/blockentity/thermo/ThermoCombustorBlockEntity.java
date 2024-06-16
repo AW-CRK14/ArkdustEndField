@@ -290,6 +290,10 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                 backgroundThermoTestA.setImage(ResourceQuote$Thermo.THERMO_TES);
                 rightPart.addView(backgroundThermoTestA, new RelativeLayout.LayoutParams(-1, -1));
 
+                ImageView backgroundThermoTestB = new ImageView(getContext());
+                backgroundThermoTestB.setImage(ResourceQuote$Thermo.THERMO_TES_B);
+                rightPart.addView(backgroundThermoTestB, new RelativeLayout.LayoutParams(-1, -1));
+
                 FactoryDecoratedItemViewBeta item = new FactoryDecoratedItemViewBeta(getContext(), menu.getSlot(0), 24, menu);
                 inventoryItemWidgets.set(0, item);
                 RelativeLayout.LayoutParams itemPara = new RelativeLayout.LayoutParams(item.defaultPara());
@@ -297,23 +301,27 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                 rightPart.addView(item,itemPara);
 
                 ValueAnimator rotationAnimator = ValueAnimator.ofFloat(0f,360f);
-                rotationAnimator.setDuration(3000); // 设置动画持续时间
+                rotationAnimator.setDuration(50000); // 设置动画持续时间
                 rotationAnimator.setRepeatCount(ValueAnimator.INFINITE); // 设置无限重复
                 rotationAnimator.setInterpolator(v -> v);
                 rotationAnimator.addUpdateListener(animation -> {
                     float animatedValue = (float) animation.getAnimatedValue();
                     backgroundThermoTestA.setRotation(animatedValue);
+                    backgroundThermoTestB.setRotation(animatedValue);
                 });
 
-                ValueAnimator breathEffectAnimator = ValueAnimator.ofFloat(0.75f,0.65f,0.75f);
+                ValueAnimator breathEffectAnimator = ValueAnimator.ofFloat(0.9375f,0.8125f,0.9375f);
                 breathEffectAnimator.setDuration(3000);
                 breathEffectAnimator.setRepeatCount(ValueAnimator.INFINITE);
                 breathEffectAnimator.setInterpolator(TimeInterpolator.SINE);
                 breathEffectAnimator.addUpdateListener(animation -> {
                     float animatedValue = (float) animation.getAnimatedValue();
-                    backgroundThermoTestA.setScaleX(animatedValue);
-                    backgroundThermoTestA.setScaleY(animatedValue);
-                    backgroundThermoTestA.setAlpha(1f - ((animatedValue - 1f) * 0.75f));
+                    backgroundThermoTestA.setScaleX(animatedValue*1.25f);
+                    backgroundThermoTestA.setScaleY(animatedValue*1.25f);
+                    backgroundThermoTestA.setAlpha(animatedValue * 0.75f);
+                    backgroundThermoTestB.setScaleX(animatedValue*0.75f);
+                    backgroundThermoTestB.setScaleY(animatedValue*0.75f);
+                    backgroundThermoTestA.setAlpha(animatedValue * 0.55f);
                 });
 
                 AnimatorSet animatorSet = new AnimatorSet();
