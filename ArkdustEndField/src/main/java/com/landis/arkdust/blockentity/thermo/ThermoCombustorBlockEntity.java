@@ -307,7 +307,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                 rotationAnimator.addUpdateListener(animation -> {
                     float animatedValue = (float) animation.getAnimatedValue();
                     backgroundThermoTestA.setRotation(animatedValue);
-                    backgroundThermoTestB.setRotation(animatedValue);
+                    backgroundThermoTestB.setRotation(animatedValue*1.25f);
                 });
 
                 ValueAnimator breathEffectAnimator = ValueAnimator.ofFloat(0.9375f,0.8125f,0.9375f);
