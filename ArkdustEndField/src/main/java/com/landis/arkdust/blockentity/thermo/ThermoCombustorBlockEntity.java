@@ -11,10 +11,11 @@ import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.arkdust.registry.MenuTypeRegistry;
 import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.module.blockentity.container.*;
+import com.landis.breakdowncore.module.render.color.GradientColors;
 import com.landis.breakdowncore.system.material.ITypedMaterialObj;
 import com.landis.breakdowncore.system.material.System$Material;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
-import icyllis.modernui.animation.*;
+import icyllis.modernui.animation.ValueAnimator;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Paint;
@@ -171,7 +172,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
         private void addSlots(Inventory inventory, Container container, ThermoCombustorBlockEntity entity) {
             for (int i = 0; i < container.getContainerSize(); i++) {
-                addSlot(new FixedSlot(container, i, 0, 0){
+                addSlot(new FixedSlot(container, i, 0, 0) {
                     @Override
                     public boolean mayPlace(ItemStack pStack) {
                         ITypedMaterialObj materialObj = System$Material.getMaterialInfo(pStack.getItem());
@@ -235,9 +236,12 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
     }
 
     public static class UI extends AbstractArkdustIndustContainerUI {
+
+        public static final GradientColors THERMO_CIRCLE_COLOR = GradientColors.equidistant(0x1E281F20, 0xCFE25836, 0XFFF98B31, 0xFFFFC023, 0xFFFFF8E0);
         public static final int SECONDARY_COLOR = 0x99FFFFFF;
         public static final int SECONDARY_COLOR_B = 0x74F3F3FF;
         protected List<TextView> thermoInfoTexts;
+        protected ThermoCircleImageView thermoCircle;
 
         public static final ForegroundColorSpan temComColor = new ForegroundColorSpan(0x2ADFDFE7);
         public static final ForegroundColorSpan temSubColor = new ForegroundColorSpan(0xFFFFFFFF);
@@ -276,52 +280,35 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
             //右侧发热器内容
             RelativeLayout rightPart = new RelativeLayout(getContext());
-            RelativeLayout.LayoutParams rightPartPara = new RelativeLayout.LayoutParams(group.dp(150), group.dp(150));
-            rightPartPara.setMargins(group.dp(150), group.dp(30), group.dp(30), group.dp(30));
+            RelativeLayout.LayoutParams rightPartPara = new RelativeLayout.LayoutParams(group.dp(180), group.dp(180));
+            rightPartPara.setMargins(group.dp(130), group.dp(30), group.dp(30), group.dp(30));
             defaultIndsGroup.child.addView(rightPart, rightPartPara);
             {
-                //背景图片显示
                 ImageView backgroundThermoCircle = new ImageView(getContext());
                 backgroundThermoCircle.setImage(ResourceQuote$Thermo.THERMO_CIR);
-                backgroundThermoCircle.setAlpha(0.6F);
+                backgroundThermoCircle.setAlpha(0.5F);
                 rightPart.addView(backgroundThermoCircle, new RelativeLayout.LayoutParams(-1, -1));
 
-                ImageView backgroundThermoTestA = new ImageView(getContext());
-                backgroundThermoTestA.setImage(ResourceQuote$Thermo.THERMO_TES);
-                rightPart.addView(backgroundThermoTestA, new RelativeLayout.LayoutParams(-1, -1));
+                //背景图片显示
+                thermoCircle = new ThermoCircleImageView();
+                rightPart.addView(thermoCircle, new RelativeLayout.LayoutParams(-1, -1));
+
+                ValueAnimator rotationAnimator = ValueAnimator.ofInt(0,3400);
+                rotationAnimator.setDuration(20000); // 设置动画持续时间
+                rotationAnimator.setRepeatCount(ValueAnimator.INFINITE); // 设置无限重复
+                rotationAnimator.setRepeatMode(ValueAnimator.REVERSE); // 设置无限重复
+                rotationAnimator.setInterpolator(v -> v);
+                rotationAnimator.addUpdateListener(animation -> {
+                    thermoCircle.refreshColor((int) animation.getAnimatedValue());
+                });
+                rotationAnimator.start();
 
                 FactoryDecoratedItemViewBeta item = new FactoryDecoratedItemViewBeta(getContext(), menu.getSlot(0), 24, menu);
                 inventoryItemWidgets.set(0, item);
                 RelativeLayout.LayoutParams itemPara = new RelativeLayout.LayoutParams(item.defaultPara());
                 itemPara.addRule(RelativeLayout.CENTER_IN_PARENT);
-                rightPart.addView(item,itemPara);
+                rightPart.addView(item, itemPara);
 
-                ValueAnimator rotationAnimator = ValueAnimator.ofFloat(0f,360f);
-                rotationAnimator.setDuration(3000); // 设置动画持续时间
-                rotationAnimator.setRepeatCount(ValueAnimator.INFINITE); // 设置无限重复
-                rotationAnimator.setInterpolator(v -> v);
-                rotationAnimator.addUpdateListener(animation -> {
-                    float animatedValue = (float) animation.getAnimatedValue();
-                    backgroundThermoTestA.setRotation(animatedValue);
-                });
-
-                ValueAnimator breathEffectAnimator = ValueAnimator.ofFloat(0.75f,0.65f,0.75f);
-                breathEffectAnimator.setDuration(3000);
-                breathEffectAnimator.setRepeatCount(ValueAnimator.INFINITE);
-                breathEffectAnimator.setInterpolator(TimeInterpolator.SINE);
-                breathEffectAnimator.addUpdateListener(animation -> {
-                    float animatedValue = (float) animation.getAnimatedValue();
-                    backgroundThermoTestA.setScaleX(animatedValue);
-                    backgroundThermoTestA.setScaleY(animatedValue);
-                    backgroundThermoTestA.setAlpha(1f - ((animatedValue - 1f) * 0.75f));
-                });
-
-                AnimatorSet animatorSet = new AnimatorSet();
-                animatorSet.playTogether(
-                        breathEffectAnimator,
-                        rotationAnimator
-                );
-                animatorSet.start();
             }
 
 
@@ -365,7 +352,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                 temperatureInfoGroup.setOrientation(LinearLayout.VERTICAL);
                 LinearLayout.LayoutParams temperatureInfoGroupPara = new LinearLayout.LayoutParams(-2, -2);
                 temperatureInfoGroupPara.gravity = Gravity.LEFT;
-                temperatureInfoGroupPara.setMargins(0, 0, group.dp(30), group.dp(15));
+                temperatureInfoGroupPara.setMargins(0, 0, group.dp(40), group.dp(15));
                 leftInfoBoard.addView(temperatureInfoGroup, temperatureInfoGroupPara);
                 {
                     ImageView thermoDec = new ImageView(getContext());
@@ -474,6 +461,50 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
             thermoInfoTexts = infoTexts;
             return group;
+        }
+
+        protected class ThermoCircleImageView extends ImageView {
+            public int testT = 0;
+            public final Paint P1 = new Paint();
+            public final Paint P2 = new Paint();
+            public final Paint P3 = new Paint();
+            public final Paint PB = new Paint();
+
+            {
+                P1.setColor(0x1E281F20);
+                P1.setStrokeWidth(dp(1));
+                P1.setStroke(true);
+                P2.setColor(0x1E281F20);
+                P2.setStrokeWidth(dp(1));
+                P2.setStroke(true);
+                P3.setColor(0x1E281F20);
+                P3.setStrokeWidth(dp(1));
+                P3.setStroke(true);
+                PB.setColor(0x64FFFFFF);
+            }
+
+            public ThermoCircleImageView() {
+                super(UI.this.getContext());
+            }
+
+            public void refreshColor(int t) {
+                this.testT = t;
+                this.post(() -> {
+                    P1.setColor(THERMO_CIRCLE_COLOR.getColor((t - 100) / 1000F));
+                    P2.setColor(THERMO_CIRCLE_COLOR.getColor((t - 400) / 1600F));
+                    P3.setColor(THERMO_CIRCLE_COLOR.getColor((t - 900) / 2500F));
+                    this.invalidate();
+                });
+            }
+
+            @Override
+            protected void onDraw(@NotNull Canvas canvas) {
+                super.onDraw(canvas);
+                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(50), P3);
+                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(40), P2);
+                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(30), P1);
+                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(28F),PB);
+            }
         }
     }
 }
