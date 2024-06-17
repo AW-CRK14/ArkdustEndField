@@ -27,12 +27,10 @@ public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMa
     public ThermoBlockEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, Material material) {
         super(pType, pPos, pBlockState);
         this.material = material;
-        this.setQ(getMC() * 27);
     }
 
     public ThermoBlockEntity(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
         super(pType, pPos, pBlockState);
-        this.setQ(getMC() * 27);
     }
 
     public void setMaterial(Material material) {

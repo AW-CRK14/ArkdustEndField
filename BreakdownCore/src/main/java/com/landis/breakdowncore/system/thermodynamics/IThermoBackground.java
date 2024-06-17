@@ -121,7 +121,7 @@ public interface IThermoBackground {
     }
 
     default void init(Level level,BlockPos pos,BlockState state){
-        setQ((double) TEnvironment * getMC());
+        setQ((double) 700 * getMC());
     }
 
     static int equT(double providerQ, long providerMC, double consumerQ, long consumerMC) {

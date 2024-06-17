@@ -15,6 +15,7 @@ import com.landis.breakdowncore.module.render.color.GradientColors;
 import com.landis.breakdowncore.system.material.ITypedMaterialObj;
 import com.landis.breakdowncore.system.material.System$Material;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
+import icyllis.modernui.animation.TimeInterpolator;
 import icyllis.modernui.animation.ValueAnimator;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.graphics.Canvas;
@@ -32,6 +33,10 @@ import icyllis.modernui.widget.ImageView;
 import icyllis.modernui.widget.LinearLayout;
 import icyllis.modernui.widget.RelativeLayout;
 import icyllis.modernui.widget.TextView;
+import it.unimi.dsi.fastutil.floats.FloatArrayList;
+import it.unimi.dsi.fastutil.floats.FloatList;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -251,6 +256,24 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             super(true, menu, false);
         }
 
+
+        private int hoverT;
+        private ValueAnimator temChangeAnimator;
+
+        private ValueAnimator decorateTemChangeAnimator(int end) {
+            return decorateTemChangeAnimator(end, thermoInfoTexts.get(1));
+        }
+
+        private ValueAnimator decorateTemChangeAnimator(int end, TextView obj) {
+            ValueAnimator temChangeAnimator = ValueAnimator.ofInt(hoverT, end).setDuration(750);
+            temChangeAnimator.setInterpolator(TimeInterpolator.DECELERATE);
+            temChangeAnimator.addUpdateListener(i -> {
+                hoverT = (int) i.getAnimatedValue();
+                MUIHelper.digitComplementAndSet(obj, 4, "" + hoverT, '0', temComColor, temSubColor, overbold);
+            });
+            return temChangeAnimator;
+        }
+
         @Override
         public void notifyData(int index, int content) {
             super.notifyData(index, content);
@@ -258,8 +281,13 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             TextView obj = index == 4 ? null : thermoInfoTexts.get(index);
             switch (index) {
                 case 0 -> obj.post(() -> obj.setText(content / 100F + "%"));
-                case 1 ->
-                        MUIHelper.digitComplementAndSet(obj, 4, "" + content, '0', temComColor, temComColor, overbold);
+                case 1 -> {
+                    if (temChangeAnimator.isRunning()) {
+                        temChangeAnimator.pause();
+                    }
+                    temChangeAnimator = decorateTemChangeAnimator(content);
+                    obj.post(() -> temChangeAnimator.start());
+                }
                 case 2 -> obj.post(() -> obj.setText("/" + content));
                 case 3 -> obj.post(() -> obj.setText(content + " kJ/t"));
             }
@@ -395,7 +423,9 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                         temperature.setId(210112);
                         temperature.setTextSize(30);
                         temperature.setTextColor(0xFFFFFFFF);
-                        MUIHelper.digitComplementAndSet(temperature, 4, "" + entity.clientCachedT, '0', temComColor, temSubColor, overbold);
+                        MUIHelper.digitComplementAndSet(temperature, 4, "0", '0', temComColor, temSubColor, overbold);
+                        temChangeAnimator = decorateTemChangeAnimator(((Menu) menu).belonging.clientCachedT, temperature);
+                        temChangeAnimator.start();
                         temperature.setTypeface(MUIResourceQuote.RAJDHANI);
                         infoTexts.add(temperature);
                         RelativeLayout.LayoutParams temperaturePara = new RelativeLayout.LayoutParams(-2, -2);
@@ -456,39 +486,43 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         protected class ThermoCircleImageView extends ImageView {
             public static final GradientColors THERMO_CIRCLE_COLOR = new GradientColors(0x1E281F20, 0xFFFFF8E0)
                     .addKeyPoint(0xFF30130E, 0.1F)
-                    .addKeyPoint(0xFFB21B18, 0.3F)
-                    .addKeyPoint(0xFFF2382B, 0.6F)
+                    .addKeyPoint(0xFFB21B18, 0.25F)
+                    .addKeyPoint(0xFFF2382B, 0.45F)
                     .addKeyPoint(0xFFFF8454, 0.85F);
 
-            public int testT = 0;
-            public final Paint P1 = new Paint();
-            public final Paint P2 = new Paint();
-            public final Paint P3 = new Paint();
+            public final Paint RETAIN = new Paint();
             public final Paint PB = new Paint();
 
             private float breathCycle = 0;
 
-            {
-                P1.setColor(0x1E281F20);
-                P1.setStrokeWidth(dp(2.6F));
-                P1.setStroke(true);
-                P2.setColor(0x1E281F20);
-                P2.setStrokeWidth(dp(2F));
-                P2.setStroke(true);
-                P3.setColor(0x1E281F20);
-                P3.setStrokeWidth(dp(1.4F));
-                P3.setStroke(true);
-                PB.setColor(0x64FFFFFF);
+            public ThermoCircleImageView() {
+                super(UI.this.getContext());
+            }
 
-                ValueAnimator rotationAnimator = ValueAnimator.ofInt(0, 4000);
-                rotationAnimator.setDuration(20000); // 设置动画持续时间
-                rotationAnimator.setRepeatCount(ValueAnimator.INFINITE); // 设置无限重复
-                rotationAnimator.setRepeatMode(ValueAnimator.REVERSE); // 设置无限重复
-                rotationAnimator.setInterpolator(v -> v);
-                rotationAnimator.addUpdateListener(animation -> {
-                    this.refreshColor((int) animation.getAnimatedValue());
-                });
-                rotationAnimator.start();
+            private int counter = 99999;
+            private final IntList circles = new IntArrayList(4);
+            private final FloatList colors = new FloatArrayList(4);
+
+            public void animaTick() {
+                if (counter >= 60 - 25 * Math.clamp(1600, 300, hoverT) / 1300F) {
+                    counter = 0;
+                    circles.add(0);
+                    colors.add(Math.clamp(0, 1, (hoverT + 400) / 900F));
+                }
+                counter++;
+                if (circles.getInt(0) >= 120) {
+                    circles.removeInt(0);
+                    colors.removeFloat(0);
+                }
+                for (int i = 0; i < circles.size(); i++) {
+                    circles.set(i, circles.getInt(i) + 1);
+                }
+                invalidate();
+            }
+
+            {
+                PB.setColor(0x64FFFFFF);
+                RETAIN.setStroke(true);
 
                 ValueAnimator breathAnimator = ValueAnimator.ofFloat(0, 1);
                 breathAnimator.setDuration(3500); // 设置动画持续时间
@@ -496,31 +530,26 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                 breathAnimator.setRepeatMode(ValueAnimator.RESTART); // 设置无限重复
                 breathAnimator.addUpdateListener(animation -> {
                     this.breathCycle = (float) animation.getAnimatedValue();
-//                    this.invalidate();
+                    this.animaTick();
                 });
                 breathAnimator.start();
-            }
-
-            public ThermoCircleImageView() {
-                super(UI.this.getContext());
-            }
-
-            public void refreshColor(int t) {
-                this.testT = t;
-                this.post(() -> {
-                    P1.setColor(THERMO_CIRCLE_COLOR.getColor(Math.clamp(0, 1, (t - 100) / 1100F) + resizeBreath(-0.1F)));
-                    P2.setColor(THERMO_CIRCLE_COLOR.getColor(Math.clamp(0, 1, (t - 300) / 1700F) + resizeBreath(0)));
-                    P3.setColor(THERMO_CIRCLE_COLOR.getColor(Math.clamp(0, 1, (t - 500) / 3100F) + resizeBreath(0.1F)));
-                    this.invalidate();
-                });
             }
 
             @Override
             protected void onDraw(@NotNull Canvas canvas) {
                 super.onDraw(canvas);
-                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(50), P3);
-                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(42.5F), P2);
-                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(35), P1);
+
+                if (!circles.isEmpty()) {
+                    for (int i = 0; i < circles.size(); i++) {
+                        float fallout = circles.getInt(i) / 100F;
+                        RETAIN.setColor(THERMO_CIRCLE_COLOR.getColor((1 - fallout) * colors.getFloat(i) + resizeBreath(fallout * 0.3F - 0.15F)));
+                        RETAIN.setAlphaF(1.5F - fallout * fallout);
+                        RETAIN.setStrokeWidth(dp(3 - 1.75F * fallout));
+                        canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(30 + fallout * 25), RETAIN);
+                    }
+                }
+
+
                 canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(30), PB);
             }
 
