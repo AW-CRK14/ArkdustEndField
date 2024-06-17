@@ -544,7 +544,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                         float fallout = circles.getInt(i) / 100F;
                         RETAIN.setColor(THERMO_CIRCLE_COLOR.getColor((1 - fallout) * colors.getFloat(i) + resizeBreath(fallout * 0.3F - 0.15F)));
                         RETAIN.setAlphaF(1.5F - fallout * fallout);
-                        RETAIN.setStrokeWidth(dp(3 - 1.75F * fallout));
+                        RETAIN.setStrokeWidth(dp(fallout <= 0.3F ? 7 * fallout + 0.5F : 3 - 1.75F * fallout));
                         canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(30 + fallout * 25), RETAIN);
                     }
                 }
