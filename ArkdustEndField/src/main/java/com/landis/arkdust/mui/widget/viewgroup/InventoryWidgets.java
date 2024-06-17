@@ -2,6 +2,7 @@ package com.landis.arkdust.mui.widget.viewgroup;
 
 import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.mui.abs.ItemWidget;
+import com.landis.arkdust.mui.widget.item.ContainerItemViewAlpha;
 import com.landis.arkdust.mui.widget.item.FactoryDecoratedItemViewAlpha;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
@@ -91,7 +92,7 @@ public abstract class InventoryWidgets extends IndsGroup {
 
     protected abstract void setItemWidget(ItemWidget widget, int index);
 
-    protected class SlotView extends FactoryDecoratedItemViewAlpha {
+    protected class SlotView extends ContainerItemViewAlpha {
         public SlotView(int index, AbstractContainerMenu menu) {
             super(InventoryWidgets.this.getContext(), menu.getSlot(index), menu);
         }

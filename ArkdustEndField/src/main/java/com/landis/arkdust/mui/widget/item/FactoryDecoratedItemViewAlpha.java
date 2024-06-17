@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
+
 public class FactoryDecoratedItemViewAlpha extends ItemWidget {
     public static final Image FOREGROUND = Image.create(Arkdust.MODID, "gui/slots/factory_decorated_alpha.png");
     public static final int COLOR_DAMAGE_BAR = 0xFF454545;

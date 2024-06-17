@@ -5,6 +5,7 @@ import com.landis.arkdust.mui.abs.ItemWidget;
 import com.landis.breakdowncore.helper.RenderHelper;
 import icyllis.modernui.animation.ObjectAnimator;
 import icyllis.modernui.animation.TimeInterpolator;
+import icyllis.modernui.animation.ValueAnimator;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
@@ -28,15 +29,12 @@ public class FactoryDecoratedItemViewBeta extends FactoryDecoratedItemViewAlpha 
     protected TextView nameHoverStroke;
 
     private float animatorFlag = 0;
-    protected ObjectAnimator animator = ObjectAnimator.ofFloat(this, ANIMATOR_PROPERTY, 0, 1).setDuration(200);
 
     {
         PAINT.setColor(COLOR_DAMAGED);
         IMAGE_RETAIN.setColor(0xFFE2E2EC);
         IMAGE_RETAIN.setStrokeWidth(dp(1));
         IMAGE_RETAIN.setStroke(true);
-
-        animator.setInterpolator(TimeInterpolator.ACCELERATE_DECELERATE);
     }
 
 
@@ -74,6 +72,18 @@ public class FactoryDecoratedItemViewBeta extends FactoryDecoratedItemViewAlpha 
         nameHoverStroke.setTextColor(COLOR_DAMAGE_BAR);
         nameHoverStroke.setTextSize(0.4F * width + 1);
         this.addView(nameHoverStroke, nameHoverStrokePara);
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0, 1).setDuration(200);
+        animator.setInterpolator(TimeInterpolator.ACCELERATE_DECELERATE);
+        animator.addUpdateListener(i -> {
+            float value = (float) i.getAnimatedValue();
+            animatorFlag = value;
+            text.setAlpha(1 - value);
+            countHoverStroke.setAlpha(1 - value);
+            nameHover.setAlpha(value);
+            nameHoverStroke.setAlpha(value);
+            IMAGE_RETAIN.setAlphaF(value);
+        });
 
         setFocusable(true);
         setOnHoverListener((v, t) -> {
@@ -142,21 +152,4 @@ public class FactoryDecoratedItemViewBeta extends FactoryDecoratedItemViewAlpha 
         }
 
     }
-
-    protected static final FloatProperty<FactoryDecoratedItemViewBeta> ANIMATOR_PROPERTY = new FloatProperty<FactoryDecoratedItemViewBeta>("fd_itemview_beta") {
-        @Override
-        public void setValue(FactoryDecoratedItemViewBeta object, float value) {
-            object.animatorFlag = value;
-            object.text.setAlpha(1 - value);
-            object.countHoverStroke.setAlpha(1 - value);
-            object.nameHover.setAlpha(value);
-            object.nameHoverStroke.setAlpha(value);
-            object.IMAGE_RETAIN.setAlphaF(value);
-        }
-
-        @Override
-        public Float get(FactoryDecoratedItemViewBeta object) {
-            return object.animatorFlag;
-        }
-    };
 }

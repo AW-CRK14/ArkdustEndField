@@ -7,6 +7,8 @@ import com.landis.breakdowncore.helper.ContainerHelper;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
+import icyllis.modernui.graphics.Paint;
+import icyllis.modernui.graphics.RectF;
 import icyllis.modernui.view.MotionEvent;
 import icyllis.modernui.view.ViewGroup;
 import icyllis.modernui.widget.ImageView;
@@ -30,7 +32,6 @@ public abstract class ItemWidget extends RelativeLayout {
     public final float width;
     public final AbstractContainerMenu menu;
     protected final TextView text;
-    protected ImageView hoverImage;
 
     public ItemWidget(Context context, Slot slot, AbstractContainerMenu menu) {
         this(context, slot, 16, menu);
@@ -68,7 +69,7 @@ public abstract class ItemWidget extends RelativeLayout {
     }
 
     public void refresh() {
-        post(()->{
+        post(() -> {
             if (text != null) {
                 if (slot.hasItem() && slot.getItem().getMaxStackSize() != 1) {
                     text.setText("" + slot.getItem().getCount());
@@ -124,6 +125,62 @@ public abstract class ItemWidget extends RelativeLayout {
             }
         }
         return false;
+    }
+
+
+    private static final Paint BACKGROUND_PAINTER_STROKE = new Paint();
+    private static final Paint BACKGROUND_PAINTER_FILL = new Paint();
+
+    static {
+        BACKGROUND_PAINTER_STROKE.setColor(0xFF707070);
+        BACKGROUND_PAINTER_STROKE.setStroke(true);
+        BACKGROUND_PAINTER_FILL.setColor(0x33000000);
+    }
+
+    public static void drawSlotBackground(Canvas canvas, float x0, float y0, float x1, float y1) {
+        drawSlotBackground(canvas, new RectF(x0, y0, x1, y1), 1);
+    }
+
+    public static void drawSlotBackground(Canvas canvas, RectF range) {
+        drawSlotBackground(canvas, range, 1);
+    }
+
+    public static void drawSlotBackground(Canvas canvas, RectF range, float alpha) {
+        if(alpha == 0) return;
+        float r = range.width() / 16;
+        BACKGROUND_PAINTER_STROKE.setAlphaF(alpha);
+        BACKGROUND_PAINTER_FILL.setAlphaF(alpha * 0.2F);
+        BACKGROUND_PAINTER_STROKE.setStrokeWidth(range.width() * 0.015F);
+        canvas.drawRoundRect(range, r, BACKGROUND_PAINTER_FILL);
+        canvas.drawRoundRect(range, r, BACKGROUND_PAINTER_STROKE);
+    }
+
+
+    private static final Paint FOREGROUND_PAINTER_STROKE = new Paint();
+    private static final Paint FOREGROUND_PAINTER_FILL = new Paint();
+
+    static {
+        FOREGROUND_PAINTER_STROKE.setColor(0xFFEEEEEE);
+        FOREGROUND_PAINTER_STROKE.setStroke(true);
+        FOREGROUND_PAINTER_FILL.setColor(0x4DBBBBBB);
+    }
+
+    public static void drawSlotForeground(Canvas canvas, float x0, float y0, float x1, float y1) {
+        drawSlotForeground(canvas, new RectF(x0, y0, x1, y1), 1);
+    }
+
+    public static void drawSlotForeground(Canvas canvas, RectF range) {
+        drawSlotForeground(canvas, range, 1);
+    }
+
+    public static void drawSlotForeground(Canvas canvas, RectF range, float alpha) {
+        if(alpha == 0) return;
+        float r = range.width() / 16;
+        FOREGROUND_PAINTER_STROKE.setAlphaF(alpha);
+        FOREGROUND_PAINTER_FILL.setAlphaF(alpha * 0.3F);
+        FOREGROUND_PAINTER_STROKE.setStrokeWidth(range.width() * 0.015F);
+        canvas.drawRoundRect(range, r, FOREGROUND_PAINTER_FILL);
+        canvas.drawRoundRect(range, r, FOREGROUND_PAINTER_STROKE);
     }
 
 

@@ -46,6 +46,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Math;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -237,7 +238,6 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
     public static class UI extends AbstractArkdustIndustContainerUI {
 
-        public static final GradientColors THERMO_CIRCLE_COLOR = GradientColors.equidistant(0x1E281F20, 0xCFE25836, 0XFFF98B31, 0xFFFFC023, 0xFFFFF8E0);
         public static final int SECONDARY_COLOR = 0x99FFFFFF;
         public static final int SECONDARY_COLOR_B = 0x74F3F3FF;
         protected List<TextView> thermoInfoTexts;
@@ -286,22 +286,12 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             {
                 ImageView backgroundThermoCircle = new ImageView(getContext());
                 backgroundThermoCircle.setImage(ResourceQuote$Thermo.THERMO_CIR);
-                backgroundThermoCircle.setAlpha(0.5F);
+                backgroundThermoCircle.setAlpha(0.3F);
                 rightPart.addView(backgroundThermoCircle, new RelativeLayout.LayoutParams(-1, -1));
 
                 //背景图片显示
                 thermoCircle = new ThermoCircleImageView();
                 rightPart.addView(thermoCircle, new RelativeLayout.LayoutParams(-1, -1));
-
-                ValueAnimator rotationAnimator = ValueAnimator.ofInt(0,3400);
-                rotationAnimator.setDuration(20000); // 设置动画持续时间
-                rotationAnimator.setRepeatCount(ValueAnimator.INFINITE); // 设置无限重复
-                rotationAnimator.setRepeatMode(ValueAnimator.REVERSE); // 设置无限重复
-                rotationAnimator.setInterpolator(v -> v);
-                rotationAnimator.addUpdateListener(animation -> {
-                    thermoCircle.refreshColor((int) animation.getAnimatedValue());
-                });
-                rotationAnimator.start();
 
                 FactoryDecoratedItemViewBeta item = new FactoryDecoratedItemViewBeta(getContext(), menu.getSlot(0), 24, menu);
                 inventoryItemWidgets.set(0, item);
@@ -464,23 +454,51 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         }
 
         protected class ThermoCircleImageView extends ImageView {
+            public static final GradientColors THERMO_CIRCLE_COLOR = new GradientColors(0x1E281F20, 0xFFFFF8E0)
+                    .addKeyPoint(0xFF30130E, 0.1F)
+                    .addKeyPoint(0xFFB21B18, 0.3F)
+                    .addKeyPoint(0xFFF2382B, 0.6F)
+                    .addKeyPoint(0xFFFF8454, 0.85F);
+
             public int testT = 0;
             public final Paint P1 = new Paint();
             public final Paint P2 = new Paint();
             public final Paint P3 = new Paint();
             public final Paint PB = new Paint();
 
+            private float breathCycle = 0;
+
             {
                 P1.setColor(0x1E281F20);
-                P1.setStrokeWidth(dp(1));
+                P1.setStrokeWidth(dp(2.6F));
                 P1.setStroke(true);
                 P2.setColor(0x1E281F20);
-                P2.setStrokeWidth(dp(1));
+                P2.setStrokeWidth(dp(2F));
                 P2.setStroke(true);
                 P3.setColor(0x1E281F20);
-                P3.setStrokeWidth(dp(1));
+                P3.setStrokeWidth(dp(1.4F));
                 P3.setStroke(true);
                 PB.setColor(0x64FFFFFF);
+
+                ValueAnimator rotationAnimator = ValueAnimator.ofInt(0, 4000);
+                rotationAnimator.setDuration(20000); // 设置动画持续时间
+                rotationAnimator.setRepeatCount(ValueAnimator.INFINITE); // 设置无限重复
+                rotationAnimator.setRepeatMode(ValueAnimator.REVERSE); // 设置无限重复
+                rotationAnimator.setInterpolator(v -> v);
+                rotationAnimator.addUpdateListener(animation -> {
+                    this.refreshColor((int) animation.getAnimatedValue());
+                });
+                rotationAnimator.start();
+
+                ValueAnimator breathAnimator = ValueAnimator.ofFloat(0, 1);
+                breathAnimator.setDuration(3500); // 设置动画持续时间
+                breathAnimator.setRepeatCount(ValueAnimator.INFINITE); // 设置无限重复
+                breathAnimator.setRepeatMode(ValueAnimator.RESTART); // 设置无限重复
+                breathAnimator.addUpdateListener(animation -> {
+                    this.breathCycle = (float) animation.getAnimatedValue();
+//                    this.invalidate();
+                });
+                breathAnimator.start();
             }
 
             public ThermoCircleImageView() {
@@ -490,9 +508,9 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             public void refreshColor(int t) {
                 this.testT = t;
                 this.post(() -> {
-                    P1.setColor(THERMO_CIRCLE_COLOR.getColor((t - 100) / 1000F));
-                    P2.setColor(THERMO_CIRCLE_COLOR.getColor((t - 400) / 1600F));
-                    P3.setColor(THERMO_CIRCLE_COLOR.getColor((t - 900) / 2500F));
+                    P1.setColor(THERMO_CIRCLE_COLOR.getColor(Math.clamp(0, 1, (t - 100) / 1100F) + resizeBreath(-0.1F)));
+                    P2.setColor(THERMO_CIRCLE_COLOR.getColor(Math.clamp(0, 1, (t - 300) / 1700F) + resizeBreath(0)));
+                    P3.setColor(THERMO_CIRCLE_COLOR.getColor(Math.clamp(0, 1, (t - 500) / 3100F) + resizeBreath(0.1F)));
                     this.invalidate();
                 });
             }
@@ -501,9 +519,13 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
             protected void onDraw(@NotNull Canvas canvas) {
                 super.onDraw(canvas);
                 canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(50), P3);
-                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(40), P2);
-                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(30), P1);
-                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(28F),PB);
+                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(42.5F), P2);
+                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(35), P1);
+                canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(30), PB);
+            }
+
+            private float resizeBreath(float deviation) {
+                return -0.075F * Math.sin(5 * (Math.clamp(0.3F, 0.7F, breathCycle - deviation) - 0.3F) * 3.14F);
             }
         }
     }

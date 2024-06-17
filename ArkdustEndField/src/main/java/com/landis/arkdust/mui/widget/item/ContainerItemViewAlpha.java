@@ -4,6 +4,7 @@ import com.landis.arkdust.Arkdust;
 import com.landis.arkdust.mui.abs.ItemWidget;
 import com.landis.breakdowncore.helper.RenderHelper;
 import icyllis.modernui.animation.ObjectAnimator;
+import icyllis.modernui.animation.ValueAnimator;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
@@ -20,52 +21,32 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class ContainerItemViewAlpha extends ItemWidget {
+public class ContainerItemViewAlpha extends ItemWidget {
     public static final Image FOREGROUND = Image.create(Arkdust.MODID, "gui/slots/container_alpha.png");
 
     public final Paint EDGE_PAINT = new Paint();
+
+    protected float hoverFlag = 0;
 
     {
         EDGE_PAINT.setColor(0xFFA0A0A0);
         EDGE_PAINT.setStrokeWidth(dp(0.5F));
         EDGE_PAINT.setStroke(true);
-    }
 
-    protected final ImageView hoverImage = new ImageView(getContext()) {
-        private final ObjectAnimator hlaAnimator = ObjectAnimator.ofFloat(this, hlaProperty, 0F, 1F);
-
-        private static final FloatProperty<ImageView> hlaProperty = new FloatProperty<>("hla") {
-            @Override
-            public void setValue(ImageView object, float value) {
-                object.setAlpha(value);
+        setFocusable(true);
+        ValueAnimator hlaAnimator = ObjectAnimator.ofFloat(0F, 1F);
+        hlaAnimator.setDuration(100);
+        hlaAnimator.addUpdateListener(i -> {
+            hoverFlag = (float) i.getAnimatedValue();
+            invalidate();
+        });
+        setOnHoverListener((view, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_HOVER_ENTER -> hlaAnimator.start();
+                case MotionEvent.ACTION_HOVER_EXIT -> hlaAnimator.reverse();
             }
-
-            @Override
-            public Float get(ImageView object) {
-                return object.getAlpha();
-            }
-        };
-
-        {
-            setFocusable(true);
-            hlaAnimator.setDuration(100);
-            setOnHoverListener((view, event) -> {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_HOVER_ENTER -> hlaAnimator.start();
-                    case MotionEvent.ACTION_HOVER_EXIT -> hlaAnimator.reverse();
-                }
-                return false;
-            });
-        }
-
-    };
-
-    {
-        hoverImage.setImage(SLOT_HOVER);
-        hoverImage.setAlpha(0);
-        LayoutParams imageLayoutParams = new LayoutParams(dp(2 * width), dp(2 * width));
-        imageLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-        this.addView(hoverImage, imageLayoutParams);
+            return false;
+        });
     }
 
     public final Paint FILL_PAINT = new Paint();
@@ -96,7 +77,7 @@ public abstract class ContainerItemViewAlpha extends ItemWidget {
 
     @Override
     public void refresh() {
-        if (slot.hasItem() && (slot.getItem().getCount() > 1 || slot.getItem().getMaxStackSize() > 1) && slot.getItem().isBarVisible() != rise) {
+        if (slot.hasItem() && slot.getItem().isBarVisible() != rise && (slot.getItem().getCount() > 1 || slot.getItem().getMaxStackSize() > 1)) {
             rise = !rise;
             if (rise) textLayout.setMarginsRelative(0, 0, dp(width / 8F), 0);
             else textLayout.setMarginsRelative(0, 0, dp(width / 16F), 0);
@@ -113,6 +94,7 @@ public abstract class ContainerItemViewAlpha extends ItemWidget {
         float x1 = x0 + actuallyLos;
 
 
+        drawSlotBackground(canvas, new RectF(x0, y0, x1, y1));
         if (!stack.isEmpty()) {
             //背景渲染
             canvas.drawImage(FOREGROUND, null, new RectF(x0, y0, x1, y1), null);
@@ -132,9 +114,10 @@ public abstract class ContainerItemViewAlpha extends ItemWidget {
             } else {
                 if (stack.getMaxStackSize() == 1) renderRDCircle(actuallyLos, canvas, x1, y1, stack);
             }
-
         }
-        canvas.drawImage(SLOT_BACKGROUND, null, new RectF(x0, y0, x1, y1), null);
+        if (hoverFlag != 0) {
+            drawSlotForeground(canvas, new RectF(x0, y0, x1, y1), hoverFlag);
+        }
 
     }
 

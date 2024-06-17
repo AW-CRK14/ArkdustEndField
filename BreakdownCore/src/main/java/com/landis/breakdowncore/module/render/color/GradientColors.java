@@ -35,17 +35,22 @@ public class GradientColors {
     }
 
     public static GradientColors equidistant(int... colors) {
-        return equidistant(false,colors);
+        return equidistant(false, colors);
     }
 
     public static GradientColors equidistant(boolean ignoreAlpha, int... colors) {
+        return equidistant(ignoreAlpha, 0F, 1F, colors);
+    }
+
+    public static GradientColors equidistant(boolean ignoreAlpha, float from, float to, int... colors) {
         if (colors.length == 0) return new GradientColors(ignoreAlpha, 0xFF000000, 0xFFFFFFFF);
         if (colors.length == 1) return new GradientColors(ignoreAlpha, colors[0], colors[0]);
+        if (from >= to) return new GradientColors(colors[0], colors[colors.length - 1]);
         GradientColors ins = new GradientColors(ignoreAlpha, colors[0], colors[colors.length - 1]);
         float interval = 1F / (colors.length - 1);
         for (int i = colors.length - 2; i >= 1; i--) {
-            ins.colors.add(1,colors[i]);
-            ins.points.add(1,i * interval);
+            ins.colors.add(1, colors[i]);
+            ins.points.add(1, i * interval);
         }
         return ins;
     }
@@ -87,7 +92,7 @@ public class GradientColors {
         }
         if (points.size() > 2) {
             float now;
-            for (int index = 1; index < points.size() - 1; index++) {
+            for (int index = 1; index < points.size(); index++) {
                 now = points.getFloat(index);
                 if (now == point) {
                     colors.set(index, color);
