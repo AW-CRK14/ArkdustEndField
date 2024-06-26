@@ -8,20 +8,23 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.world.entity.LivingEntity;
 
-public class AnimationFrame{
-    private final float tick;
-    private final ModelPoseData poseData;
+import java.util.List;
+import java.util.Map;
 
-    public AnimationFrame(float tick, ModelPoseData poseData) {
+public class AnimationFrame{
+    private final int tick;
+    private final List<ModelPoseData> poseData;
+
+    public AnimationFrame(int tick, List<ModelPoseData> poseData) {
         this.tick = tick;
         this.poseData = poseData;
     }
 
-    public float getTick() {
+    public int getTick() {
         return tick;
     }
 
-    public ModelPoseData getPoseData() {
+    public List<ModelPoseData> getPoseData() {
         return poseData;
     }
 }

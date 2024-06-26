@@ -9,16 +9,14 @@ import net.minecraft.client.model.geom.PartPose;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Animation{
     public static final Logger LOGGER = LogManager.getLogger("BREA:Animation/");
     private final String name;
     private final int duration;
-    private final Map<Integer,List<AnimationFrame>> keyFrames;
+    private final List<AnimationFrame> keyFrames;
     private final boolean cycle = false;
     protected float startTime = 0;
     // 当前动画播放的时间
@@ -29,20 +27,28 @@ public class Animation{
     protected float frameRate = 20;
     // 每个帧的持续时间
     protected float frameDuration;
+    // 是否开始播放
+    public boolean isStarted = false;
 
-    public Animation(String name, int duration, Map<Integer,List<AnimationFrame>> keyFrames) {
+    public Animation(String name, int duration, List<AnimationFrame> keyFrames) {
         this.name = name;
         this.duration = duration;
-        this.keyFrames = keyFrames;
+        List<AnimationFrame> sortedKeyFrames = new ArrayList<>();
+        int minKey = keyFrames.stream().mapToInt(AnimationFrame::getTick).min().orElse(0);
+        int maxKey = keyFrames.stream().mapToInt(AnimationFrame::getTick).max().orElse(0);
+        for (int i = minKey; i <= maxKey; i++) {
+            AnimationFrame frame = keyFrames.get(i);
+            if (frame != null) {
+                sortedKeyFrames.set(i, frame);
+            }
+        }
+        this.keyFrames = sortedKeyFrames;
         this.frameDuration = 1.0f / frameRate * duration / keyFrames.size(); // 总持续时间除以帧数
     }
 
-    public static Map<Integer,ModelPoseData> getNextFramePoseData(List<AnimationFrame> nextFrames){
-        Map<Integer,ModelPoseData> map = new HashMap<>();
-        for(AnimationFrame frame : nextFrames){
-            map.put(frame.getPoseData().modelPartNum(),frame.getPoseData());
-        }
-        return map;
+    public List<ModelPoseData> getNextFramePoseData(){
+        int nextIndex = (currentFrameIndex + 1) % keyFrames.size();
+        return keyFrames.get(nextIndex).getPoseData();
     }
 
     public String getName() {
@@ -53,7 +59,7 @@ public class Animation{
         return duration;
     }
 
-    public Map<Integer,List<AnimationFrame>> getFrames() {
+    public List<AnimationFrame> getFrames() {
         return keyFrames;
     }
 
@@ -66,7 +72,6 @@ public class Animation{
     }
 
     public void update(ModelPartController controller, float tickTime) {
-        boolean bl = true;
         // 更新当前时间
         currentTime = tickTime;
         if (currentTime > duration) {
@@ -78,34 +83,22 @@ public class Animation{
         if (nextFrameIndex != currentFrameIndex) {
             currentFrameIndex = nextFrameIndex;
             // 插值逻辑
-            bl = interpolateFrame(controller);
-        }
-
-        if(!bl){
-
+            interpolateFrame(controller);
         }
     }
 
     // 插值当前帧和下一帧
-    private boolean interpolateFrame(ModelPartController controller) {
-        boolean bl = true;
+    private void interpolateFrame(ModelPartController controller) {
         // 获取当前帧和下一帧
-        List<AnimationFrame> currentFrames = keyFrames.get(currentFrameIndex);
+
+        AnimationFrame currentFrames = keyFrames.get(currentFrameIndex);
         int nextIndex = (currentFrameIndex + 1) % keyFrames.size();
-        if(nextIndex == 0 && !this.cycle) return false;
-        Map<Integer, ModelPoseData> nextFramePoseDataMap = getNextFramePoseData(keyFrames.get(nextIndex));
+        if(nextIndex == 0 && !this.cycle) return;
+        List<ModelPoseData> nextFramePoseDataMap = getNextFramePoseData();
 
         // 计算插值比例
         float progress = calculateInterpolationProgress();
-
-        // 对每个模型部分进行插值
-        for (AnimationFrame frame : currentFrames) {
-           bl = interpolatePartPose(frame, nextFramePoseDataMap, progress, controller);
-           if (!bl){
-               return bl;
-           }
-        }
-        return bl;
+        interpolatePartPose(currentFrames, nextFramePoseDataMap, progress, controller);
     }
 
 
@@ -113,31 +106,41 @@ public class Animation{
         return (currentTime - (currentFrameIndex * frameDuration)) / frameDuration;
     }
 
-    private boolean interpolatePartPose(AnimationFrame frame, Map<Integer, ModelPoseData> nextFramePoseDataMap, float progress, ModelPartController controller) {
-        ModelPoseData currentPose = frame.getPoseData();
-        int num = currentPose.modelPartNum();
-        ModelPoseData nextPose = getNextPoseData(num, nextFramePoseDataMap, currentPose);
-
-        ModelPart part = controller.getModelPartByNum(num);
-        if (part == null) {
-            LOGGER.error("{} play fail: part is null by num {}", this.name, num);
-            Iterable<ModelPart> parts = controller.ModelParts();
-            if(parts != null){
-                parts.forEach((ModelPart::resetPose));
-            }else{
-                LOGGER.error("Reset of the model parts has failed because they are null.");
+    private void interpolatePartPose(AnimationFrame frame, List<ModelPoseData> nextFramePoseData, float progress, ModelPartController controller) {
+        List<ModelPoseData> currentPose = frame.getPoseData();
+        currentPose.forEach((pose) -> {
+            int modelPartNum = pose.modelPartNum();
+            ModelPoseData nextPose = getNextPoseData(modelPartNum, nextFramePoseData, pose);
+            ModelPart part = controller.getModelPartByNum(modelPartNum);
+            if (part == null) {
+                LOGGER.error("{} play fail: part is null by num {}", this.name, modelPartNum);
+                Iterable<ModelPart> parts = controller.ModelParts();
+                if(parts != null){
+                    parts.forEach((ModelPart::resetPose));
+                }else{
+                    LOGGER.error("Reset of the model parts has failed because they are null.");
+                }
+                return;
             }
 
-            return false;
-        }
-
-        interpolatePoseAttributes(part, currentPose.partPose(), nextPose.partPose(), progress);
-        interpolateScaleAttributes(part, currentPose.scaleData(), nextPose.scaleData(), progress);
-        return true;
+            interpolatePoseAttributes(part, pose.partPose(), nextPose.partPose(), progress);
+            interpolateScaleAttributes(part, pose.scaleData(), nextPose.scaleData(), progress);
+        });
     }
 
-    private ModelPoseData getNextPoseData(int partNum, Map<Integer, ModelPoseData> nextFramePoseDataMap, ModelPoseData defaultPose) {
-        return nextFramePoseDataMap.getOrDefault(partNum, defaultPose);
+    private ModelPoseData getNextPoseData(int partNum, List<ModelPoseData> nextFramePoseData, ModelPoseData defaultPose) {
+        AtomicReference<ModelPoseData> data = new AtomicReference<>(defaultPose);
+        nextFramePoseData.forEach((pose) -> {
+            if(pose.modelPartNum() == partNum){
+                data.set(pose);
+            }
+        });
+
+        if(data.get() == defaultPose){
+            LOGGER.warn("No pose data found for part {} in next frame pose data list.", partNum);
+        }
+
+        return data.get();
     }
 
     private void interpolatePoseAttributes(ModelPart part, PartPose currentPose, PartPose nextPose, float progress) {
