@@ -23,6 +23,7 @@ public class BreakdownCore {
         BreaRegistries.MaterialReg.MATERIAL.register(modEventBus);
         BreaRegistries.MaterialReg.FEATURE.register(modEventBus);
         BreaRegistries.MaterialReg.TYPE.register(modEventBus);
+        BreaRegistries.JsonCodecReg.LOOT_POOL.register(modEventBus);
     }
 
     private static ItemModelGenerator ITEM_MODELGEN;

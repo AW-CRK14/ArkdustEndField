@@ -12,6 +12,7 @@ import com.landis.breakdowncore.system.weather.ClimateParameter;
 import com.landis.breakdowncore.system.weather.Weather;
 import com.landis.breakdowncore.system.weather.WeatherScheduler;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +20,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -36,6 +38,7 @@ public class BreaRegistries {
             output.accept((DeferredItem<Item>) i);
         }
     }).title(Component.translatable("tab.brea.default")).icon(() -> new ItemStack(Items.COMMAND_BLOCK)).build());
+
 
 
     /**
@@ -70,8 +73,14 @@ public class BreaRegistries {
         public static final DeferredHolder<MaterialFeatureType<?>, MaterialFeatureType<CombustibleMF>> COMBUSTIBLE = feature("combustible", CombustibleMF.class);
 
 
-        public static final DeferredHolder<Material, Material> MISSING = MATERIAL.register("missing", MissingMaterial::new);
+        public static final DeferredHolder<Material, MissingMaterial> MISSING = MATERIAL.register("missing", MissingMaterial::new);
         public static final DeferredHolder<Material, Material> IRON = material("iron", r -> new Material(r, true, new MetalMF(), new PhaseTransitMF(1539, 3000), new ThermoMF(0.46F, 80.9F, 7.87F)));
-        public static final DeferredHolder<Material, Material> LIGNITE = material("lignite", r -> new Material(r, false, new CombustibleMF(18000,1150)));
+        public static final DeferredHolder<Material, Material> LIGNITE = material("lignite", r -> new Material(r, false, new CombustibleMF(18000, 1150)));
+    }
+
+    public static class JsonCodecReg {
+        public static final DeferredRegister<LootPoolEntryType> LOOT_POOL = DeferredRegister.create(Registries.LOOT_POOL_ENTRY_TYPE, BreakdownCore.MODID);
+
+        public static final DeferredHolder<LootPoolEntryType, LootPoolEntryType> MATERIAL_ITEM_LOOT_POOL = LOOT_POOL.register("material_item", () -> new LootPoolEntryType(LootMaterialItem.CODEC));
     }
 }

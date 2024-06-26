@@ -192,6 +192,7 @@ public class System$Material {
             LOGGER.warn("M_MIT2I map has not present so the result may lead to some unexpected error.");
         }
         if (itemStack == null) {
+            if(!material.getOrCreateTypes().contains(type)) return null;
             itemStack = material.createItem(type);
             if (itemStack == null) {
                 return type.createItem(material);
