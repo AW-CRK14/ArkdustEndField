@@ -528,6 +528,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                 breathAnimator.setDuration(3500); // 设置动画持续时间
                 breathAnimator.setRepeatCount(ValueAnimator.INFINITE); // 设置无限重复
                 breathAnimator.setRepeatMode(ValueAnimator.RESTART); // 设置无限重复
+                breathAnimator.setInterpolator(TimeInterpolator.SINE);
                 breathAnimator.addUpdateListener(animation -> {
                     this.breathCycle = (float) animation.getAnimatedValue();
                     this.animaTick();
@@ -548,8 +549,6 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                         canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(30 + fallout * 25), RETAIN);
                     }
                 }
-
-
                 canvas.drawCircle(getWidth() / 2F, getHeight() / 2F, dp(30), PB);
             }
 
