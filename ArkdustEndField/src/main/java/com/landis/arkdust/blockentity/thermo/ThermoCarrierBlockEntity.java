@@ -10,7 +10,6 @@ public class ThermoCarrierBlockEntity extends ThermoBlockEntity {
     public ThermoCarrierBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityRegistry.THERMO_CARRIER.get(), pPos, pBlockState, BreaRegistries.MaterialReg.IRON.get());
     }
-
     @Override
     public long getM() {
         return 1000;
