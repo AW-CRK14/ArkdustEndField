@@ -1,8 +1,7 @@
 package com.landis.breakdowncore.system.animation;
 
 import com.landis.breakdowncore.BreakdownCore;
-import com.landis.breakdowncore.system.material.Material;
-import com.landis.breakdowncore.system.material.Registry$Material;
+import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
