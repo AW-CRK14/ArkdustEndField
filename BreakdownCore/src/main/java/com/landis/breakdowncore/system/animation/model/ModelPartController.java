@@ -8,6 +8,6 @@ public interface ModelPartController{
     @Nullable
     ModelPart getModelPartByNum(int num);
     @Nullable
-    Iterable<ModelPart> ModelParts();
+    Iterable<ModelPart> getModelParts();
 
 }
