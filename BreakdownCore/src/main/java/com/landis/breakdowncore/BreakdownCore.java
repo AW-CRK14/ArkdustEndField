@@ -23,6 +23,7 @@ public class BreakdownCore {
         REGISTER = RegroupController.create(modEventBus,MODID);
         BreaRegistries.ITEM.register(modEventBus);
         BreaRegistries.TAB.register(modEventBus);
+        BreaRegistries.INGREDIENT_TYPE.register(modEventBus);
         BreaRegistries.MaterialReg.MATERIAL.register(modEventBus);
         BreaRegistries.MaterialReg.FEATURE.register(modEventBus);
         BreaRegistries.MaterialReg.TYPE.register(modEventBus);

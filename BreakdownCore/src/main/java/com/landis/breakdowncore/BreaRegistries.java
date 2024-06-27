@@ -17,24 +17,27 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
+import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.function.Function;
 
 public class BreaRegistries {
     public static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, BreakdownCore.MODID);
     public static final DeferredRegister<Item> ITEM = DeferredRegister.createItems(BreakdownCore.MODID);
+    public static final DeferredRegister<IngredientType<?>> INGREDIENT_TYPE = DeferredRegister.create(NeoForgeRegistries.Keys.INGREDIENT_TYPES, BreakdownCore.MODID);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BREA_TAB = TAB.register("default", () -> CreativeModeTab.builder().displayItems((parameters, output) -> {
         for (DeferredHolder<Item, ? extends Item> i : ITEM.getEntries()) {
             output.accept((DeferredItem<Item>) i);
         }
     }).title(Component.translatable("tab.brea.default")).icon(() -> new ItemStack(Items.COMMAND_BLOCK)).build());
-
     public static final ItemRegroup<Item> PLACEHOLDER = BreakdownCore.REGISTER.item("placeholder").addExplainPre().texture().build();
-
+    public static final DeferredHolder<IngredientType<?>, IngredientType<RecipeMaterialGroupIngredient>> MATERIAL_RECIPE_INGREDIENT =
+            INGREDIENT_TYPE.register("material_recipe", () -> new IngredientType<>(RecipeMaterialGroupIngredient.CODEC));
 
 
     /**
