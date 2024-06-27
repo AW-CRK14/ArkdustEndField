@@ -1,5 +1,6 @@
 package com.landis.breakdowncore;
 
+import com.landis.breakdowncore.module.registry.ItemRegroup;
 import com.landis.breakdowncore.system.material.*;
 import com.landis.breakdowncore.system.material.expansion.CombustibleType;
 import com.landis.breakdowncore.system.material.expansion.IngotType;
@@ -8,13 +9,8 @@ import com.landis.breakdowncore.system.material.expansion.materialfeature.Combus
 import com.landis.breakdowncore.system.material.expansion.materialfeature.MetalMF;
 import com.landis.breakdowncore.system.material.expansion.materialfeature.PhaseTransitMF;
 import com.landis.breakdowncore.system.material.expansion.materialfeature.ThermoMF;
-import com.landis.breakdowncore.system.weather.ClimateParameter;
-import com.landis.breakdowncore.system.weather.Weather;
-import com.landis.breakdowncore.system.weather.WeatherScheduler;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -24,12 +20,10 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.function.Function;
 
 public class BreaRegistries {
-
     public static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, BreakdownCore.MODID);
     public static final DeferredRegister<Item> ITEM = DeferredRegister.createItems(BreakdownCore.MODID);
 
@@ -38,6 +32,8 @@ public class BreaRegistries {
             output.accept((DeferredItem<Item>) i);
         }
     }).title(Component.translatable("tab.brea.default")).icon(() -> new ItemStack(Items.COMMAND_BLOCK)).build());
+
+    public static final ItemRegroup<Item> PLACEHOLDER = BreakdownCore.REGISTER.item("placeholder").addExplainPre().texture().build();
 
 
 

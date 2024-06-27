@@ -1,4 +1,4 @@
-package com.landis.breakdowncore.helper;
+package com.landis.breakdowncore.module.codec;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Either;
@@ -10,30 +10,99 @@ import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
-import org.jetbrains.annotations.Range;
 
-import java.util.*;
-import java.util.function.Function;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
-public class CodecHelper {
+public interface NumberChecker {
 
-    public static <T> String unwrapHolderSet(Either<TagKey<T>, List<Holder<T>>> either, @Range(from = 1L, to = Integer.MAX_VALUE) int listMax) {
-        if (either.left().isPresent()) {
-            return "#" + either.left().get().location();
-        } else {
-            List<Holder<T>> list = either.right().get();
-            StringBuilder l = new StringBuilder();
-            for (int i = 0; i < Math.min(list.size(), listMax); i++) {
-                if (list.get(i).unwrapKey().isPresent()) {
-                    l.append(list.get(i).unwrapKey().get().location());
+    Codec<NumberChecker> CODEC = ExtraCodecs.xor(ValueExact.CODEC, ValueRange.CODEC)
+            .xmap(n -> n.map(a -> a, b -> b), i -> i instanceof ValueExact l ? Either.left(l) : Either.right((ValueRange) i));
+
+    boolean is(double value);
+
+    Codec<? extends NumberChecker> codec();
+
+    record ValueExact(double v) implements NumberChecker {
+        public static final Codec<ValueExact> CODEC = ExtraCodecs.withAlternative(
+                Codec.DOUBLE, Codec.DOUBLE.fieldOf("value").codec()
+        ).xmap(ValueExact::new, ValueExact::v);
+
+        @Override
+        public boolean is(double value) {
+            return value == v;
+        }
+
+        @Override
+        public Codec<? extends NumberChecker> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public String toString() {
+            return "{" + v + "}";
+        }
+    }
+
+
+    //    @SuppressWarnings("all")
+    class ValueRange implements NumberChecker {
+        public static final Codec<ValueRange> CODEC = RecordCodecBuilder.create(n -> n.group(
+                Codec.DOUBLE.optionalFieldOf("min").forGetter(ins -> ins.valueA),
+                Codec.DOUBLE.optionalFieldOf("max").forGetter(ins -> ins.valueB),
+                Codec.BOOL.fieldOf("includeMin").orElse(true).forGetter(ins -> ins.includeA),
+                Codec.BOOL.fieldOf("includeMax").orElse(false).forGetter(ins -> ins.includeB)
+        ).apply(n, ValueRange::new));
+        public final Optional<Double> valueA;
+        public final Optional<Double> valueB;
+
+        public final boolean includeA;
+        public final boolean includeB;
+
+        public ValueRange(Optional<Double> valueA, Optional<Double> valueB) {
+            this(valueA, valueB, true, false);
+        }
+
+        public ValueRange(Optional<Double> valueA, Optional<Double> valueB, boolean includeA, boolean includeB) {
+            if (valueA.isPresent() && valueB.isPresent()) {
+                if (valueA.get() > valueB.get()) {
+                    Optional<Double> d = valueB;
+                    valueB = valueA;
+                    valueA = d;
+                } else if (valueA.get().equals(valueB.get())) {
+                    includeA = includeB = true;
                 }
+            } else {
+                if (valueA.isEmpty()) includeA = false;
+                if (valueB.isEmpty()) includeB = false;
             }
-            if (list.size() > listMax) {
-                int r = list.size() - listMax;
-                l.append("...(").append(r).append(")");
-            }
-            return l.toString();
+
+            this.valueA = valueA;
+            this.valueB = valueB;
+            this.includeA = includeA;
+            this.includeB = includeB;
+        }
+
+        @Override
+        public boolean is(double value) {
+            return (valueA.isEmpty() || value > valueA.get() || (includeA && value == valueA.get())) &&
+                    (valueB.isEmpty() || value < valueB.get() || (includeB && value == valueB.get()));
+        }
+
+        @Override
+        public Codec<? extends NumberChecker> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public String toString() {
+            return (includeA ? "[" : "(") +
+                    (valueA.isPresent() ? valueA.get() : "-∞") +
+                    "," +
+                    (valueB.isPresent() ? valueB.get() : "+∞") +
+                    (includeB ? "]" : ")");
         }
     }
 

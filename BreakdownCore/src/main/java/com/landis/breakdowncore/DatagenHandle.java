@@ -1,5 +1,6 @@
 package com.landis.breakdowncore;
 
+import com.landis.breakdowncore.module.registry.RegroupController;
 import com.landis.breakdowncore.system.material.MaterialItemType;
 import com.landis.breakdowncore.system.material.Registry$Material;
 import com.landis.breakdowncore.system.material.datagen.MaterialSpriteAttachGen;

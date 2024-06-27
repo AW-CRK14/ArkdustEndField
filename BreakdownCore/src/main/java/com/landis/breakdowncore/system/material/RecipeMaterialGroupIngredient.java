@@ -1,19 +1,23 @@
 package com.landis.breakdowncore.system.material;
 
+import com.landis.breakdowncore.BreaRegistries;
+import com.landis.breakdowncore.helper.CodecHelper;
+import com.landis.breakdowncore.module.codec.NumberChecker;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Stream;
 
 public class RecipeMaterialGroupIngredient extends Ingredient {
     public static final Logger LOGGER = LogManager.getLogger("BREA:RecipeIng/MGI");
@@ -25,21 +29,21 @@ public class RecipeMaterialGroupIngredient extends Ingredient {
             MATERIAL_CODEC.fieldOf("material").forGetter(ins -> ins.materials),
             TYPE_CODEC.fieldOf("type").forGetter(ins -> ins.types),
             FEATURE_CODEC.fieldOf("feature").forGetter(ins -> ins.features),
-            NumberProviders.CODEC.fieldOf("purity").forGetter(ins -> ins.purityRange),
-            NumberProviders.CODEC.fieldOf("content").forGetter(ins -> ins.contentRange),
-            NumberProviders.CODEC.fieldOf("valid").forGetter(ins -> ins.validRange)
+            NumberChecker.CODEC.fieldOf("purity").forGetter(ins -> ins.purityRange),
+            NumberChecker.CODEC.fieldOf("content").forGetter(ins -> ins.contentRange),
+            NumberChecker.CODEC.fieldOf("valid").forGetter(ins -> ins.validRange)
     ).apply(i, RecipeMaterialGroupIngredient::of));
 
 
     public final HolderSet<Material> materials;
     public final HolderSet<MaterialItemType> types;
     public final HolderSet<MaterialFeatureType<?>> features;
-    public final NumberProvider purityRange;
-    public final NumberProvider contentRange;
-    public final NumberProvider validRange;
+    public final NumberChecker purityRange;
+    public final NumberChecker contentRange;
+    public final NumberChecker validRange;
 
-    private RecipeMaterialGroupIngredient(HolderSet<Material> materials, HolderSet<MaterialItemType> types, HolderSet<MaterialFeatureType<?>> features, NumberProvider purityRange, NumberProvider contentRange, NumberProvider validRange) {
-        super();
+    private RecipeMaterialGroupIngredient(HolderSet<Material> materials, HolderSet<MaterialItemType> types, HolderSet<MaterialFeatureType<?>> features, NumberChecker purityRange, NumberChecker contentRange, NumberChecker validRange) {
+        super(Stream.of(new ItemValue(createInfo(materials, types, features, purityRange, contentRange, validRange))));
         this.materials = materials;
         this.types = types;
         this.features = features;
@@ -49,7 +53,7 @@ public class RecipeMaterialGroupIngredient extends Ingredient {
     }
 
     //material->or type->or feature->and
-    public static RecipeMaterialGroupIngredient of(HolderSet<Material> materials, HolderSet<MaterialItemType> types, HolderSet<MaterialFeatureType<?>> features, NumberProvider purityRange, NumberProvider contentRange, NumberProvider validRange) {
+    public static RecipeMaterialGroupIngredient of(HolderSet<Material> materials, HolderSet<MaterialItemType> types, HolderSet<MaterialFeatureType<?>> features, NumberChecker purityRange, NumberChecker contentRange, NumberChecker validRange) {
         if(materials == null&& types == null && features == null && purityRange == null && contentRange == null && validRange == null){
             LOGGER.error("Deserialize failed as all the elements are null. The class require at least one element is nonnull.");
             LOGGER.error("由于每一个参数均为null，无法解析。此类要求至少一个参数为非null。");
@@ -57,8 +61,38 @@ public class RecipeMaterialGroupIngredient extends Ingredient {
             return EMPTY;
         }
 
-
         return new RecipeMaterialGroupIngredient(materials, types, features, purityRange, contentRange, validRange);
+    }
+
+    private static ItemStack createInfo(HolderSet<Material> materials, HolderSet<MaterialItemType> types, HolderSet<MaterialFeatureType<?>> features, NumberChecker purityRange, NumberChecker contentRange, NumberChecker validRange){
+        ItemStack itemStack = new ItemStack(BreaRegistries.PLACEHOLDER);
+        ListTag tags = new ListTag();
+        if(materials != null){
+            Component c = Component.translatable("brea.module.recipe.material.material").append(": ").append(CodecHelper.unwrapHolderSet(materials.unwrap(),6));
+            tags.add(StringTag.valueOf(Component.Serializer.toJson(c)));
+        }
+        if(types != null){
+            Component c = Component.translatable("brea.module.recipe.material.type").append(": ").append(CodecHelper.unwrapHolderSet(types.unwrap(),6));
+            tags.add(StringTag.valueOf(Component.Serializer.toJson(c)));
+        }
+        if(features != null){
+            Component c = Component.translatable("brea.module.recipe.material.feature").append(": ").append(CodecHelper.unwrapHolderSet(features.unwrap(),6));
+            tags.add(StringTag.valueOf(Component.Serializer.toJson(c)));
+        }
+        if(purityRange != null){
+            Component c = Component.translatable("brea.module.recipe.material.purity").append(": ").append(purityRange.toString());
+            tags.add(StringTag.valueOf(Component.Serializer.toJson(c)));
+        }
+        if(contentRange != null){
+            Component c = Component.translatable("brea.module.recipe.material.content").append(": ").append(contentRange.toString());
+            tags.add(StringTag.valueOf(Component.Serializer.toJson(c)));
+        }
+        if(validRange != null){
+            Component c = Component.translatable("brea.module.recipe.material.valid").append(": ").append(validRange.toString());
+            tags.add(StringTag.valueOf(Component.Serializer.toJson(c)));
+        }
+        itemStack.getOrCreateTagElement("display").put("Lore",tags);
+        return itemStack;
     }
 
     private static final RecipeMaterialGroupIngredient EMPTY = new RecipeMaterialGroupIngredient(null,null,null,null,null,null){

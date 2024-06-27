@@ -2,7 +2,6 @@ package com.landis.breakdowncore.module.registry;
 
 import com.landis.breakdowncore.module.datagen.ExpandLanguageProvider;
 import com.landis.breakdowncore.module.datagen.ExpandSpriteSourceProvider;
-import com.landis.breakdowncore.system.material.datagen.MaterialSpriteAttachGen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -12,10 +11,11 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.common.data.SpriteSourceProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class RegroupController {
+    public static final Logger LOGGER = LogManager.getLogger("BREA:RegGroup");
     public static final Runnable RN = () -> {
     };
     public final String modid;
@@ -34,7 +35,7 @@ public class RegroupController {
         this.REG_ITEM = DeferredRegister.createItems(modid);
     }
 
-    protected final DeferredRegister<Item> REG_ITEM;
+    protected final DeferredRegister.Items REG_ITEM;
     protected final List<Consumer<ItemModelProvider>> ITEM_MODEL_DATAGEN = new ArrayList<>();
     protected final List<Consumer<ExpandLanguageProvider>> I18N_DATAGEN = new ArrayList<>();
     protected final List<Consumer<ExpandSpriteSourceProvider>> SPRITE_DATAGEN = new ArrayList<>();
@@ -47,7 +48,15 @@ public class RegroupController {
 
         ItemModelProvider itemModel = new ItemModelProvider(output, modid, fileHelper) {
             protected void registerModels() {
-                ITEM_MODEL_DATAGEN.forEach(c -> c.accept(this));
+                ITEM_MODEL_DATAGEN.forEach(c -> {
+                    try {
+                        c.accept(this);
+                    } catch (NullPointerException e) {
+                        LOGGER.warn("Can't find target texture when executing add item model datagen element. Ignored.");
+                        LOGGER.warn("在添加物品模型数据生成元素时未能找到目标材质。已忽略此项目。");
+                        LOGGER.warn("Cause by: ", e);
+                    }
+                });
             }
         };
 
@@ -57,15 +66,24 @@ public class RegroupController {
             }
         };
 
-        ExpandSpriteSourceProvider sprite = new ExpandSpriteSourceProvider(output,lookup,modid,fileHelper) {
+        ExpandSpriteSourceProvider sprite = new ExpandSpriteSourceProvider(output, lookup, modid, fileHelper) {
             protected void gather() {
                 SPRITE_DATAGEN.forEach(c -> c.accept(this));
             }
         };
 
-        generator.addProvider(event.includeClient(),itemModel);
-        generator.addProvider(event.includeClient(),i18n);
-        generator.addProvider(event.includeClient(),sprite);
+        generator.addProvider(event.includeClient(), itemModel);
+        generator.addProvider(event.includeClient(), i18n);
+        generator.addProvider(event.includeClient(), sprite);
+
+        ITEM_MODEL_DATAGEN.clear();
+        I18N_DATAGEN.clear();
+        SPRITE_DATAGEN.clear();
+    }
+
+
+    public ItemRegroupBuilder<Item> item(String id) {
+        return new ItemRegroupBuilder<>(REG_ITEM.registerSimpleItem(id));
     }
 
     public <T extends Item> ItemRegroupBuilder<T> item(String id, Supplier<T> itemSupplier) {
@@ -74,7 +92,8 @@ public class RegroupController {
 
     public static RegroupController create(IEventBus bus, String modid) {
         RegroupController controller = new RegroupController(modid);
-        //TODO
+        controller.REG_ITEM.register(bus);
+        bus.addListener(GatherDataEvent.class, controller::registry);
         return controller;
     }
 
