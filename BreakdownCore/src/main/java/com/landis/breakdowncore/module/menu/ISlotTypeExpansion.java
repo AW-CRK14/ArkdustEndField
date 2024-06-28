@@ -1,5 +1,6 @@
-package com.landis.breakdowncore.module.blockentity.container;
+package com.landis.breakdowncore.module.menu;
 
+import com.landis.breakdowncore.module.blockentity.container.IFriendlyItemHandle;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

@@ -37,23 +37,17 @@ public class CombustibleMF implements IMaterialFeature<CombustibleMF> {
      *     <td>kJ</td>
      *   </tr>
      *   <tr>
-     *     <td>P = 2000</td>
-     *     <td>Power</td>
-     *     <td>功率</td>
-     *     <td>kJ/tick</td>
-     *   </tr>
-     *   <tr>
-     *     <td>defaultBurningTime</td>
-     *     <td>Default Burning Time</td>
-     *     <td>燃烧时间</td>
-     *     <td>tick/m³</td>
+     *     <td>q</td>
+     *     <td>Combustion Internal Energy</td>
+     *     <td>燃烧内能</td>
+     *     <td>kJ/mB</td>
      *   </tr>
      * </table>
      */
-    public final int defaultBurningTime;
+    public final long q;
 
     public CombustibleMF(int cv, int density) {
-        this.defaultBurningTime = cv * density / 2000;
+        this.q = (long) cv * density / 1000;
     }
 
     @Override

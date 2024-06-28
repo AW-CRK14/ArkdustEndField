@@ -1,6 +1,9 @@
 package com.landis.breakdowncore.module.blockentity.container;
 
 import com.google.common.collect.HashMultimap;
+import com.landis.breakdowncore.module.menu.ISlotTypeExpansion;
+import com.landis.breakdowncore.module.menu.SlotType;
+import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.IntFunction;
 
-public class ExpandedContainer extends SimpleContainer implements ISlotTypeExpansion {
+public class ExpandedContainer extends SimpleContainer implements ISlotTypeExpansion, IWrappedContainer {
     public final int length;
     public final List<SlotType> typeList;
     private HashMultimap<SlotType, Integer> indexMap;
@@ -86,5 +89,10 @@ public class ExpandedContainer extends SimpleContainer implements ISlotTypeExpan
     public void onContentsChanged(int slot) {
         ISlotTypeExpansion.super.onContentsChanged(slot);
         setChanged();
+    }
+
+    @Override
+    public Container getContainer() {
+        return this;
     }
 }

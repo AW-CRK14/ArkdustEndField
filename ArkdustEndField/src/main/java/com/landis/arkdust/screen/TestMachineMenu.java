@@ -1,17 +1,6 @@
 package com.landis.arkdust.screen;
 
 //import com.landis.arkdust.blocks.TestMachineBlock;
-import com.landis.arkdust.registry.MenuTypeRegistry;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.items.SlotItemHandler;
-
 //TODO ThermoTest
 //public class TestMachineMenu extends AbstractContainerMenu {
 //    public final TestMachineBlock.Entity blockEntity;

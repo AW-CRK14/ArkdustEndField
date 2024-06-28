@@ -11,9 +11,14 @@ import com.landis.arkdust.registry.BlockEntityRegistry;
 import com.landis.arkdust.registry.MenuTypeRegistry;
 import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.module.blockentity.container.*;
+import com.landis.breakdowncore.module.fluid.FluidSlot;
+import com.landis.breakdowncore.module.fluid.WaterTank;
+import com.landis.breakdowncore.module.menu.IWrappedMenuProvider;
+import com.landis.breakdowncore.module.menu.SlotType;
 import com.landis.breakdowncore.module.render.color.GradientColors;
 import com.landis.breakdowncore.system.material.ITypedMaterialObj;
 import com.landis.breakdowncore.system.material.System$Material;
+import com.landis.breakdowncore.system.thermodynamics.System$Thermo;
 import com.landis.breakdowncore.system.thermodynamics.ThermoBlockEntity;
 import icyllis.modernui.animation.TimeInterpolator;
 import icyllis.modernui.animation.ValueAnimator;
@@ -49,12 +54,14 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Math;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalDouble;
 
 public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWrappedMenuProvider, MenuScreenFactory<ThermoCombustorBlockEntity.Menu> {
 
@@ -75,12 +82,20 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
     }
 
     protected ExpandedContainer container = new ExpandedContainer(SlotType.INPUT);
+    protected WaterTank tank = new WaterTank(40000);
 
     private ItemStack burning = ItemStack.EMPTY;
     private int remainTime;//当前状态下 这一个燃料可以燃烧的时间 t = Q / P = Q * conversionRate / P0
     private int thermalEfficiency;//根据计算获得的实际燃料消耗功率 P = P0 / conversionRate
     private float conversionRate;//根据计算获得的实际转化率
     private int outputEffi;//根据计算获得的实际输出功率
+
+    public void refreshRemainTime() {
+        long q = (long) remainTime * thermalEfficiency;
+        //TODO 数据刷新 来自模块数据组
+        thermalEfficiency = (int) (outputEffi / conversionRate);
+        remainTime = q != 0 ? (int) (q / thermalEfficiency) : 0;
+    }
 
     public int getRemainTime() {
         return remainTime;
@@ -111,6 +126,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         pTag.put("container", container.serializeNBT());
         pTag.put("burning", burning.save(new CompoundTag()));
         pTag.putInt("rt", remainTime);
+        pTag.put("tank", tank.writeToNBT(new CompoundTag()));
     }
 
     @Override
@@ -119,6 +135,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         container.deserializeNBT(pTag.getCompound("container"));
         burning = ItemStack.of(pTag.getCompound("burning"));
         remainTime = pTag.getInt("rt");
+        tank.readFromNBT(pTag.getCompound("tank"));
     }
 
     //---[热力处理 thermo handle]---
@@ -130,11 +147,40 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
     @Override
     public void onOverheating() {
-
+        if (!tank.isEmpty()) {
+            double flow = getQ() - maxQ();
+            int cost = Math.min((int) (flow / 420) + 1, tank.getFluid().getAmount());
+            tank.drain(cost, IFluidHandler.FluidAction.EXECUTE);
+            extractHeat(cost * 420, false);
+        } else {
+            //TODO 熔毁
+        }
     }
 
     public void thermoTick(Level pLevel, BlockPos pPos, BlockState pState) {
         super.thermoTick(pLevel, pPos, pState);
+        if (burning.isEmpty() && !container.getItem(0).isEmpty()) {
+            ItemStack stack = container.getItem(0);
+            OptionalDouble q = System$Thermo.getCombustionInternalEnergy(stack);
+            if (q.isPresent()) {
+                stack.shrink(1);
+                burning = stack.copy();
+                burning.setCount(1);
+
+                this.remainTime = (int) (q.getAsDouble() / thermalEfficiency);
+                if (stack.isEmpty()) {
+                    container.setItem(0, ItemStack.EMPTY);
+                }
+            } else {
+                container.setItem(0, ItemStack.EMPTY);
+            }
+        } else if (remainTime > 0) {
+            insertHeat(outputEffi, false);
+            remainTime--;
+            if (remainTime <= 0) {
+                this.burning = ItemStack.EMPTY;
+            }
+        }
     }
 
     //---[菜单与容器 menu and container]---
@@ -163,7 +209,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
 
     public static class Menu extends MUIRelativeMenu<ThermoCombustorBlockEntity> {
-
+        private int tankCapacityClientCache = 0;
         public final Container container;
         public final Inventory inventory;
         public final int invStartIndex;
@@ -177,15 +223,14 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         }
 
         private void addSlots(Inventory inventory, Container container, ThermoCombustorBlockEntity entity) {
-            for (int i = 0; i < container.getContainerSize(); i++) {
-                addSlot(new FixedSlot(container, i, 0, 0) {
-                    @Override
-                    public boolean mayPlace(ItemStack pStack) {
-                        ITypedMaterialObj materialObj = System$Material.getMaterialInfo(pStack.getItem());
-                        return materialObj != null && materialObj.getMaterialOrMissing(pStack).getFeature(BreaRegistries.MaterialReg.COMBUSTIBLE.get()) != null;
-                    }
-                }, SlotType.INPUT);
-            }
+            addTank(new FluidSlot(entity.tank));
+
+            addSlot(new FixedSlot(container, 0, 0, 0) {
+                public boolean mayPlace(ItemStack pStack) {
+                    ITypedMaterialObj materialObj = System$Material.getMaterialInfo(pStack.getItem());
+                    return materialObj != null && materialObj.getMaterialOrMissing(pStack).getFeature(BreaRegistries.MaterialReg.COMBUSTIBLE.get()) != null;
+                }
+            }, SlotType.INPUT);
 
             for (int i = 0; i < inventory.getContainerSize(); i++) {
                 addSlot(new FixedSlot(inventory, i, 0, 0), SlotType.PLAYER_INVENTORY);
@@ -218,6 +263,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                     case 2 -> belonging.maxT();
                     case 3 -> belonging.outputEffi;
                     case 4 -> belonging.remainTime;
+                    case 5 -> belonging.tank.getTankCapacity(0);
                     default -> -1;
                 };
             }
@@ -230,12 +276,13 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                     case 2 -> belonging.clientCachedTMax = pValue;
                     case 3 -> belonging.outputEffi = pValue;
                     case 4 -> belonging.remainTime = pValue;
+                    case 5 -> tankCapacityClientCache = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 5;
+                return 6;
             }
 
         }

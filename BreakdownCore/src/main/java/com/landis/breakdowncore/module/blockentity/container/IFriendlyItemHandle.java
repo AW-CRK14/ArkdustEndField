@@ -3,6 +3,8 @@ package com.landis.breakdowncore.module.blockentity.container;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerListener;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -98,15 +100,16 @@ public interface IFriendlyItemHandle extends IItemHandler, IItemHandlerModifiabl
 //    }
 
 
-    default int getStackLimit(int slot, ItemStack stack){
-        return Math.min(getSlotLimit(slot),stack.getMaxStackSize());
-    };
+    default int getStackLimit(int slot, ItemStack stack) {
+        return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
+    }
 
     //value: -1 表示不计索引的变动
-    default void onContentsChanged(int slot){};
+    default void onContentsChanged(int slot) {
+    }
 
     @Override
-    default CompoundTag serializeNBT(){
+    default CompoundTag serializeNBT() {
         ListTag nbtTagList = new ListTag();
         for (int i = 0; i < getSlots(); i++) {
             if (!getStackInSlot(i).isEmpty()) {
@@ -119,10 +122,12 @@ public interface IFriendlyItemHandle extends IItemHandler, IItemHandlerModifiabl
         CompoundTag nbt = new CompoundTag();
         nbt.put("Items", nbtTagList);
         return nbt;
-    };
+    }
+
+    ;
 
     @Override
-    default void deserializeNBT(CompoundTag nbt){
+    default void deserializeNBT(CompoundTag nbt) {
         ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
         for (int i = 0; i < tagList.size(); i++) {
             CompoundTag itemTags = tagList.getCompound(i);

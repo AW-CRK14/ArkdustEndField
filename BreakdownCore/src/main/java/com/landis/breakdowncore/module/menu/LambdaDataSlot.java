@@ -1,4 +1,4 @@
-package com.landis.breakdowncore.module.blockentity.container;
+package com.landis.breakdowncore.module.menu;
 
 import net.minecraft.world.inventory.DataSlot;
 

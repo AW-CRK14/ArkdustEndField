@@ -3,8 +3,8 @@ package com.landis.arkdust.mui;
 import com.landis.arkdust.mui.abs.IMenu2ScreenNotifiable;
 import com.landis.arkdust.mui.abs.ItemWidget;
 import com.landis.arkdust.mui.widget.viewgroup.InventoryWidgets;
-import com.landis.breakdowncore.module.blockentity.container.ISlotTypeExpansion;
-import com.landis.breakdowncore.module.blockentity.container.SlotType;
+import com.landis.breakdowncore.module.menu.ISlotTypeExpansion;
+import com.landis.breakdowncore.module.menu.SlotType;
 import com.landis.breakdowncore.module.blockentity.gmui.IMenuChangeNotify;
 import icyllis.modernui.util.DataSet;
 import icyllis.modernui.view.LayoutInflater;
@@ -70,7 +70,7 @@ public abstract class AbstractArkdustIndustContainerUI extends AbstractArkdustIn
     }
 
     @Override
-    public void notify(int index) {
+    public void notifyItem(int index) {
         if (inventoryItemWidgets.get(index) != null) {
             inventoryItemWidgets.get(index).refresh();
         }
