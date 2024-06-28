@@ -85,6 +85,7 @@ public class Animation{
     // 播放动画
     public void play(ModelPartController controller){
         float partialTick = Minecraft.getInstance().getPartialTick();
+        this.isStarted = true;
         if(startTime == 0){
             startTime = partialTick;
         }
@@ -111,7 +112,6 @@ public class Animation{
     // 插值当前帧和下一帧
     private void interpolateFrame(ModelPartController controller) {
         // 获取当前帧和下一帧
-
         AnimationFrame currentFrames = keyFrames.get(currentFrameIndex);
         int nextIndex = (currentFrameIndex + 1) % keyFrames.size();
         if(nextIndex == 0 && !this.cycle) return;
@@ -137,7 +137,7 @@ public class Animation{
             ModelPart part = controller.getModelPartByNum(modelPartNum);
             if (part == null) {
                 LOGGER.error("{} play fail: part is null by num {}", this.name, modelPartNum);
-                Iterable<ModelPart> parts = controller.ModelParts();
+                Iterable<ModelPart> parts = controller.getModelParts();
                 if(parts != null){
                     parts.forEach((ModelPart::resetPose));
                 }else{

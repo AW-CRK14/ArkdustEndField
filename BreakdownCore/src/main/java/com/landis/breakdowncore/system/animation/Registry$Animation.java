@@ -2,6 +2,7 @@ package com.landis.breakdowncore.system.animation;
 
 import com.landis.breakdowncore.BreakdownCore;
 import com.mojang.serialization.Codec;
+import net.minecraft.client.model.ZombieModel;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
