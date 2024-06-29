@@ -5,7 +5,6 @@ import com.landis.breakdowncore.helper.ContainerHelper;
 import com.landis.breakdowncore.module.fluid.IFluidSlot;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.NonNullList;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
@@ -14,6 +13,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 public abstract class ExpandedContainerMenu<T extends BlockEntity> extends AbstractContainerMenu implements ISlotTypeExpansion, IExpandedContainerListener {
     private final NonNullList<FluidStack> lastFluids = NonNullList.create();
     private final NonNullList<FluidStack> remoteFluids = NonNullList.create();
+    private final NonNullList<FluidStack> cacheFluids = NonNullList.create();
     public final NonNullList<IFluidSlot> fluids = NonNullList.create();
 
 
@@ -64,11 +65,11 @@ public abstract class ExpandedContainerMenu<T extends BlockEntity> extends Abstr
     }
 
     //由Menu下发
-    public void slotChanged(AbstractContainerMenu menu, int slotIndex, ItemStack stack) {
+    public void slotChanged(@NotNull AbstractContainerMenu menu, int slotIndex, @NotNull ItemStack stack) {
         onContentsChanged(slotIndex);//IFIH已收到提醒
     }
 
-    public void dataChanged(AbstractContainerMenu pContainerMenu, int pDataSlotIndex, int pValue) {
+    public void dataChanged(@NotNull AbstractContainerMenu pContainerMenu, int pDataSlotIndex, int pValue) {
 
     }
 
@@ -123,12 +124,26 @@ public abstract class ExpandedContainerMenu<T extends BlockEntity> extends Abstr
     public void fluidChanged(AbstractContainerMenu pContainerMenu, int pFluidSlotIndex, FluidStack pValue) {
     }
 
+    @SuppressWarnings("all")
     public IFluidSlot addTank(IFluidSlot tank) {
         tank.setIndex(this.slots.size());
         this.fluids.add(tank);
         this.lastFluids.add(FluidStack.EMPTY);
         this.remoteFluids.add(FluidStack.EMPTY);
+        this.cacheFluids.add(FluidStack.EMPTY);
         return tank;
+    }
+
+    //TODO 需要发包内容修理
+    /**issue flag
+     * @see SynMenuFluidPacker#consume(PlayPayloadContext) 
+     * */
+    public void fluidNetworkFeedback(int index, boolean succeed) {
+        FluidStack stack = cacheFluids.set(index, FluidStack.EMPTY);
+        if (succeed) {
+            remoteFluids.set(index, stack);
+        }
+//        System.out.println("Server got feedback. succeed = " + succeed);
     }
 
     public boolean isValidFluidIndex(int index) {
@@ -168,8 +183,8 @@ public abstract class ExpandedContainerMenu<T extends BlockEntity> extends Abstr
         FluidStack fluidStack = this.remoteFluids.get(pSlotIndex);
         if (!fluidStack.isFluidStackIdentical(pStack)) {
             FluidStack neo = pSupplier.get();
-            this.remoteFluids.set(pSlotIndex, neo);
-            new SynMenuFluidPacker(pSlotIndex, pStack).send((ServerPlayer) user);
+            this.cacheFluids.set(pSlotIndex, neo);
+            new SynMenuFluidPacker(pSlotIndex, pStack).send(user);
         }
     }
 

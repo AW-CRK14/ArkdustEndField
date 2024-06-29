@@ -1,6 +1,7 @@
 package com.landis.breakdowncore.module.menu;
 
 import com.landis.breakdowncore.BreakdownCore;
+import com.landis.breakdowncore.module.network.IClientCustomPacketPayload;
 import com.landis.breakdowncore.module.network.IServerCustomPacketPayload;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -30,8 +31,39 @@ public record SynMenuFluidPacker(int index, FluidStack stack) implements IServer
     @Override
     public void consume(PlayPayloadContext context) {
         Player p = context.player().get();
+        boolean flag = false;
         if (p.containerMenu instanceof ExpandedContainerMenu<?> expanded) {
             expanded.setFluid(index, stack);
+            flag = true;
+        }
+//        System.out.println("Client got pack. flag = " + flag);
+        context.replyHandler().send(new Feedback(index, flag));
+    }
+
+    public record Feedback(int index, boolean consumed) implements IClientCustomPacketPayload {
+        public static final ResourceLocation ID = new ResourceLocation(BreakdownCore.MODID, "menu_syn/fluid/feedback");
+
+        public Feedback(FriendlyByteBuf buf) {
+            this(buf.readInt(), buf.readBoolean());
+        }
+
+        @Override
+        public void consume(PlayPayloadContext context) {
+            Player p = context.player().get();
+            if (p.containerMenu instanceof ExpandedContainerMenu<?> expanded) {
+                expanded.fluidNetworkFeedback(index, consumed);
+            }
+        }
+
+        @Override
+        public void write(FriendlyByteBuf pBuffer) {
+            pBuffer.writeInt(index);
+            pBuffer.writeBoolean(consumed);
+        }
+
+        @Override
+        public ResourceLocation id() {
+            return ID;
         }
     }
 }

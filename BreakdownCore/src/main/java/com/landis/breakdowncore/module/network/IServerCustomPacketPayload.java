@@ -8,20 +8,14 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.Nullable;
 
-public interface IServerCustomPacketPayload extends CustomPacketPayload {
-    default void send(ServerPlayer... players) {
+import java.util.Arrays;
+
+public interface IServerCustomPacketPayload extends IDecoratedCustomPacketPayload {
+    default void send(Player... players) {
         if (players == null || players.length == 0) {
             PacketDistributor.ALL.noArg().send(this);
         } else {
-            for (ServerPlayer player : players) {
-                PacketDistributor.PLAYER.with(player).send(this);
-            }
+            Arrays.stream(players).filter(player -> player instanceof ServerPlayer).forEach(player -> PacketDistributor.PLAYER.with((ServerPlayer) player).send(this));
         }
     }
-
-    default void handle(PlayPayloadContext context) {
-        context.workHandler().execute(() -> consume(context));
-    }
-
-    void consume(PlayPayloadContext context);
 }

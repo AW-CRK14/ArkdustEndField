@@ -46,7 +46,7 @@ public abstract class ThermoBlockEntity extends BlockEntity implements IThermoMa
 
     @Override
     public void setQ(double heat) {
-        this.q = Math.max(Math.min(heat, maxQ()), -273L * getMC());
+        this.q = Math.max(heat, -273L * getMC());
     }
 
     @Override

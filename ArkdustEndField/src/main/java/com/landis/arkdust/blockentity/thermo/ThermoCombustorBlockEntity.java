@@ -5,6 +5,7 @@ import com.landis.arkdust.helper.MUIHelper;
 import com.landis.arkdust.mui.AbstractArkdustIndustContainerUI;
 import com.landis.arkdust.mui.MUIRelativeMenu;
 import com.landis.arkdust.mui.MUIResourceQuote;
+import com.landis.arkdust.mui.widget.LinetypeProcessBar;
 import com.landis.arkdust.mui.widget.item.FactoryDecoratedItemViewBeta;
 import com.landis.arkdust.mui.widget.viewgroup.IndsGroup;
 import com.landis.arkdust.registry.BlockEntityRegistry;
@@ -54,6 +55,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,6 +70,14 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
     public final int basicOutputEffi;
     public final float basicConversionRate;
 
+    protected ExpandedContainer container = new ExpandedContainer(SlotType.INPUT);
+    protected WaterTank tank = new WaterTank(40000);
+    private ItemStack burning = ItemStack.EMPTY;
+    private int remainTime;//当前状态下 这一个燃料可以燃烧的时间 t = Q / P = Q * conversionRate / P0
+    private int thermalEfficiency;//根据计算获得的实际燃料消耗功率 P = P0 / conversionRate
+    private float conversionRate;//根据计算获得的实际转化率
+    private int outputEffi;//根据计算获得的实际输出功率
+
     public ThermoCombustorBlockEntity(BlockPos pPos, BlockState pBlockState) {
         this(pPos, pBlockState, ((ThermoBlocks.CombustorBlock) pBlockState.getBlock()).basicOutputEffi, ((ThermoBlocks.CombustorBlock) pBlockState.getBlock()).basicConversionRate);
     }
@@ -81,14 +91,6 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         this.basicConversionRate = basicConversionRate;
     }
 
-    protected ExpandedContainer container = new ExpandedContainer(SlotType.INPUT);
-    protected WaterTank tank = new WaterTank(40000);
-
-    private ItemStack burning = ItemStack.EMPTY;
-    private int remainTime;//当前状态下 这一个燃料可以燃烧的时间 t = Q / P = Q * conversionRate / P0
-    private int thermalEfficiency;//根据计算获得的实际燃料消耗功率 P = P0 / conversionRate
-    private float conversionRate;//根据计算获得的实际转化率
-    private int outputEffi;//根据计算获得的实际输出功率
 
     public void refreshRemainTime() {
         long q = (long) remainTime * thermalEfficiency;
@@ -117,6 +119,9 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         return burning;
     }
 
+    public WaterTank getTank() {
+        return tank;
+    }
 
     //---[基础数据处理 basic data handle]--
 
@@ -209,7 +214,6 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
 
     public static class Menu extends MUIRelativeMenu<ThermoCombustorBlockEntity> {
-        private int tankCapacityClientCache = 0;
         public final Container container;
         public final Inventory inventory;
         public final int invStartIndex;
@@ -263,7 +267,6 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                     case 2 -> belonging.maxT();
                     case 3 -> belonging.outputEffi;
                     case 4 -> belonging.remainTime;
-                    case 5 -> belonging.tank.getTankCapacity(0);
                     default -> -1;
                 };
             }
@@ -276,13 +279,12 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                     case 2 -> belonging.clientCachedTMax = pValue;
                     case 3 -> belonging.outputEffi = pValue;
                     case 4 -> belonging.remainTime = pValue;
-                    case 5 -> tankCapacityClientCache = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 6;
+                return 5;
             }
 
         }
@@ -293,6 +295,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         public static final int SECONDARY_COLOR = 0x99FFFFFF;
         public static final int SECONDARY_COLOR_B = 0x74F3F3FF;
         protected List<TextView> thermoInfoTexts;
+        protected TextView tankText;
         protected ThermoCircleImageView thermoCircle;
 
         public static final ForegroundColorSpan temComColor = new ForegroundColorSpan(0x2ADFDFE7);
@@ -341,6 +344,14 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
         }
 
         @Override
+        public void notifyFluid(int index) {
+            super.notifyFluid(index);
+            if (tankText != null) {
+                tankText.post(() -> tankText.setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.tank") + " : " + ((Menu) menu).belonging.tank.getFluid().getAmount()));
+            }
+        }
+
+        @Override
         public @NotNull View onCreateView(LayoutInflater inflater, ViewGroup container, DataSet savedInstanceState) {
             //基本数据预备
             ViewGroup group = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
@@ -355,6 +366,7 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
 
             //右侧发热器内容
             RelativeLayout rightPart = new RelativeLayout(getContext());
+            rightPart.setId(212000);
             RelativeLayout.LayoutParams rightPartPara = new RelativeLayout.LayoutParams(group.dp(180), group.dp(180));
             rightPartPara.setMargins(group.dp(130), group.dp(30), group.dp(30), group.dp(30));
             defaultIndsGroup.child.addView(rightPart, rightPartPara);
@@ -516,6 +528,29 @@ public class ThermoCombustorBlockEntity extends ThermoBlockEntity implements IWr
                     valueTextViewPara.gravity = Gravity.RIGHT;
                     efficiencyGroup.addView(valueTextView, valueTextViewPara);
                 }
+            }
+
+            //底部冷却水储量显示
+            LinearLayout bottomWaterInfo = new LinearLayout(getContext());
+            bottomWaterInfo.setOrientation(LinearLayout.VERTICAL);
+            bottomWaterInfo.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
+            RelativeLayout.LayoutParams bottomWaterInfoPara = new RelativeLayout.LayoutParams(group.dp(340), -2);
+            bottomWaterInfoPara.addRule(RelativeLayout.BELOW, 212000);
+            defaultIndsGroup.child.addView(bottomWaterInfo, bottomWaterInfoPara);
+            {
+                tankText = new TextView(getContext());
+                tankText.setTextSize(6);
+                tankText.setTextSize(0xFF0B5195);
+                tankText.setText(I18n.get("arkdust.industry.arkdust.mac.thermo.combustor.info.tank") + ":" + ((Menu) menu).belonging.tank.getFluid().getAmount());
+                LinearLayout.LayoutParams tankTextPara = new LinearLayout.LayoutParams(-2, -2);
+                tankTextPara.setMargins(0, 0, 0, group.dp(2));
+                tankTextPara.gravity = Gravity.CENTER_HORIZONTAL;
+                bottomWaterInfo.addView(tankText, tankTextPara);
+
+                bottomWaterInfo.addView(new LinetypeProcessBar(getContext(), 0xFF0B5195, () -> {
+                    WaterTank tank = ((Menu) menu).belonging.tank;
+                    return (float) tank.getFluid().getAmount() / tank.getCapacity();
+                }), new LinearLayout.LayoutParams(-1, group.dp(3)));
             }
 
 

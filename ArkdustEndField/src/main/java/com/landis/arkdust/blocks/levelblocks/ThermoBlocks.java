@@ -20,8 +20,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
 
 public class ThermoBlocks {
 
@@ -60,8 +65,11 @@ public class ThermoBlocks {
         @Override
         public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
             super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
-            if (!pMovedByPiston)
-                ((ThermoBlockEntity) pLevel.getBlockEntity(pPos)).init(pLevel, pPos, pState);
+            if (!pMovedByPiston) {
+                @Nonnull ThermoCombustorBlockEntity entity = ((ThermoCombustorBlockEntity) pLevel.getBlockEntity(pPos));
+                entity.init(pLevel, pPos, pState);
+//                entity.getTank().setFluid(new FluidStack(Fluids.WATER,4000));
+            }
         }
 
         @Override

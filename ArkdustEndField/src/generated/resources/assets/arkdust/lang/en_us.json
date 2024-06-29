@@ -24,5 +24,6 @@
   "arkdust.industry.arkdust.test.name": "TestMac",
   "arkdust.industry.arkdust.backpack.name": "BackPack",
   "arkdust.industry.arkdust.mac.thermo.combustor.test": "TestingCombustor",
-  "arkdust.industry.arkdust.mac.thermo.combustor.info.temp": "Mac Tempera"
+  "arkdust.industry.arkdust.mac.thermo.combustor.info.temp": "Mac Tempera",
+  "arkdust.industry.arkdust.mac.thermo.combustor.info.tank": "Water Reserve"
 }
