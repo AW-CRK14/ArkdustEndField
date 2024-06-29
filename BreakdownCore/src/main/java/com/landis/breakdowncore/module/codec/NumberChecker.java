@@ -27,8 +27,9 @@ public interface NumberChecker {
 
     record ValueExact(double v) implements NumberChecker {
         public static final Codec<ValueExact> CODEC = ExtraCodecs.withAlternative(
-                Codec.DOUBLE, Codec.DOUBLE.fieldOf("value").codec()
-        ).xmap(ValueExact::new, ValueExact::v);
+                Codec.DOUBLE.xmap(ValueExact::new, ValueExact::v),
+                RecordCodecBuilder.create(i -> i.group(Codec.DOUBLE.fieldOf("value").forGetter(ValueExact::v)).apply(i, ValueExact::new))
+        );
 
         @Override
         public boolean is(double value) {
