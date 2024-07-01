@@ -125,7 +125,6 @@ public class LoadingClientMixin {
 		int width = drawContext.guiWidth();
 		int height = drawContext.guiHeight();
 		int barX = 0;
-
 		// 计算进度条的填充宽度
 		int fillWidth = Mth.ceil((float)(width * this.currentProgress));
 
