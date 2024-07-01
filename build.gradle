@@ -3,88 +3,124 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.80'
-    id 'net.neoforged.gradle.mixin' version '7.0.80'
+    id 'net.neoforged.gradle.userdev' version '7.0.145' apply false
+    id 'net.neoforged.gradle.mixin' version '7.0.145' apply false
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-repositories {
-    mavenLocal()
-
-    maven {
-        url "https://mvn.cloud.alipay.com/nexus/content/repositories/open/"
-    }
-
-    maven{
-        url 'https://maven.aliyun.com/nexus/content/groups/public/'
-    }
-
-    maven {
-        url 'https://maven.aliyun.com/nexus/content/repositories/google'
-    }
-
-    maven {
-        name 'IzzelAliz Maven'
-        url 'https://maven.izzel.io/releases/'
-    }
-
-    maven {
-        name 'Curse Maven'
-        url "https://www.cursemaven.com"
-    }
+tasks.named('wrapper', Wrapper).configure {
+    // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
+    // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
+    // documentation attached on cursor hover of gradle classes and methods. However, this comes with increased
+    // file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.
+    // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
+    distributionType = Wrapper.DistributionType.BIN
 }
 
-mixin {
-    config("${core_mod_id}.mixins.json")
-    config("${main_mod_id}.mixins.json")
-}
+group = mod_group_id
 
-runs {
-    // applies to all the run configs below
-    configureEach {
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'maven-publish'
+    apply plugin: 'net.neoforged.gradle.userdev'
+    apply plugin: 'net.neoforged.gradle.mixin'
 
-        systemProperty 'forge.logging.console.level', 'info'
+    group = rootProject.group
 
-        modSource project("ArkdustEndField").sourceSets.main
-        modSource project("BreakdownCore").sourceSets.main
+    // Mojang ships Java 17 to end users starting in 1.18, so mods should target Java 17.
+    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+    repositories {
+        maven { url 'https://mvn.cloud.alipay.com/nexus/content/repositories/open/' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+
+        maven {
+            name 'IzzelAliz Maven'
+            url 'https://maven.izzel.io/releases/'
+        }
+
+        maven {
+            name 'Curse Maven'
+            url "https://www.cursemaven.com"
+        }
+
+        mavenCentral()
+        mavenLocal()
     }
 
-    client {
-//        systemProperty 'forge.enabledGameTestNamespaces', project.main_mod_id
+    dependencies {
+        // Specify the version of Minecraft to use.
+        // Depending on the plugin applied there are several options.
+        // We will assume you applied the userdev plugin as shown above.
+        // The group for userdev is net.neoforged, the module name is neoforge,
+        // and the version is the same as the neoforge version.
+        // You can however also use the vanilla plugin (net.neoforged.gradle.vanilla) to
+        // use a version of Minecraft without the neoforge loader.
+        // And its provides the option to then use net.minecraft as the group, and one of;
+        // client, server or joined as the module name, plus the game version as version.
+        // For all intends and purposes: You can treat this dependency as if it is a normal library
+        // you would use.
+        implementation "net.neoforged:neoforge:${rootProject.neo_version}"
 
-//        property 'mixin.env.remapRefMap', 'true'
-//        property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+        // Example optional mod dependency with JEI
+        // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
+        // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
+        // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
+        // We add the full version to localRuntime, not runtimeOnly,
+        // so that we do not publish a dependency on it
+        // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
+
+        // Example mod dependency using a mod jar from ./libs with a flat dir repository
+        // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
+        // The group id is ignored when searching -- in this case, it is "blank"
+        // implementation "blank:coolmod-${mc_version}:${coolmod_version}"
+
+        // Example mod dependency using a file as dependency
+        // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
+
+        // Example project dependency using a sister or child project:
+        // implementation project(":myproject")
+
+        // For more info:
+        // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+        // http://www.gradle.org/docs/current/userguide/dependency_management.html
     }
 
-    server {
-//        systemProperty 'forge.enabledGameTestNamespaces', project.main_mod_id
-        programArgument '--nogui'
-
-//        property 'mixin.env.remapRefMap', 'true'
-//        property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+    // Sets up a dependency configuration called 'localRuntime'.
+    // This configuration should be used instead of 'runtimeOnly' to declare
+    // a dependency that will be present for runtime testing but that is
+    // "optional", meaning it will not be pulled by dependents of this mod.
+    configurations {
+        runtimeClasspath.extendsFrom localRuntime
     }
 
-    gameTestServer {
-//        systemProperty 'forge.enabledGameTestNamespaces', project.main_mod_id
+    // Example configuration to allow publishing using the maven-publish plugin
+    publishing {
+        publications {
+            register('mavenJava', MavenPublication) {
+                from components.java
+            }
+        }
+
+        repositories {
+            maven {
+                url "file://${project.projectDir}/repo"
+            }
+        }
     }
 
-    data {
-//        programArguments.addAll '--mod', project.main_mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+        options.release = 17
     }
-}
 
-sourceSets.main.resources {
-    srcDir 'ArkdustEndField/src/generated/resources'
-    srcDir 'BreakdownCore/src/generated/resources'
-}
-
-
-dependencies {
-    implementation "net.neoforged:neoforge:${neo_version}"
-
-    runtimeOnly project(":ArkdustEndField")
-    runtimeOnly project(":BreakdownCore")
-    runtimeOnly "curse.maven:modern-ui-${modernui_path}"
+    // IDEA no longer automatically downloads sources/javadoc jars for dependencies,
+    // so we need to explicitly enable the behavior.
+    idea {
+        module {
+            downloadSources = true
+            downloadJavadoc = true
+        }
+    }
 }
