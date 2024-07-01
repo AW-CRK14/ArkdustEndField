@@ -1,11 +1,11 @@
 {
-  "tab.brea.default": "BreakdownCore : Default",
   "brea.material.missing": "Missing",
   "brea.mit.brea.ingot": "Ingot",
-  "brea.module.recipe.material.material": "Material",
-  "brea.module.recipe.material.type": "Type",
-  "brea.module.recipe.material.feature": "Feature",
-  "brea.module.recipe.material.purity": "Purity",
   "brea.module.recipe.material.content": "Content",
-  "brea.module.recipe.material.valid": "Valid"
+  "brea.module.recipe.material.feature": "Feature",
+  "brea.module.recipe.material.material": "Material",
+  "brea.module.recipe.material.purity": "Purity",
+  "brea.module.recipe.material.type": "Type",
+  "brea.module.recipe.material.valid": "Valid",
+  "tab.brea.default": "BreakdownCore : Default"
 }

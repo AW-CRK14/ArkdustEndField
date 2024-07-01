@@ -24,17 +24,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public abstract class ExpandLanguageProvider implements DataProvider {
+public abstract class ExpandLanguageProvider implements DataProvider, IAgencyProvider<ExpandLanguageProvider>{
     public static final Logger LOGGER = LogManager.getLogger("BREA:Datagen:Language");
     private final Map<String, String> data = new TreeMap<>();
     public final PackOutput output;
     public final String modid;
     public final String locale;
+
+    private final List<ExpandLanguageProvider> agency = new ArrayList<>();
 
     public ExpandLanguageProvider(PackOutput output, String modid, String locale) {
         this.output = output;
@@ -42,7 +46,25 @@ public abstract class ExpandLanguageProvider implements DataProvider {
         this.locale = locale;
     }
 
-    protected abstract void addTranslations();
+    @Override
+    public void addAgency(ExpandLanguageProvider instance) {
+        agency.add(instance);
+    }
+
+    @Override
+    public List<ExpandLanguageProvider> getAgency() {
+        return agency;
+    }
+
+    @Override
+    public void execute(ExpandLanguageProvider instance) {
+        instance.addTranslations();
+        data.putAll(instance.data);
+    }
+
+    public void addTranslations(){
+        agency();
+    };
 
     @Override
     public CompletableFuture<?> run(CachedOutput cache) {

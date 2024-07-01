@@ -1,0 +1,175 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": 10,
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:blend_alpha"
+        },
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": -10,
+          "argument2": {
+            "type": "minecraft:spline",
+            "spline": {
+              "coordinate": "minecraft:overworld_large_biomes/continents",
+              "points": [
+                {
+                  "location": -1.2,
+                  "derivative": 0,
+                  "value": 3.95
+                },
+                {
+                  "location": -0.15,
+                  "derivative": 0,
+                  "value": {
+                    "coordinate": "minecraft:overworld_large_biomes/erosion",
+                    "points": [
+                      {
+                        "location": -0.25,
+                        "derivative": 0,
+                        "value": {
+                          "coordinate": "minecraft:overworld/ridges",
+                          "points": [
+                            {
+                              "location": -0.2,
+                              "derivative": 0,
+                              "value": 6.3
+                            },
+                            {
+                              "location": 0.2,
+                              "derivative": 0,
+                              "value": 6.25
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "location": 0.35,
+                        "derivative": 0,
+                        "value": 6.25
+                      },
+                      {
+                        "location": 0.62,
+                        "derivative": 0,
+                        "value": 6.25
+                      }
+                    ]
+                  }
+                },
+                {
+                  "location": 0.03,
+                  "derivative": 0,
+                  "value": {
+                    "coordinate": "minecraft:overworld_large_biomes/erosion",
+                    "points": [
+                      {
+                        "location": -0.6,
+                        "derivative": 0,
+                        "value": {
+                          "coordinate": "minecraft:overworld/ridges",
+                          "points": [
+                            {
+                              "location": -0.2,
+                              "derivative": 0,
+                              "value": 6.3
+                            },
+                            {
+                              "location": 0.2,
+                              "derivative": 0,
+                              "value": 5.08
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "location": -0.35,
+                        "derivative": 0,
+                        "value": {
+                          "coordinate": "minecraft:overworld/ridges",
+                          "points": [
+                            {
+                              "location": -0.2,
+                              "derivative": 0,
+                              "value": 6.3
+                            },
+                            {
+                              "location": 0.2,
+                              "derivative": 0,
+                              "value": 5.08
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "location": 0.03,
+                        "derivative": 0,
+                        "value": {
+                          "coordinate": "minecraft:overworld/ridges",
+                          "points": [
+                            {
+                              "location": -0.2,
+                              "derivative": 0,
+                              "value": 6.3
+                            },
+                            {
+                              "location": 0.2,
+                              "derivative": 0,
+                              "value": 5.08
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "location": 0.35,
+                        "derivative": 0,
+                        "value": 5.08
+                      },
+                      {
+                        "location": 0.62,
+                        "derivative": 0,
+                        "value": 5.08
+                      }
+                    ]
+                  }
+                },
+                {
+                  "location": 0.06,
+                  "derivative": 0,
+                  "value": {
+                    "coordinate": "minecraft:overworld_large_biomes/erosion",
+                    "points": [
+                      {
+                        "location": 0.03,
+                        "derivative": 0,
+                        "value": {
+                          "coordinate": "minecraft:overworld/ridges",
+                          "points": [
+                            {
+                              "location": -0.8,
+                              "derivative": 0,
+                              "value": 6.3
+                            },
+                            {
+                              "location": 0.8,
+                              "derivative": 0,
+                              "value": 4.69
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

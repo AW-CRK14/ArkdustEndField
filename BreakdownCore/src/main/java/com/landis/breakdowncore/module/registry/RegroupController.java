@@ -1,5 +1,6 @@
 package com.landis.breakdowncore.module.registry;
 
+import com.landis.breakdowncore.module.datagen.ExpandItemModelProvider;
 import com.landis.breakdowncore.module.datagen.ExpandLanguageProvider;
 import com.landis.breakdowncore.module.datagen.ExpandSpriteSourceProvider;
 import net.minecraft.core.HolderLookup;
@@ -20,10 +21,11 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class RegroupController {
+public abstract class RegroupController {
     public static final Logger LOGGER = LogManager.getLogger("BREA:RegGroup");
     public static final Runnable RN = () -> {
     };
@@ -40,14 +42,19 @@ public class RegroupController {
     protected final List<Consumer<ExpandLanguageProvider>> I18N_DATAGEN = new ArrayList<>();
     protected final List<Consumer<ExpandSpriteSourceProvider>> SPRITE_DATAGEN = new ArrayList<>();
 
+    public ExpandItemModelProvider itemModelProvider;
+    public ExpandLanguageProvider i18nProvider;
+    public ExpandSpriteSourceProvider spriteProvider;
+
     public void registry(GatherDataEvent event) {//TODO
         DataGenerator generator = event.getGenerator();
         PackOutput output = event.getGenerator().getPackOutput();
         ExistingFileHelper fileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
 
-        ItemModelProvider itemModel = new ItemModelProvider(output, modid, fileHelper) {
-            protected void registerModels() {
+        itemModelProvider = new ExpandItemModelProvider(output, modid, fileHelper) {
+            public void registerModels() {
+                super.registerModels();
                 ITEM_MODEL_DATAGEN.forEach(c -> {
                     try {
                         c.accept(this);
@@ -60,26 +67,32 @@ public class RegroupController {
             }
         };
 
-        ExpandLanguageProvider i18n = new ExpandLanguageProvider(output, modid, "en_us") {
-            protected void addTranslations() {
+        i18nProvider = new ExpandLanguageProvider(output, modid, "en_us") {
+            public void addTranslations() {
+                super.addTranslations();
                 I18N_DATAGEN.forEach(c -> c.accept(this));
             }
         };
 
-        ExpandSpriteSourceProvider sprite = new ExpandSpriteSourceProvider(output, lookup, modid, fileHelper) {
-            protected void gather() {
+        spriteProvider = new ExpandSpriteSourceProvider(output, lookup, modid, fileHelper) {
+            public void gather() {
+                super.gather();
                 SPRITE_DATAGEN.forEach(c -> c.accept(this));
             }
         };
 
-        generator.addProvider(event.includeClient(), itemModel);
-        generator.addProvider(event.includeClient(), i18n);
-        generator.addProvider(event.includeClient(), sprite);
+        bootstrapExtraDatagen(event,this);
+
+        generator.addProvider(event.includeClient(), itemModelProvider);
+        generator.addProvider(event.includeClient(), i18nProvider);
+        generator.addProvider(event.includeClient(), spriteProvider);
 
         ITEM_MODEL_DATAGEN.clear();
         I18N_DATAGEN.clear();
         SPRITE_DATAGEN.clear();
     }
+
+    public abstract void bootstrapExtraDatagen(GatherDataEvent event, RegroupController i);
 
 
     public ItemRegroupBuilder<Item> item(String id) {
@@ -91,7 +104,15 @@ public class RegroupController {
     }
 
     public static RegroupController create(IEventBus bus, String modid) {
-        RegroupController controller = new RegroupController(modid);
+        return create(bus,modid,(event,controller)->{});
+    }
+
+    public static RegroupController create(IEventBus bus, String modid, BiConsumer<GatherDataEvent,RegroupController> bootstrapExtraHandler) {
+        RegroupController controller = new RegroupController(modid){
+            public void bootstrapExtraDatagen(GatherDataEvent event, RegroupController i) {
+                bootstrapExtraHandler.accept(event,i);
+            }
+        };
         controller.REG_ITEM.register(bus);
         bus.addListener(GatherDataEvent.class, controller::registry);
         return controller;

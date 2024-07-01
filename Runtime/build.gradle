@@ -86,5 +86,5 @@ dependencies {
 
     runtimeOnly project(":ArkdustEndField")
     runtimeOnly project(":BreakdownCore")
-    runtimeOnly "curse.maven:modern-ui-352491:5040141"
+    runtimeOnly "curse.maven:modern-ui-${modernui_path}"
 }

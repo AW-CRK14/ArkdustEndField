@@ -31,11 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class SarconDimension{
-    public static final ResourceKey<LevelStem> STEM = ResourceKey.create(Registries.LEVEL_STEM,new ResourceLocation(Arkdust.MODID,"sarcon"));
-    public static final ResourceKey<Level> LEVEL = ResourceKey.create(Registries.DIMENSION,new ResourceLocation(Arkdust.MODID,"sarcon"));
-    public static final ResourceKey<DimensionType> TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,new ResourceLocation(Arkdust.MODID,"sarcon_type"));
-    public static final ResourceKey<NoiseGeneratorSettings> SETTING = ResourceKey.create(Registries.NOISE_SETTINGS,new ResourceLocation(Arkdust.MODID,"sarcon"));
+public class SarconDimension {
+    public static final ResourceKey<LevelStem> STEM = ResourceKey.create(Registries.LEVEL_STEM, new ResourceLocation(Arkdust.MODID, "sarcon"));
+    public static final ResourceKey<Level> LEVEL = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(Arkdust.MODID, "sarcon"));
+    public static final ResourceKey<DimensionType> TYPE = ResourceKey.create(Registries.DIMENSION_TYPE, new ResourceLocation(Arkdust.MODID, "sarcon_type"));
+    public static final ResourceKey<NoiseGeneratorSettings> SETTING = ResourceKey.create(Registries.NOISE_SETTINGS, new ResourceLocation(Arkdust.MODID, "sarcon"));
 
     public static class Source extends BiomeSource {
         public static final Logger LOGGER = LogManager.getLogger(Arkdust.getLogName("worldgen.dimension.biome.sarcon"));
@@ -51,7 +51,6 @@ public class SarconDimension{
             this.BIOME_MAP = new HashMap<>();
             BiomeRegistry.Sarcon.BIOMES.forEach(obj -> BIOME_MAP.put(obj, getter.getOrThrow(obj)));
             this.BIOMES = BIOME_MAP.values().stream().toList();
-
         }
 
         public Source(List<Holder<Biome>> biomes) {
@@ -75,46 +74,49 @@ public class SarconDimension{
 
         @Override
         public Holder<Biome> getNoiseBiome(int pX, int pY, int pZ, Climate.Sampler pSampler) {//TODO
-            return switch (getBiomeTypeMark(pX, pY)) {
-                case 0 -> BIOME_MAP.get(BiomeRegistry.Sarcon.DESERT);
-                case 1 -> BIOME_MAP.get(BiomeRegistry.Sarcon.DEGRADED_GRASSLAND);
-                case 2 -> BIOME_MAP.get(BiomeRegistry.Sarcon.PLATEAU);
-                case 3 -> BIOME_MAP.get(BiomeRegistry.Sarcon.PLATEAU);
-                case 4 -> BIOME_MAP.get(BiomeRegistry.Sarcon.SPARSE_RAIN_FOREST);
-                case 5 -> BIOME_MAP.get(BiomeRegistry.Sarcon.RAIN_FOREST);
-                default -> throw new IllegalArgumentException("Can't get any valuable biome mark index in Arkdust Sarcon Level Biome Source");
-            };
+
+            return BIOME_MAP.get(BiomeRegistry.Sarcon.PLATEAU);
         }
 
-        /*0:沙漠
-         * 1:退化草原
-         * 2:山崖
-         * 3:高山草甸
-         * 4:稀疏雨林
-         * 5:雨林*/
-        public static int getBiomeTypeMark(int pX, int pY) {
+        /* 0 - 20    : 沙漠
+         * 20 - 27.5 : 退化草原
+         * 30 - 50   : 山崖
+         * 50 - 60   : 高山草甸
+         * 60 - 75   : 稀疏雨林
+         * 75 - 100  : 雨林*/
+        public static float getBiomeTypeMark(int pX, int pY) {
             final int k = -1200;
             long y = (long) pY << 2 + 2;
             long x = (long) pX << 2 + 2;
-            float distance = (y + 2 * x - k) / 2.236F;
+            float distance = (y + 2 * x - k) * 0.447F;
             double origin = Math.sqrt(x * x + y * y);
-            if (distance <= Math.min(1200 + origin / 20, 2400)) {
-                return 0;
-            } else if (distance <= -40) {
-                return 1;
-            } else if (distance <= 0) {
-                return 2;
-            } else if (distance <= Math.min(1800 + origin / 40, 2000)) {
-                return 3;
-            } else if (distance <= Math.min(4000 + origin / 30, 5000)) {
-                return 4;
+
+            if (distance < 0) {
+                if (distance > -40) return 50 + distance * 0.5F;
+
+                int desertPoint = (int) (Math.min(1200 + origin / 20, 2400) * -1);
+                if (distance <= -8000) {
+                    return 0;
+                } else if (distance <= desertPoint) {
+                    return 20 - (desertPoint - distance) / 450F;
+                } else {
+                    return 27.5F - 7.5F * distance / desertPoint;
+                }
             } else {
-                return 5;
+                if (distance > 13000) return 100;
+                int forestPoint = (int) Math.min(1800 + origin / 40, 2000);
+                if (distance < forestPoint) return 50 + distance / forestPoint * 10;
+                int rainforestPoint = (int) Math.min(4000 + origin / 30, 5000);
+                if (distance < rainforestPoint)
+                    return 60 + 15 * (distance - forestPoint) / (rainforestPoint - forestPoint);
+                else return 75 + (distance - rainforestPoint) / (520 - (float) rainforestPoint / 25);
             }
         }
     }
 
-//    public static class Generator extends DimensionPre.YRelativeDimensionGenerator {
+//    public record DensityFunc
+
+
     public static class Generator extends DimensionPre.YRelativeDimensionGenerator {
 
         public static final Codec<Generator> CODEC = RecordCodecBuilder.create(
@@ -159,16 +161,16 @@ public class SarconDimension{
                     }
                 } else {//雨林半区高度计算
                     // 计算n的值，高山草甸边界
-                    double n = Math.min(1800 + origin / 40,2000);
+                    double n = Math.min(1800 + origin / 40, 2000);
                     // 计算p的值，稀疏雨林边界
-                    double p = Math.min(4000 + origin / 30,5000);
+                    double p = Math.min(4000 + origin / 30, 5000);
                     // 判断距离是否小于n
                     if (distance < n) {//高山草甸高度计算
                         height = (float) (344 - distance / n * 30);
                     } else if (distance < p) {//稀疏雨林高度计算
                         height = (float) (314 - 50 * (distance - n) / p - n);
                     } else {//密林高度计算
-                        height = (float) Math.max(264 - (distance - p) / 100,228);
+                        height = (float) Math.max(264 - (distance - p) / 100, 228);
                     }
                 }
             }
@@ -195,8 +197,9 @@ public class SarconDimension{
         }
     }
 
-    public static class SurfaceSource implements SurfaceRules.RuleSource{
+    public static class SurfaceSource implements SurfaceRules.RuleSource {
         public static final Codec<SurfaceSource> CODEC = Codec.unit(new SurfaceSource());
+
         @Override
         public KeyDispatchDataCodec<? extends SurfaceRules.RuleSource> codec() {
             return new KeyDispatchDataCodec<>(CODEC);
@@ -207,7 +210,8 @@ public class SarconDimension{
             return new SurfaceRule(context);
         }
     }
-    public record SurfaceRule(SurfaceRules.Context context) implements SurfaceRules.SurfaceRule{
+
+    public record SurfaceRule(SurfaceRules.Context context) implements SurfaceRules.SurfaceRule {
         @Nullable
         @Override
         public BlockState tryApply(int pX, int pY, int pZ) {

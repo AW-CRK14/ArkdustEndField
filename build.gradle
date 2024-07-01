@@ -1,18 +1,16 @@
-
-
 plugins {
     id 'java-library'
-    id 'java'
+    id 'eclipse'
     id 'idea'
+    id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.80'
+    id 'net.neoforged.gradle.mixin' version '7.0.80'
 }
 
-
-group = 'org.example'
-version = '1.0-SNAPSHOT'
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 repositories {
-    mavenCentral()
+    mavenLocal()
 
     maven {
         url "https://mvn.cloud.alipay.com/nexus/content/repositories/open/"
@@ -33,21 +31,60 @@ repositories {
 
     maven {
         name 'Curse Maven'
-        url = "https://www.cursemaven.com"
+        url "https://www.cursemaven.com"
     }
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+mixin {
+    config("${core_mod_id}.mixins.json")
+    config("${main_mod_id}.mixins.json")
+}
 
-//dependencies {
-//    testImplementation platform('org.junit:junit-bom:5.9.1')
-//    testImplementation 'org.junit.jupiter:junit-jupiter'
-//}
+runs {
+    // applies to all the run configs below
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+        systemProperty 'forge.logging.console.level', 'info'
+
+        modSource project("ArkdustEndField").sourceSets.main
+        modSource project("BreakdownCore").sourceSets.main
+    }
+
+    client {
+//        systemProperty 'forge.enabledGameTestNamespaces', project.main_mod_id
+
+//        property 'mixin.env.remapRefMap', 'true'
+//        property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+    }
+
+    server {
+//        systemProperty 'forge.enabledGameTestNamespaces', project.main_mod_id
+        programArgument '--nogui'
+
+//        property 'mixin.env.remapRefMap', 'true'
+//        property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+    }
+
+    gameTestServer {
+//        systemProperty 'forge.enabledGameTestNamespaces', project.main_mod_id
+    }
+
+    data {
+//        programArguments.addAll '--mod', project.main_mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+sourceSets.main.resources {
+    srcDir 'ArkdustEndField/src/generated/resources'
+    srcDir 'BreakdownCore/src/generated/resources'
+}
+
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
-}
 
-test {
-    useJUnitPlatform()
+    runtimeOnly project(":ArkdustEndField")
+    runtimeOnly project(":BreakdownCore")
+    runtimeOnly "curse.maven:modern-ui-${modernui_path}"
 }
