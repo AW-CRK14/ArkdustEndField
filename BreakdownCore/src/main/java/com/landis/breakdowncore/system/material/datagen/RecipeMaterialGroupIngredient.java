@@ -1,9 +1,10 @@
-package com.landis.breakdowncore.system.material;
+package com.landis.breakdowncore.system.material.datagen;
 
 import com.google.common.collect.ImmutableSet;
 import com.landis.breakdowncore.BreaRegistries;
 import com.landis.breakdowncore.helper.CodecHelper;
 import com.landis.breakdowncore.module.codec.NumberChecker;
+import com.landis.breakdowncore.system.material.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;

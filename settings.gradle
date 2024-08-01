@@ -14,7 +14,5 @@ plugins {
 
 rootProject.name = 'ArkProgress'
 
-include 'ArkProgress'
 include 'BreakdownCore'
 include 'ArkdustEndField'
-include 'Runtime'

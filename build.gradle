@@ -16,7 +16,7 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-group = mod_group_id
+group = group_id
 
 subprojects {
     apply plugin: 'java-library'

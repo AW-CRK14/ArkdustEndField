@@ -1,5 +1,6 @@
-package com.landis.breakdowncore.system.material;
+package com.landis.breakdowncore.system.material.datagen;
 
+import com.landis.breakdowncore.system.material.Handler$Material;
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;
 

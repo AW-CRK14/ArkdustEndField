@@ -1,10 +1,10 @@
-version = core_mod_version
+version = brea_mod_version
 base {
-    archivesName = core_mod_id
+    archivesName = brea_mod_id
 }
 
 mixin {
-    config("${core_mod_id}.mixins.json")
+    config("${brea_mod_id}.mixins.json")
 }
 
 minecraft {
@@ -35,11 +35,11 @@ runs {
 
     client {
         // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'forge.enabledGameTestNamespaces', core_mod_id
+        systemProperty 'forge.enabledGameTestNamespaces', brea_mod_id
     }
 
     server {
-        systemProperty 'forge.enabledGameTestNamespaces', core_mod_id
+        systemProperty 'forge.enabledGameTestNamespaces', brea_mod_id
         programArgument '--nogui'
     }
 
@@ -47,7 +47,7 @@ runs {
     // By default, the server will crash when no gametests are provided.
     // The gametest system is also enabled by default for other run configs under the /test command.
     gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', core_mod_id
+        systemProperty 'forge.enabledGameTestNamespaces', brea_mod_id
     }
 
     data {
@@ -57,7 +57,7 @@ runs {
 
         // Specify the modid for data generation, where to output the resulting resource,
         // and where to look for existing resources.
-        programArguments.addAll '--mod', core_mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        programArguments.addAll '--mod', brea_mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
@@ -72,10 +72,10 @@ tasks.withType(ProcessResources).configureEach {
             neo_version            : neo_version,
             neo_version_range      : neo_version_range,
             loader_version_range   : loader_version_range,
-            mod_id                 : core_mod_id,
-            mod_name               : core_mod_name,
-            mod_license            : core_mod_license,
-            mod_version            : core_mod_version,
+            mod_id                 : brea_mod_id,
+            mod_name               : brea_mod_name,
+            mod_license            : mod_license,
+            mod_version            : brea_mod_version,
             mod_authors            : brea_mod_authors,
             mod_description        : brea_mod_description,
     ]

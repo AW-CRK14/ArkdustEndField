@@ -2,6 +2,7 @@ package com.landis.breakdowncore;
 
 import com.landis.breakdowncore.system.macmodule.Registry$MacModule;
 import com.landis.breakdowncore.system.material.*;
+import com.landis.breakdowncore.system.material.datagen.MaterialReflectDataGatherEvent;
 import com.landis.breakdowncore.system.weather.Registry$Weather;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;

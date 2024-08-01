@@ -2,10 +2,9 @@ package com.landis.breakdowncore.event;
 
 import com.landis.breakdowncore.event.render.SpriteBeforeStitchEvent;
 import com.landis.breakdowncore.system.material.Handler$Material;
-import com.landis.breakdowncore.system.material.MaterialReflectDataGatherEvent;
+import com.landis.breakdowncore.system.material.datagen.MaterialReflectDataGatherEvent;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.neoforged.fml.ModLoader;
-import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.ArrayList;
 import java.util.List;

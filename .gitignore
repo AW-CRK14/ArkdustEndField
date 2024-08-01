@@ -24,9 +24,9 @@ eclipse
 run
 runs
 run-data
+*.hprof
 
 repo
 /logs/
 /BreakdownCore/.eclipse/
 /ArkdustEndField/.eclipse/
-/Runtime/.eclipse/

@@ -2,6 +2,7 @@ package com.landis.breakdowncore;
 
 import com.landis.breakdowncore.module.registry.ItemRegroup;
 import com.landis.breakdowncore.system.material.*;
+import com.landis.breakdowncore.system.material.datagen.RecipeMaterialGroupIngredient;
 import com.landis.breakdowncore.system.material.expansion.CombustibleType;
 import com.landis.breakdowncore.system.material.expansion.IngotType;
 import com.landis.breakdowncore.system.material.expansion.MissingMaterial;
