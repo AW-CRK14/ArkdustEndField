@@ -8,6 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 
 public class LevelStemRegistry {
@@ -16,6 +17,7 @@ public class LevelStemRegistry {
         HolderGetter<DimensionType> levelTypeGetter = bootstrap.lookup(Registries.DIMENSION_TYPE);
         HolderGetter<Biome> biomeGetter = bootstrap.lookup(Registries.BIOME);
         HolderGetter<NoiseGeneratorSettings> noiseGetter = bootstrap.lookup(Registries.NOISE_SETTINGS);
-        bootstrap.register(SarconDimension.STEM,new LevelStem(levelTypeGetter.getOrThrow(SarconDimension.TYPE),new SarconDimension.Generator(new SarconDimension.Source(biomeGetter),noiseGetter.getOrThrow(SarconDimension.SETTING))));
+//        bootstrap.register(SarconDimension.STEM,new LevelStem(levelTypeGetter.getOrThrow(SarconDimension.TYPE),new SarconDimension.Generator(new SarconDimension.Source(biomeGetter),noiseGetter.getOrThrow(SarconDimension.SETTING))));
+        bootstrap.register(SarconDimension.STEM,new LevelStem(levelTypeGetter.getOrThrow(SarconDimension.TYPE),new NoiseBasedChunkGenerator(new SarconDimension.Source(biomeGetter),noiseGetter.getOrThrow(SarconDimension.SETTING))));
     }
 }

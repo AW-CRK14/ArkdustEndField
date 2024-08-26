@@ -12,12 +12,13 @@ import net.minecraft.world.level.levelgen.NoiseSettings;
 import java.util.List;
 
 public class NoiseGenSettingRegistry {
-    public static void bootstrap(BootstapContext<NoiseGeneratorSettings> context){
-        context.register(SarconDimension.SETTING,new NoiseGeneratorSettings(NoiseSettings.create(0,160,2,2), Blocks.STONE.defaultBlockState(),Blocks.WATER.defaultBlockState(),
+    public static void bootstrap(BootstapContext<NoiseGeneratorSettings> context) {
+        context.register(SarconDimension.SETTING, new NoiseGeneratorSettings(NoiseSettings.create(0, 160, 2, 2), Blocks.STONE.defaultBlockState(), Blocks.WATER.defaultBlockState(),
 //                Router.overworldWithoutCaves(context.lookup(Registries.DENSITY_FUNCTION), context.lookup(Registries.NOISE)),
+//                NoiseRouterData.noNewCaves(context.lookup(Registries.DENSITY_FUNCTION), context.lookup(Registries.NOISE),),
                 Router.sarconRouter(context.lookup(Registries.DENSITY_FUNCTION), context.lookup(Registries.NOISE)),
                 new SarconDimension.SurfaceSource(),//TODO SurfaceRule required
-                List.of(),1,false,false,false,true));
+                List.of(), 64, false, false, false, true));
     }
 
 }

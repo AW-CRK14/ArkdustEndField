@@ -1,0 +1,143 @@
+{
+  "type": "minecraft:spline",
+  "spline": {
+    "coordinate": {
+      "type": "minecraft:noise",
+      "noise": "minecraft:noodle_thickness",
+      "xz_scale": 0.35,
+      "y_scale": 0
+    },
+    "points": [
+      {
+        "location": 0,
+        "derivative": 0,
+        "value": {
+          "coordinate": {
+            "type": "minecraft:add",
+            "argument1": "arkdust:sarcon/surface_noise_a",
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": "arkdust:sarcon/river_covered",
+              "argument2": -0.25
+            }
+          },
+          "points": [
+            {
+              "location": 0,
+              "derivative": 1,
+              "value": 0.275
+            }
+          ]
+        }
+      },
+      {
+        "location": 0.5,
+        "derivative": 0,
+        "value": {
+          "coordinate": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:mul",
+              "argument1": 0.4,
+              "argument2": {
+                "type": "minecraft:add",
+                "argument1": "arkdust:sarcon/surface_noise_a",
+                "argument2": {
+                  "type": "minecraft:spline",
+                  "spline": {
+                    "coordinate": "arkdust:sarcon/river",
+                    "points": [
+                      {
+                        "location": -0.02,
+                        "derivative": 0,
+                        "value": 0
+                      },
+                      {
+                        "location": 0.01,
+                        "derivative": 0,
+                        "value": {
+                          "coordinate": {
+                            "type": "minecraft:noise",
+                            "noise": "minecraft:spaghetti_2d",
+                            "xz_scale": 20,
+                            "y_scale": 0
+                          },
+                          "points": [
+                            {
+                              "location": 0,
+                              "derivative": 0.015,
+                              "value": -0.02
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": "arkdust:sarcon/river_covered",
+              "argument2": -0.2
+            }
+          },
+          "points": [
+            {
+              "location": 0,
+              "derivative": 1,
+              "value": 0.18
+            }
+          ]
+        }
+      },
+      {
+        "location": 0.65,
+        "derivative": 0,
+        "value": {
+          "coordinate": "arkdust:sarcon/river",
+          "points": [
+            {
+              "location": -0.07,
+              "derivative": 0,
+              "value": {
+                "coordinate": "arkdust:sarcon/oasis",
+                "points": [
+                  {
+                    "location": -0.04,
+                    "derivative": 0,
+                    "value": -0.025
+                  },
+                  {
+                    "location": 0,
+                    "derivative": 1,
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            {
+              "location": 0.01,
+              "derivative": 0,
+              "value": {
+                "coordinate": {
+                  "type": "minecraft:noise",
+                  "noise": "minecraft:spaghetti_2d",
+                  "xz_scale": 20,
+                  "y_scale": 0
+                },
+                "points": [
+                  {
+                    "location": 0,
+                    "derivative": 0.04,
+                    "value": -0.048
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

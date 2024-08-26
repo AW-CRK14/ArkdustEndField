@@ -32,10 +32,11 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class SarconDimension {
-    public static final ResourceKey<LevelStem> STEM = ResourceKey.create(Registries.LEVEL_STEM, new ResourceLocation(Arkdust.MODID, "sarcon"));
-    public static final ResourceKey<Level> LEVEL = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(Arkdust.MODID, "sarcon"));
-    public static final ResourceKey<DimensionType> TYPE = ResourceKey.create(Registries.DIMENSION_TYPE, new ResourceLocation(Arkdust.MODID, "sarcon_type"));
-    public static final ResourceKey<NoiseGeneratorSettings> SETTING = ResourceKey.create(Registries.NOISE_SETTINGS, new ResourceLocation(Arkdust.MODID, "sarcon"));
+    public static final ResourceLocation RL = new ResourceLocation(Arkdust.MODID, "sarcon");
+    public static final ResourceKey<LevelStem> STEM = ResourceKey.create(Registries.LEVEL_STEM, RL);
+    public static final ResourceKey<Level> LEVEL = ResourceKey.create(Registries.DIMENSION, RL);
+    public static final ResourceKey<DimensionType> TYPE = ResourceKey.create(Registries.DIMENSION_TYPE, RL.withSuffix("_type"));
+    public static final ResourceKey<NoiseGeneratorSettings> SETTING = ResourceKey.create(Registries.NOISE_SETTINGS, RL);
 
     public static class Source extends BiomeSource {
         public static final Logger LOGGER = LogManager.getLogger(Arkdust.getLogName("worldgen.dimension.biome.sarcon"));
@@ -117,7 +118,8 @@ public class SarconDimension {
 //    public record DensityFunc
 
 
-    public static class Generator extends DimensionPre.YRelativeDimensionGenerator {
+//    public static class Generator extends DimensionPre.YRelativeDimensionGenerator {
+    public static class Generator extends NoiseBasedChunkGenerator {
 
         public static final Codec<Generator> CODEC = RecordCodecBuilder.create(
                 p_255585_ -> p_255585_.group(
@@ -128,7 +130,7 @@ public class SarconDimension {
         );
 
         public Generator(BiomeSource pBiomeSource, Holder<NoiseGeneratorSettings> settings) {
-            super(pBiomeSource, settings, 0.3F);
+            super(pBiomeSource, settings);
         }
 
         @Override
@@ -186,15 +188,15 @@ public class SarconDimension {
             return max ? 343 - 160 : 192 - 160;
         }
 
-        @Override
-        public int getMinY() {
-            return 0;
-        }
-
-        @Override
-        public int getGenDepth() {
-            return (int) (generatorSettings().value().noiseSettings().height() * routerScaleFactor + extremeYOffset(true));
-        }
+//        @Override
+//        public int getMinY() {
+//            return 0;
+//        }
+//
+//        @Override
+//        public int getGenDepth() {
+//            return (int) (generatorSettings().value().noiseSettings().height() * routerScaleFactor + extremeYOffset(true));
+//        }
     }
 
     public static class SurfaceSource implements SurfaceRules.RuleSource {
